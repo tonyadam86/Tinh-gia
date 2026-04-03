@@ -1,0 +1,1385 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tính Giá Nội Thất Xuất Khẩu</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+:root {
+  --navy:#0f1f3d; --navy2:#1a3060; --navy3:#243870;
+  --gold:#c8a84b; --gold2:#f0d080;
+  --cream:#f5f0e8; --cream2:#ede6d6; --cream3:#faf7f0;
+  --green:#2d7a4f; --green2:#e6f4ec;
+  --red:#c0392b; --red2:#fdf0ee;
+  --border:#d4c9a8; --text:#1a1a2e; --muted:#6b6b7a;
+  --mono:'IBM Plex Mono',monospace; --sans:'IBM Plex Sans',sans-serif;
+  --hh:56px; --th:48px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:var(--sans);background:var(--cream);color:var(--text);min-height:100vh;overflow-x:hidden}
+
+/* ── Header ── */
+.header{background:var(--navy);height:var(--hh);padding:0 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:3px solid var(--gold);position:sticky;top:0;z-index:200}
+.header h1{font-family:var(--mono);font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--gold2);line-height:1.2}
+.header p{font-size:10px;color:rgba(255,255,255,.4);font-family:var(--mono);margin-top:1px}
+.hbtns{display:flex;gap:8px;align-items:center}
+.btn{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding:9px 14px;border:none;cursor:pointer;transition:all .2s;-webkit-appearance:none;border-radius:0}
+.btn-gold{background:var(--gold);color:var(--navy);font-weight:700}.btn-gold:active{background:var(--gold2)}
+.btn-outline{background:transparent;color:var(--gold);border:1px solid var(--gold)}.btn-outline:active{background:rgba(200,168,75,.1)}
+
+/* ── Database Manager Toggle (Cũ đã được ẩn, thay bằng nút trên Header) ── */
+.db-toggle{display:none;position:fixed;top:var(--hh);right:16px;z-index:160;background:var(--navy2);border:1px solid var(--gold);padding:8px 12px;cursor:pointer;font-family:var(--mono);font-size:9px;color:var(--gold);text-transform:uppercase;letter-spacing:.08em;align-items:center;gap:6px;border-radius:2px}
+.db-toggle:hover{background:var(--navy3)}
+
+/* ── Database Manager Modal ── */
+#dbManager{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.7);z-index:300;overflow-y:auto}
+.db-content{background:var(--cream);margin:20px auto;max-width:900px;border:2px solid var(--navy);max-height:90vh;overflow-y:auto}
+.db-header{background:var(--navy);color:var(--gold);padding:14px 16px;display:flex;justify-content:space-between;align-items:center;font-family:var(--mono);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em}
+.db-close{cursor:pointer;font-size:18px;color:var(--gold);background:none;border:none;padding:0;width:20px;height:20px;display:flex;align-items:center;justify-content:center}
+.db-body{padding:16px}
+.db-section{margin-bottom:20px;padding:14px;background:white;border:1px solid var(--border);overflow-x:auto}
+.db-section-title{font-family:var(--mono);font-size:10px;font-weight:700;text-transform:uppercase;color:var(--navy);margin-bottom:12px;letter-spacing:.1em;border-bottom:2px solid var(--gold);padding-bottom:8px}
+.db-table{width:100%;border-collapse:collapse;font-size:11px}
+.db-table th{background:var(--navy2);color:white;padding:8px;text-align:left;font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.06em}
+.db-table td{padding:8px;border-bottom:1px solid var(--cream2);font-family:var(--mono)}
+.db-table tr:hover{background:var(--cream3)}
+.db-input{width:100%;padding:6px;border:1px solid var(--border);font-family:var(--mono);font-size:10px}
+.db-row{display:grid;grid-template-columns:1fr 1fr 1fr 1fr 60px;gap:8px;margin-bottom:8px}
+.db-row.header{background:var(--navy2);color:white;padding:8px;font-weight:700;margin-bottom:8px}
+.db-row input{padding:6px}
+.db-btn-add{background:var(--green);color:white;padding:6px 12px;border:none;cursor:pointer;font-family:var(--mono);font-size:9px;text-transform:uppercase;margin-top:8px}
+.db-btn-add:hover{background:var(--green);opacity:.8}
+/* Thêm class Edit */
+.db-btn-edit{background:var(--gold);color:var(--navy);padding:2px 8px;border:none;cursor:pointer;font-size:9px;font-weight:bold;margin-right:4px;}
+.db-btn-del{background:var(--red);color:white;padding:2px 8px;border:none;cursor:pointer;font-size:9px}
+.db-actions{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap}
+.db-actions button,.db-actions label{flex:1;min-width:140px;padding:10px;background:var(--navy);color:var(--gold);border:1px solid var(--gold);font-family:var(--mono);font-size:9px;text-transform:uppercase;cursor:pointer;text-align:center;display:inline-block}
+
+/* ── Product type selector ── */
+.type-bar{background:var(--navy2);border-bottom:2px solid var(--gold);display:flex;overflow-x:auto;scrollbar-width:none;position:sticky;top:var(--hh);z-index:150}
+.type-bar::-webkit-scrollbar{display:none}
+.type-btn{flex:1;min-width:68px;height:44px;background:none;border:none;color:rgba(255,255,255,.4);font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.07em;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;border-bottom:2px solid transparent;margin-bottom:-2px;padding:0 6px;white-space:nowrap;transition:all .2s}
+.type-btn .ti{font-size:15px}
+.type-btn.active{color:var(--gold);border-bottom-color:var(--gold);background:rgba(200,168,75,.07)}
+
+/* ── Tab bar (Input / Result / BOM / Quote) ── */
+.tab-bar{background:var(--navy3);display:flex;overflow-x:auto;scrollbar-width:none;position:sticky;top:calc(var(--hh) + 44px);z-index:140}
+.tab-bar::-webkit-scrollbar{display:none}
+.tab-btn{flex:1;min-width:60px;height:var(--th);background:none;border:none;color:rgba(255,255,255,.4);font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.07em;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;border-bottom:2px solid transparent;margin-bottom:-2px;padding:0 4px;transition:all .2s}
+.tab-btn .ti{font-size:14px}
+.tab-btn.active{color:var(--gold);border-bottom-color:var(--gold);background:rgba(200,168,75,.05)}
+
+/* ── Layout ── */
+.main{display:block}
+.left-panel{background:var(--navy2);padding:18px 16px 28px}
+.right-panel{padding:14px 16px 90px}
+.tab-panel{display:none}.tab-panel.active{display:block}
+
+/* ── Section label ── */
+.slabel{font-family:var(--mono);font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin:16px 0 10px;display:flex;align-items:center;gap:8px}
+.slabel::after{content:'';flex:1;height:1px;background:rgba(200,168,75,.22)}
+.slabel:first-child{margin-top:4px}
+
+/* ── Form ── */
+.fg{margin-bottom:13px}
+.fg label{display:block;font-family:var(--mono);font-size:10px;color:rgba(255,255,255,.55);letter-spacing:.07em;text-transform:uppercase;margin-bottom:5px}
+.fg input,.fg select{width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);color:white;font-family:var(--mono);font-size:15px;padding:11px 12px;outline:none;border-radius:0;-webkit-appearance:none;transition:border-color .2s,background .2s}
+.fg input:focus,.fg select:focus{border-color:var(--gold);background:rgba(200,168,75,.08)}
+.fg select option{background:var(--navy);color:white}
+.fg .hint{font-size:10px;color:rgba(255,255,255,.3);margin-top:4px;font-family:var(--mono);line-height:1.5}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.row3 .fg,.row2 .fg{margin-bottom:0}
+.divider{height:1px;background:rgba(255,255,255,.08);margin:16px 0}
+.btn-group{display:flex;gap:8px;margin-top:14px}
+.btn-group .btn{flex:1}
+
+/* ── Dynamic component section ── */
+#comp-section{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);padding:14px;margin-top:4px}
+.comp-row{display:grid;grid-template-columns:1fr 80px;gap:8px;margin-bottom:8px;align-items:center}
+.comp-row:last-child{margin-bottom:0}
+.comp-label{font-size:11px;color:rgba(255,255,255,.7);font-family:var(--mono)}
+.comp-qty{background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.2);color:white;font-family:var(--mono);font-size:13px;padding:7px 10px;text-align:center;width:100%;border-radius:0;-webkit-appearance:none;outline:none}
+.comp-qty:focus{border-color:var(--gold)}
+
+/* ── KPI cards ── */
+.kpi-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px}
+.kpi{background:white;border:1px solid var(--border);padding:14px;position:relative;overflow:hidden}
+.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--navy2)}
+.kpi.hi::before{background:var(--gold)}.kpi.gr::before{background:var(--green)}
+.kpi label{font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);display:block;margin-bottom:5px}
+.kpi .val{font-family:var(--mono);font-size:18px;font-weight:700;color:var(--navy);line-height:1.1;word-break:break-all}
+.kpi.hi .val{color:var(--gold);font-size:20px}.kpi.gr .val{color:var(--green)}
+.kpi .sub{font-family:var(--mono);font-size:9px;color:var(--muted);margin-top:3px}
+
+/* ── Breakdown ── */
+.bkd{background:white;border:1px solid var(--border);margin-bottom:18px;overflow:hidden}
+.bkd-hdr{background:var(--navy);padding:10px 14px;display:grid;grid-template-columns:1fr auto auto;gap:8px}
+.bkd-hdr span{font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.5)}
+.bkd-hdr span:not(:first-child){text-align:right}
+.bkd-row{display:grid;grid-template-columns:1fr auto auto;gap:8px;padding:9px 14px;border-bottom:1px solid var(--cream2);align-items:center}
+.bkd-row .nm{font-size:12px;color:var(--text)}
+.bkd-row .am{font-family:var(--mono);font-size:11px;color:var(--navy2);text-align:right;min-width:88px}
+.bkd-row .pc{font-family:var(--mono);font-size:10px;color:var(--muted);text-align:right;min-width:36px}
+.bkd-row.tot{background:var(--green2);border-top:2px solid var(--green)}
+.bkd-row.tot .nm{font-weight:600;color:var(--green)}
+.bkd-row.tot .am{color:var(--green);font-weight:700;font-size:13px}
+.bar-wrap{padding:10px 14px;background:#fafafa;border-top:1px solid var(--cream2)}
+.bar-row{display:flex;align-items:center;gap:8px;margin-bottom:5px}
+.bar-row:last-child{margin-bottom:0}
+.barlbl{font-size:10px;color:var(--muted);width:110px;flex-shrink:0;font-family:var(--mono);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bartrk{flex:1;height:8px;background:var(--cream2);overflow:hidden}
+.barfil{height:100%;background:var(--navy2);transition:width .5s ease}
+.barfil.gd{background:var(--gold)}.barfil.gn{background:var(--green)}
+.barpct{font-family:var(--mono);font-size:9px;color:var(--muted);width:32px;text-align:right}
+
+/* ── Sensitivity ── */
+.sens{background:white;border:1px solid var(--border);margin-bottom:18px;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.sens table{border-collapse:collapse;min-width:360px;width:100%}
+.sens th{background:var(--navy);color:rgba(255,255,255,.8);font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.06em;padding:9px 10px;text-align:center;white-space:nowrap}
+.sens td{font-family:var(--mono);font-size:11px;padding:7px 10px;text-align:center;border-bottom:1px solid var(--cream2);white-space:nowrap}
+.sens td.rl{background:var(--cream);font-weight:500;text-align:left;color:var(--navy2);font-size:10px}
+.sens td.cur{background:#fff9e6;font-weight:700;border:2px solid var(--gold);color:var(--gold)}
+.sens td.lo{background:#eef7f2;color:var(--green)}.sens td.hi2{background:var(--red2);color:var(--red)}
+
+/* ── BOM table ── */
+.bomt{background:white;border:1px solid var(--border);margin-bottom:18px;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.bomt table{border-collapse:collapse;min-width:480px;width:100%}
+.bomt th{background:var(--navy2);color:rgba(255,255,255,.8);font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.08em;padding:9px 12px;text-align:left;white-space:nowrap}
+.bomt td{font-size:11px;padding:8px 12px;border-bottom:1px solid var(--cream2);white-space:nowrap}
+.bomt td.r{text-align:right;font-family:var(--mono)}
+.bomt tr.tot td{background:var(--green2);font-weight:600;color:var(--green)}
+
+/* ── Quote ── */
+.qbox{background:white;border:1px solid var(--border);padding:18px 16px;margin-bottom:18px;position:relative}
+.qbox::before{content:'QUOTATION';position:absolute;top:14px;right:14px;font-family:var(--mono);font-size:8px;letter-spacing:.18em;color:var(--border)}
+.qrow{display:flex;justify-content:space-between;align-items:flex-start;padding:6px 0;border-bottom:1px dashed var(--cream2);gap:8px}
+.qrow:last-child{border-bottom:none}
+.ql{font-size:11px;color:var(--muted);font-family:var(--mono);flex-shrink:0}
+.qv{font-family:var(--mono);font-size:12px;font-weight:500;color:var(--navy);text-align:right}
+.qfob{background:var(--navy);padding:16px;display:flex;justify-content:space-between;align-items:center;margin-top:14px;gap:8px}
+.qfob-lbl{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--gold)}
+.qfob-val{font-family:var(--mono);font-size:26px;font-weight:700;color:var(--gold2)}
+
+/* ── Floating bar ── */
+.fsticky{position:fixed;bottom:0;left:0;right:0;background:var(--navy);border-top:2px solid var(--gold);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;z-index:300;box-shadow:0 -4px 20px rgba(0,0,0,.3)}
+.fsticky .fl{font-family:var(--mono);font-size:9px;color:var(--gold);text-transform:uppercase;letter-spacing:.1em}
+.fsticky .fv{font-family:var(--mono);font-size:22px;font-weight:700;color:var(--gold2)}
+.fsticky .fc{font-family:var(--mono);font-size:10px;color:rgba(255,255,255,.35)}
+
+/* ── Desktop ── */
+@media(min-width:768px){
+  :root{--hh:65px}
+  .header{padding:0 32px}.header h1{font-size:15px}
+  .db-toggle{display:none!important} /* Ẩn toggle cũ trên màn hình lớn nếu có */
+  .type-bar{top:var(--hh)}.type-btn{height:48px;font-size:10px;min-width:90px}
+  .tab-bar{display:none}.tab-panel{display:block!important}
+  .fsticky{display:none!important}
+  .main{display:grid;grid-template-columns:360px 1fr;min-height:calc(100vh - var(--hh) - 48px)}
+  .left-panel{padding:24px;overflow-y:auto;position:sticky;top:calc(var(--hh)+48px);height:calc(100vh - var(--hh) - 48px)}
+  .right-panel{padding:24px 32px 40px;overflow-y:auto}
+  .kpi-grid{grid-template-columns:repeat(4,1fr);gap:14px}
+  .kpi .val{font-size:20px}.kpi.hi .val{font-size:24px}
+  .bkd-row .nm{font-size:13px}.bkd-row .am{font-size:12px;min-width:110px}
+  .sens table{min-width:unset}.sens th{font-size:10px;padding:10px 14px}.sens td{font-size:12px;padding:8px 14px}
+  .bomt table{min-width:unset}.bomt th,.bomt td{padding:9px 14px;font-size:11px}
+  .qbox{padding:24px 28px}.ql{font-size:12px}.qv{font-size:13px}.qfob-val{font-size:30px}
+  .bkd,.sens,.bomt,.qbox{margin-bottom:24px}
+  .db-content{margin-top:var(--hh)}
+}
+@media print{
+  .left-panel,.type-bar,.tab-bar,.fsticky,.btn-group,.db-toggle,
+  .sens,.bomt,.slabel+div:has(#debugRows){display:none!important}
+  .main{display:block}.right-panel{padding:0}.tab-panel{display:block!important}
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <h1>TÍNH GIÁ NỘI THẤT XUẤT KHẨU</h1>
+    <p>FOB HCMC · Cấu kiện thực tế theo từng loại sản phẩm</p>
+  </div>
+  <div class="hbtns">
+    <button class="btn btn-outline" onclick="window.print()" style="display:none" id="btnPrint">In</button>
+    <button class="btn btn-outline" onclick="toggleDbManager()" style="margin-right:8px;">⚙️ Database</button>
+    <button class="btn btn-gold" onclick="calculate()">Tính ▶</button>
+  </div>
+</div>
+
+<div class="db-toggle" onclick="toggleDbManager()">⚙️ Database</div>
+
+<div id="dbManager">
+  <div class="db-content">
+    <div class="db-header">
+      <span>📊 Quản Lý Database Nguyên Vật Liệu, Hoàn Thiện & Cấu Kiện</span>
+      <button class="db-close" onclick="toggleDbManager()">✕</button>
+    </div>
+    <div class="db-body">
+      
+      <div class="db-section">
+        <div class="db-section-title">🌳 Gỗ Nguyên Liệu (m³)</div>
+        <table class="db-table">
+          <thead><tr><th>Mã</th><th>Tên Gỗ</th><th>Giá (VND/m³)</th><th>TLTH</th><th>Hành động</th></tr></thead>
+          <tbody id="woodList"></tbody>
+        </table>
+        <div style="margin-top:10px;display:grid;grid-template-columns:1fr 1fr 1fr 1fr auto;gap:8px">
+          <input class="db-input" id="wood_code" placeholder="Mã (VD: G-PO-32)">
+          <input class="db-input" id="wood_name" placeholder="Tên gỗ">
+          <input class="db-input" id="wood_price" type="number" placeholder="Giá (VND/m³)">
+          <input class="db-input" id="wood_tlth" type="number" step="0.01" placeholder="TLTH" value="1.54">
+          <button class="db-btn-add" onclick="addWood()">Thêm</button>
+        </div>
+      </div>
+
+      <div class="db-section">
+        <div class="db-section-title">🎨 Hoàn Thiện Bề Mặt (m²)</div>
+        <table class="db-table">
+          <thead><tr><th>Tên Hoàn Thiện</th><th>Giá (VND/m²)</th><th></th><th></th><th>Hành động</th></tr></thead>
+          <tbody id="finishList"></tbody>
+        </table>
+        <div style="margin-top:10px;display:grid;grid-template-columns:1fr 1fr 1fr 1fr auto;gap:8px">
+          <input class="db-input" id="finish_name" placeholder="Tên (VD: Sơn PU NC)">
+          <input class="db-input" id="finish_cost" type="number" placeholder="Giá (VND/m²)">
+          <div></div><div></div>
+          <button class="db-btn-add" onclick="addFinish()">Thêm</button>
+        </div>
+      </div>
+
+      <div class="db-section">
+        <div class="db-section-title">🔧 Cấu Kiện Phụ Kiện</div>
+        <table class="db-table">
+          <thead><tr><th>Tên Cấu Kiện</th><th>Giá (VND/cái)</th><th>Loại</th><th></th><th>Hành động</th></tr></thead>
+          <tbody id="accList"></tbody>
+        </table>
+        <div style="margin-top:10px;display:grid;grid-template-columns:1fr 1fr 1fr 1fr auto;gap:8px">
+          <input class="db-input" id="acc_name" placeholder="Tên (VD: Bản lề BGC)">
+          <input class="db-input" id="acc_price" type="number" placeholder="Giá (VND)">
+          <input class="db-input" id="acc_type" placeholder="Loại (cái/bộ/m)">
+          <div></div>
+          <button class="db-btn-add" onclick="addAccessory()">Thêm</button>
+        </div>
+      </div>
+
+      <div class="db-actions">
+        <input type="file" id="uploadCsvBtn" style="display:none" accept=".csv" onchange="importCSV(event)">
+        <label for="uploadCsvBtn" style="flex:1;padding:10px;background:var(--navy);color:var(--gold);border:1px solid var(--gold);font-family:var(--mono);font-size:9px;text-transform:uppercase;cursor:pointer;text-align:center;display:block">📂 Tải lên (CSV)</label>
+        
+        <button onclick="exportDatabase()">💾 Xuất Database (CSV)</button>
+        
+        <input type="file" id="uploadExcelBtn" style="display:none" accept=".xlsx, .xls" onchange="importExcel(event)">
+        <label for="uploadExcelBtn" style="flex:1;padding:10px;background:var(--navy);color:#21a366;border:1px solid #21a366;font-family:var(--mono);font-size:9px;text-transform:uppercase;cursor:pointer;text-align:center;display:block">📂 Tải lên (Excel)</label>
+        <button onclick="exportExcelDatabase()" style="color:#21a366;border-color:#21a366;">💾 Xuất Database (Excel)</button>
+        <button onclick="clearDatabase()">🗑️ Xóa Tất Cả</button>
+        <button onclick="loadDefaultDatabase()">🔄 Tải Mặc Định</button>
+        <button onclick="toggleDbManager()">✓ Đóng</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="type-bar">
+  <button class="type-btn active" onclick="setType('cabinet')" id="type-cabinet"><span class="ti">🗄️</span>Tủ / Kệ</button>
+  <button class="type-btn" onclick="setType('table')"   id="type-table">  <span class="ti">🪑</span>Bàn</button>
+  <button class="type-btn" onclick="setType('chair')"   id="type-chair">  <span class="ti">💺</span>Ghế</button>
+  <button class="type-btn" onclick="setType('bed')"     id="type-bed">    <span class="ti">🛏️</span>Giường</button>
+  <button class="type-btn" onclick="setType('sofa')"    id="type-sofa">   <span class="ti">🛋️</span>Sofa</button>
+</div>
+
+<div class="tab-bar">
+  <button class="tab-btn active" onclick="switchTab('input')"  id="tab-input"> <span class="ti">✏️</span>Nhập</button>
+  <button class="tab-btn"        onclick="switchTab('result')" id="tab-result"><span class="ti">📊</span>Kết quả</button>
+  <button class="tab-btn"        onclick="switchTab('bom')"    id="tab-bom">   <span class="ti">📋</span>BOM</button>
+  <button class="tab-btn"        onclick="switchTab('quote')"  id="tab-quote"> <span class="ti">📄</span>Báo giá</button>
+</div>
+
+<div class="main">
+
+<div class="left-panel tab-panel active" id="panel-input">
+
+  <div class="slabel">01 — Thông tin sản phẩm</div>
+  <div class="fg"><label>Tên sản phẩm</label><input type="text" id="productName" value="" oninput="calculate()"></div>
+  <div class="fg"><label>Mã sản phẩm</label><input type="text" id="productCode" value="" oninput="calculate()"></div>
+
+  <div class="fg">
+    <label>Kích thước (W × H × D — mm)</label>
+    <div class="row3">
+      <div class="fg"><label>Rộng W</label><input type="number" id="width"  value="610" min="100" max="2500" oninput="calculate()"></div>
+      <div class="fg"><label>Cao H</label> <input type="number" id="height" value="760" min="100" max="2500" oninput="calculate()"></div>
+      <div class="fg"><label>Sâu D</label> <input type="number" id="depth"  value="400" min="50"  max="1000" oninput="calculate()"></div>
+    </div>
+    <div class="hint" id="size-hint">20"=508 | 24"=610 | 30"=762 | 36"=914 | 48"=1219 | 60"=1524 | 72"=1829</div>
+  </div>
+
+  <div class="fg"><label>Số lượng đặt hàng (SLDK)</label><input type="number" id="qty" value="500" min="1" oninput="calculate()"></div>
+
+  <div class="divider"></div>
+  <div class="slabel">02 — Nguyên liệu</div>
+
+  <div class="fg">
+    <label>Gỗ chính</label>
+    <select id="woodType" onchange="calculate()">
+      <option value="poplar_32" data-price="16500000" data-tlth="1.54" data-thick="32">Poplar Mỹ 32mm — 16,500k/m³</option>
+    </select>
+  </div>
+
+  <div class="fg" id="fg-core">
+    <label>Ván lõi (MDF / PB / Ván ghép)</label>
+    <select id="coreBoard" onchange="calculate()">
+      <option value="mdf18" data-price="380000">MDF CARB P2 18mm — 380k/tấm</option>
+      <option value="mdf12" data-price="280000">MDF CARB P2 12mm — 280k/tấm</option>
+      <option value="pb18"  data-price="220000">Ván dăm PB 18mm — 220k/tấm</option>
+      <option value="rubber_joint" data-price="390000">Cao su ghép 18mm — 390k/tấm</option>
+      <option value="acacia_joint" data-price="400000">Tràm ghép 18mm — 400k/tấm</option>
+    </select>
+  </div>
+
+  <div class="fg">
+    <label>Hoàn thiện bề mặt</label>
+    <select id="finish" onchange="calculate()">
+      <option value="punc"         data-cost="100000">Sơn PU NC — 100k/m²</option>
+    </select>
+  </div>
+
+  <div class="divider"></div>
+  <div class="slabel">03 — Định mức nhân công (SMV)</div>
+  <div class="row2">
+    <div class="fg"><label>Giá nhân công (đ/phút)</label><input type="number" id="laborRateInput" value="1250" step="50" oninput="calculate()"></div>
+    <div class="fg"><label>Tổng phút (SMV)</label><input type="number" id="totalSmvInput" value="200" placeholder="Auto" oninput="calculate()"></div>
+  </div>
+  <div class="hint" style="margin-top:-8px; margin-bottom:10px">Để "0" để hệ thống tự tính theo loại SP</div>
+
+  <div class="divider"></div>
+  <div class="slabel">04 — Cấu kiện đặc thù</div>
+  <div id="comp-section"></div>
+
+  <div class="divider"></div>
+  <div class="slabel">05 — Chi phí & lợi nhuận</div>
+
+  <div class="row2">
+    <div class="fg"><label>Tỷ giá USD/VND</label><input type="number" id="exchangeRate" value="26342" oninput="calculate()"></div>
+    <div class="fg"><label>Định phí QLC (% FOB)</label><input type="number" id="fixedOverheadPerProduct" value="8" step="0.1" oninput="calculate()"><div class="hint">Tỉ lệ 5-8% trên giá FOB</div></div>
+  </div>
+  <div class="row2">
+    <div class="fg"><label>Test (CARB/FSC) đ/SP</label><input type="number" id="testCost" value="50000" oninput="calculate()"></div>
+    <div class="fg"><label>CPVC XK đ/SP</label><input type="number" id="shippingCost" value="55000" oninput="calculate()"></div>
+  </div>
+  <div class="row3">
+    <div class="fg"><label>% LN</label><input type="number" id="profitMargin" value="15" min="0" max="60" oninput="calculate()"><div class="hint">mục tiêu</div></div>
+    <div class="fg"><label>% Trượt</label><input type="number" id="inflationBuffer" value="3" min="0" max="20" oninput="calculate()"><div class="hint">NVL</div></div>
+    <div class="fg"><label>% HH</label><input type="number" id="commission" value="5" min="0" max="20" oninput="calculate()"><div class="hint">commission</div></div>
+  </div>
+
+  <div class="btn-group">
+    <button class="btn btn-gold" style="flex:2" onclick="calculate()">▶ Tính giá</button>
+    <button class="btn btn-outline" style="flex:1" onclick="updateMarketData()">⚡ Update</button>
+    <button class="btn btn-outline" style="flex:1" onclick="resetDefaults()">↺</button>
+  </div>
+</div><div class="right-panel">
+
+  <div class="tab-panel active" id="panel-result">
+    <div class="slabel">Kết quả tính giá</div>
+    <div class="kpi-grid">
+      <div class="kpi"><label>Giá thành SX</label><div class="val" id="cogs_vnd">—</div><div class="sub">VND/SP</div></div>
+      <div class="kpi hi"><label>Giá FOB</label><div class="val" id="fob_usd">—</div><div class="sub">Làm tròn 0.1 USD</div></div>
+      <div class="kpi gr"><label>Biên LN</label><div class="val" id="profit_usd">—</div><div class="sub" id="profit_pct">—</div></div>
+      <div class="kpi"><label>Volume tinh</label><div class="val" id="volume_m3">—</div><div class="sub" id="size_in">—</div></div>
+    </div>
+
+    <div class="slabel">Cơ cấu chi phí</div>
+    <div class="bkd">
+      <div class="bkd-hdr"><span>Khoản mục</span><span>VND/SP</span><span>%</span></div>
+      <div id="breakdownRows"></div>
+      <div class="bar-wrap" id="barChart"></div>
+    </div>
+  </div><div class="tab-panel" id="panel-bom">
+    <div class="slabel">BOM – Cấu kiện theo loại sản phẩm</div>
+    <div class="bomt">
+      <table><thead><tr>
+        <th>Cấu kiện</th><th>Quy cách</th><th>SL</th><th>ĐVT</th><th>Đơn giá</th><th>TLTH</th><th>Thành tiền</th>
+      </tr></thead><tbody id="bomBody"></tbody></table>
+    </div>
+
+    <div class="slabel">Sensitivity – Giá FOB theo biến động NVL & LN</div>
+    <div class="sens">
+      <table><thead><tr>
+        <th>NVL ↓ / LN →</th><th>LN 10%</th><th>LN 12%</th><th>LN 15%</th><th>LN 18%</th><th>LN 20%</th>
+      </tr></thead><tbody id="sensBody"></tbody></table>
+    </div>
+  </div><div class="tab-panel" id="panel-quote">
+    <div class="slabel">Báo giá xuất khẩu</div>
+    <div class="qbox">
+      <div class="qrow"><span class="ql">Ngày báo giá</span><span class="qv" id="q_date">—</span></div>
+      <div class="qrow"><span class="ql">Mã SP</span><span class="qv" id="q_code">—</span></div>
+      <div class="qrow"><span class="ql">Tên sản phẩm</span><span class="qv" id="q_name">—</span></div>
+      <div class="qrow"><span class="ql">Loại sản phẩm</span><span class="qv" id="q_type">—</span></div>
+      <div class="qrow"><span class="ql">Kích thước</span><span class="qv" id="q_size">—</span></div>
+      <div class="qrow"><span class="ql">Nguyên liệu</span><span class="qv" id="q_material">—</span></div>
+      <div class="qrow"><span class="ql">Hoàn thiện</span><span class="qv" id="q_finish">—</span></div>
+      <div class="qrow"><span class="ql">SLDK</span><span class="qv" id="q_qty">—</span></div>
+      <div class="qrow"><span class="ql">Giao hàng</span><span class="qv">FOB HCMC – Cảng Cát Lái</span></div>
+      <div class="qrow"><span class="ql">Thanh toán</span><span class="qv">30% ĐC · 70% trước giao hàng</span></div>
+      <div class="qrow"><span class="ql">Hiệu lực</span><span class="qv">30 ngày kể từ ngày báo giá</span></div>
+      <div class="qfob">
+        <div><div class="qfob-lbl">Đơn giá FOB</div><div style="font-size:9px;color:rgba(255,255,255,.35);font-family:var(--mono);margin-top:2px">Incl. LN + trượt giá + commission</div></div>
+        <div class="qfob-val" id="q_fob">USD —</div>
+      </div>
+    </div>
+    <div class="btn-group" style="margin-top:0">
+      <button class="btn btn-outline" style="flex:1" onclick="window.print()">🖨 In báo giá</button>
+    </div>
+  </div></div></div><div class="fsticky">
+  <div><div class="fl" id="sticky_type">TỦ KỆ</div><div class="fc" id="sticky_cogs">—</div></div>
+  <div class="fv" id="sticky_fob">USD —</div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════
+// DATABASE MANAGEMENT
+// ══════════════════════════════════════════════════
+let dbWood = [];
+let dbFinish = [];
+let dbAccessories = [];
+
+function toggleDbManager() {
+  const manager = document.getElementById('dbManager');
+  if(manager.style.display === 'none' || !manager.style.display) {
+    manager.style.display = 'block';
+    loadDatabase();
+  } else {
+    manager.style.display = 'none';
+  }
+}
+
+function loadDatabase() {
+  dbWood = JSON.parse(localStorage.getItem('dbWood')) || [];
+  dbFinish = JSON.parse(localStorage.getItem('dbFinish')) || [];
+  dbAccessories = JSON.parse(localStorage.getItem('dbAccessories')) || [];
+  
+  renderWoodList();
+  renderFinishList();
+  renderAccList();
+}
+
+function saveDatabase() {
+  localStorage.setItem('dbWood', JSON.stringify(dbWood));
+  localStorage.setItem('dbFinish', JSON.stringify(dbFinish));
+  localStorage.setItem('dbAccessories', JSON.stringify(dbAccessories));
+  updateAllSelects();
+  calculate();
+  alert('✅ Database đã lưu và đồng bộ!');
+}
+
+function addWood() {
+  const code = document.getElementById('wood_code').value.trim();
+  const name = document.getElementById('wood_name').value.trim();
+  const price = parseFloat(document.getElementById('wood_price').value) || 0;
+  const tlth = parseFloat(document.getElementById('wood_tlth').value) || 1.54;
+  
+  if(!code || !name || price === 0) {
+    alert('⚠️ Vui lòng điền đầy đủ thông tin');
+    return;
+  }
+  
+  dbWood = dbWood.filter(w => w.code !== code);
+  dbWood.push({code, name, price, tlth});
+  
+  document.getElementById('wood_code').value = '';
+  document.getElementById('wood_name').value = '';
+  document.getElementById('wood_price').value = '';
+  document.getElementById('wood_tlth').value = '1.54';
+  
+  renderWoodList();
+  saveDatabase();
+}
+
+// BỔ SUNG: Tính năng Edit Gỗ
+function editWood(code) {
+  const w = dbWood.find(x => x.code === code);
+  if(w) {
+    document.getElementById('wood_code').value = w.code;
+    document.getElementById('wood_name').value = w.name;
+    document.getElementById('wood_price').value = w.price;
+    document.getElementById('wood_tlth').value = w.tlth;
+  }
+}
+
+function removeWood(code) {
+  dbWood = dbWood.filter(w => w.code !== code);
+  renderWoodList();
+  saveDatabase();
+}
+
+function renderWoodList() {
+  const tbody = document.getElementById('woodList');
+  tbody.innerHTML = dbWood.map(w => `
+    <tr>
+      <td>${w.code}</td>
+      <td>${w.name}</td>
+      <td>${fmt(w.price)}</td>
+      <td>${w.tlth.toFixed(2)}</td>
+      <td>
+        <button class="db-btn-edit" onclick="editWood('${w.code}')">Sửa</button>
+        <button class="db-btn-del" onclick="removeWood('${w.code}')">Xóa</button>
+      </td>
+    </tr>`).join('');
+}
+
+function addFinish() {
+  const name = document.getElementById('finish_name').value.trim();
+  const cost = parseFloat(document.getElementById('finish_cost').value) || 0;
+  
+  if(!name || cost === 0) {
+    alert('⚠️ Vui lòng điền đầy đủ thông tin');
+    return;
+  }
+  
+  dbFinish = dbFinish.filter(f => f.name !== name);
+  dbFinish.push({name, cost});
+  
+  document.getElementById('finish_name').value = '';
+  document.getElementById('finish_cost').value = '';
+  
+  renderFinishList();
+  saveDatabase();
+}
+
+// BỔ SUNG: Tính năng Edit Hoàn thiện
+function editFinish(name) {
+  const f = dbFinish.find(x => x.name === name);
+  if(f) {
+    document.getElementById('finish_name').value = f.name;
+    document.getElementById('finish_cost').value = f.cost;
+  }
+}
+
+function removeFinish(name) {
+  dbFinish = dbFinish.filter(f => f.name !== name);
+  renderFinishList();
+  saveDatabase();
+}
+
+function renderFinishList() {
+  const tbody = document.getElementById('finishList');
+  tbody.innerHTML = dbFinish.map(f => `
+    <tr>
+      <td>${f.name}</td>
+      <td>${fmt(f.cost)}</td>
+      <td></td><td></td>
+      <td>
+        <button class="db-btn-edit" onclick="editFinish('${f.name}')">Sửa</button>
+        <button class="db-btn-del" onclick="removeFinish('${f.name}')">Xóa</button>
+      </td>
+    </tr>`).join('');
+}
+
+function addAccessory() {
+  const name = document.getElementById('acc_name').value.trim();
+  const price = parseFloat(document.getElementById('acc_price').value) || 0;
+  const type = document.getElementById('acc_type').value.trim() || 'cái';
+  
+  if(!name || price === 0) {
+    alert('⚠️ Vui lòng điền đầy đủ thông tin');
+    return;
+  }
+  
+  dbAccessories = dbAccessories.filter(a => a.name !== name);
+  dbAccessories.push({name, price, type});
+  
+  document.getElementById('acc_name').value = '';
+  document.getElementById('acc_price').value = '';
+  document.getElementById('acc_type').value = '';
+  
+  renderAccList();
+  saveDatabase();
+}
+
+// BỔ SUNG: Tính năng Edit Phụ kiện
+function editAccessory(name) {
+  const a = dbAccessories.find(x => x.name === name);
+  if(a) {
+    document.getElementById('acc_name').value = a.name;
+    document.getElementById('acc_price').value = a.price;
+    document.getElementById('acc_type').value = a.type;
+  }
+}
+
+function removeAccessory(name) {
+  dbAccessories = dbAccessories.filter(a => a.name !== name);
+  renderAccList();
+  saveDatabase();
+}
+
+function renderAccList() {
+  const tbody = document.getElementById('accList');
+  tbody.innerHTML = dbAccessories.map(a => `
+    <tr>
+      <td>${a.name}</td>
+      <td>${fmt(a.price)}</td>
+      <td>${a.type}</td><td></td>
+      <td>
+        <button class="db-btn-edit" onclick="editAccessory('${a.name}')">Sửa</button>
+        <button class="db-btn-del" onclick="removeAccessory('${a.name}')">Xóa</button>
+      </td>
+    </tr>`).join('');
+}
+
+function updateAllSelects() {
+  updateWoodSelect();
+  updateFinishSelect();
+}
+
+function updateWoodSelect() {
+  const select = document.getElementById('woodType');
+  const current = select.value;
+  
+  select.innerHTML = '';
+  dbWood.forEach(w => {
+    const opt = document.createElement('option');
+    opt.value = w.code;
+    opt.textContent = `${w.name} — ${fmt(w.price)}/m³`;
+    opt.dataset.price = w.price;
+    opt.dataset.tlth = w.tlth;
+    opt.dataset.thick = '32';
+    select.appendChild(opt);
+  });
+  
+  if(select.options.length > 0) select.value = current || select.options[0].value;
+}
+
+function updateFinishSelect() {
+  const select = document.getElementById('finish');
+  const current = select.value;
+  
+  select.innerHTML = '';
+  dbFinish.forEach(f => {
+    const opt = document.createElement('option');
+    opt.value = f.name;
+    opt.textContent = `${f.name} — ${fmt(f.cost)}/m²`;
+    opt.dataset.cost = f.cost;
+    select.appendChild(opt);
+  });
+  
+  if(select.options.length > 0) select.value = current || select.options[0].value;
+}
+
+function exportDatabase() {
+  let csv = 'Loại,Mã/Tên,Tên/Giá,Giá/ĐVT,TLTH\n';
+  dbWood.forEach(w => { csv += `wood,${w.code},${w.name},${w.price},${w.tlth}\n`; });
+  dbFinish.forEach(f => { csv += `finish,${f.name},${f.cost},,\n`; });
+  dbAccessories.forEach(a => { csv += `acc,${a.name},${a.price},${a.type},\n`; });
+  
+  const link = document.createElement('a');
+  link.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+  link.download = 'GiaNVL_Export.csv';
+  link.click();
+}
+
+// BỔ SUNG: Tính năng Import CSV
+function importCSV(event) {
+  const file = event.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const lines = e.target.result.split('\n');
+    lines.forEach(line => {
+      const parts = line.split(',');
+      if(parts.length >= 3) {
+        const type = parts[0].trim().toLowerCase();
+        if(type === 'wood') {
+           dbWood = dbWood.filter(w => w.code !== parts[1].trim());
+           dbWood.push({code: parts[1].trim(), name: parts[2].trim(), price: parseFloat(parts[3]), tlth: parseFloat(parts[4] || 1.54)});
+        } else if(type === 'finish') {
+           dbFinish = dbFinish.filter(f => f.name !== parts[1].trim());
+           dbFinish.push({name: parts[1].trim(), cost: parseFloat(parts[2])});
+        } else if(type === 'acc') {
+           dbAccessories = dbAccessories.filter(a => a.name !== parts[1].trim());
+           dbAccessories.push({name: parts[1].trim(), price: parseFloat(parts[2]), type: parts[3] ? parts[3].trim() : 'cái'});
+        }
+      }
+    });
+    saveDatabase();
+    renderWoodList(); renderFinishList(); renderAccList();
+    alert("✅ Đã cập nhật dữ liệu từ file CSV!");
+  };
+  reader.readAsText(file);
+  event.target.value = ''; // Reset input
+}
+
+function clearDatabase() {
+  if(confirm('⚠️ Xóa tất cả dữ liệu? Hành động này không thể hoàn tác.')) {
+    dbWood = [];
+    dbFinish = [];
+    dbAccessories = [];
+    saveDatabase();
+    renderWoodList();
+    renderFinishList();
+    renderAccList();
+  }
+}
+
+function loadDefaultDatabase() {
+  dbWood = [
+    {code:'G-TR-25',name:'Gỗ Tràm VN',price:3800000,tlth:1.7},
+    {code:'G-TR-30',name:'Gỗ Tràm VN',price:3900000,tlth:1.7},
+    {code:'G-CS-26',name:'Gỗ Cao su VN',price:4500000,tlth:1.45},
+    {code:'G-CS-38',name:'Gỗ Cao su VN',price:4700000,tlth:1.45},
+    {code:'G-PO-26',name:'Gỗ Poplar Mỹ',price:13776500,tlth:1.54},
+    {code:'G-PO-32',name:'Gỗ Poplar Mỹ',price:15177500,tlth:1.54},
+    {code:'G-PO-38',name:'Gỗ Poplar Mỹ',price:15294250,tlth:1.54},
+    {code:'G-OA-26',name:'Gỗ W.Oak Mỹ 1C',price:27319500,tlth:1.54},
+    {code:'G-OA-32',name:'Gỗ W.Oak Mỹ 1C',price:30355000,tlth:1.54},
+    {code:'G-OA-38',name:'Gỗ W.Oak Mỹ 1C',price:41329500,tlth:1.54},
+    {code:'G-WA-32',name:'Gỗ Walnut Mỹ 1C',price:54405500,tlth:1.54},
+    {code:'G-WA-38',name:'Gỗ Walnut Mỹ 1C',price:54405500,tlth:1.54},
+    {code:'G-PI-19',name:'Gỗ Thông',price:6500000,tlth:1.45},
+    {code:'G-PI-32',name:'Gỗ Thông',price:7000000,tlth:1.45}
+  ];
+  
+  dbFinish = [
+    {name:'Sơn PU NC',cost:100000},
+    {name:'Sơn UV',cost:140000},
+    {name:'Veneer Oak',cost:200000},
+    {name:'Veneer Cao su',cost:160000},
+    {name:'Veneer Tràm',cost:170000},
+    {name:'Laminate',cost:80000}
+  ];
+  
+  saveDatabase();
+  alert('✅ Đã tải database mặc định!');
+}
+
+// ══════════════════════════════════════════════════
+// PRODUCT TYPE DEFINITIONS — BOM per product type
+// ══════════════════════════════════════════════════
+let LABOR_COST_PER_MINUTE = 1250;
+
+const SMV_RATES = {
+  'prep_wood': 45, 
+  'precision_machining': 60, 
+  'sanding': 80, 
+  'frame_assembly': 50, 
+  'drawer_door_assembly': 70, 
+  'finishing_pu': 120, 
+  'accessory_install': 30, 
+  'qc_packaging': 40, 
+};
+
+const PRODUCT_TYPES = {
+
+  cabinet: {
+    label: '🗄️ Tủ / Kệ',
+    defaultW:610, defaultH:760, defaultD:400,
+    defaultName:'TV Stand Cabinet 24"', defaultCode:'CAB-24-TVS',
+    sizeHint:'20"=508 | 24"=610 | 30"=762 | 36"=914 | 48"=1219 | 60"=1524 | 72"=1829',
+    hasCore: true,
+    components: [
+      { id:'c_hinge',   label:'Bản lề BGC 62×78mm',    qty:4,  unit:'cái', price:12000,  note:'Cửa có bản lề' },
+      { id:'c_rail',    label:'Ray trượt bi 3T L350',   qty:2,  unit:'bộ', price:140000, note:'Ngăn kéo (0 = không có)' },
+      { id:'c_handle',  label:'Tay nắm tròn Ø30mm',    qty:4,  unit:'cái', price:10000,   note:'' },
+      { id:'c_shelf',   label:'Kệ ngang thêm (MDF)',    qty:2,  unit:'tấm',price:0,      note:'Kệ tính tự động từ kích thước' },
+      { id:'c_door',    label:'Cửa (1 cánh = W×H gỗ)', qty:1,  unit:'cái', price:0,      note:'Tính theo diện tích gỗ' },
+      { id:'c_vis',     label:'Vis + ốc + bulon',       qty:60, unit:'con', price:100,     note:'' },
+    ],
+    calcBOM(W,H,D,thick,woodPrice,tlth,corePrice,finishCostM2,comps,surfaceM2, manualSmv, manualRate) {
+      const woodPanelMM2 = 2*H*D + 2*W*D;
+      const doors = comps.c_door||0;
+      const doorMM2 = doors * W * H;
+      const totalWoodMM2 = woodPanelMM2 + doorMM2;
+      const woodVol = totalWoodMM2 * thick / 1e9;
+      const woodCost = woodVol * woodPrice * tlth;
+      
+      let totalSMV = manualSmv > 0 ? manualSmv : (
+        SMV_RATES.prep_wood + SMV_RATES.precision_machining + SMV_RATES.sanding + 
+        SMV_RATES.frame_assembly + (doors > 0 || (comps.c_rail||0) > 0 ? SMV_RATES.drawer_door_assembly : 0) +
+        SMV_RATES.finishing_pu + SMV_RATES.accessory_install + SMV_RATES.qc_packaging
+      );
+
+      const laborCostSMV = totalSMV * manualRate;
+
+      const backAreaM2  = W*H/1e6;
+      const extraShelves = comps.c_shelf||2;
+      const shelfAreaM2  = extraShelves * W*D/1e6;
+      const totalMdfM2   = backAreaM2 + shelfAreaM2;
+      const mdfCost = totalMdfM2/2.9768 * corePrice * 1.05;
+
+      const finishCost = surfaceM2 * finishCostM2 * 1.08;
+      const hingeCost  = (comps.c_hinge||0)  * 12000;
+      const railCost   = (comps.c_rail||0)   * 140000;
+      const handleCost = (comps.c_handle||0) * 10000;
+      const visCost    = (comps.c_vis||0)    * 100;
+
+      return [
+        { name:'Gỗ khung + cửa',    spec:`${(thick).toFixed(0)}mm × ${(totalWoodMM2/1e6).toFixed(3)}m²`, qty:woodVol.toFixed(4), unit:'m³',  price:woodPrice,  tlth, total:woodCost },
+        { name:'Ván lõi lưng+kệ',spec:`${totalMdfM2.toFixed(3)}m² → ${(totalMdfM2/2.9768).toFixed(2)}tấm`, qty:(totalMdfM2/2.9768).toFixed(2), unit:'tấm', price:corePrice, tlth:1.05, total:mdfCost },
+        { name:'Hoàn thiện bề mặt',  spec:`${surfaceM2.toFixed(3)}m²`,  qty:surfaceM2.toFixed(3), unit:'m²', price:finishCostM2, tlth:1.08, total:finishCost },
+        { name:'Bản lề',             spec:'BGC 62×78',   qty:comps.c_hinge||0, unit:'cái', price:12000,  tlth:1.0, total:hingeCost },
+        { name:'Ray trượt',          spec:'DTC 3T L350', qty:comps.c_rail||0,  unit:'bộ',  price:140000, tlth:1.0, total:railCost },
+        { name:'Tay nắm',            spec:'Ø30mm',       qty:comps.c_handle||0,unit:'cái', price:10000,   tlth:1.0, total:handleCost },
+        { name:'Vis + ốc + bulon',   spec:'M4×30',       qty:comps.c_vis||0,   unit:'con', price:100,     tlth:1.0, total:visCost },
+        { name:'Nhân công (SMV)',    spec:`${totalSMV.toFixed(0)} phút`, qty:totalSMV.toFixed(0), unit:'phút', price:manualRate, tlth:1.0, total:laborCostSMV },
+      ];    }
+  },
+
+  table: {
+    label: '🪑 Bàn',
+    defaultW:900, defaultH:750, defaultD:600,
+    defaultName:'Dining Table 36"', defaultCode:'TBL-36-DIN',
+    sizeHint:'Chiều cao bàn ăn chuẩn: 740-760mm | Bàn cà phê: 420-450mm',
+    hasCore: false,
+    components: [
+      { id:'c_leg',     label:'Chân bàn (số lượng)',      qty:4,  unit:'cái', price:0,    note:'Tính theo diện tích gỗ' },
+      { id:'c_legW',    label:'Tiết diện chân (mm)',       qty:50, unit:'mm',  price:0,    note:'VD: 50 = chân vuông 50×50' },
+      { id:'c_apron',   label:'Thanh ngang (apron) x4',   qty:4,  unit:'cái', price:0,    note:'Tính theo gỗ' },
+      { id:'c_brace',   label:'Thanh chéo/giằng',         qty:0,  unit:'cái', price:0,    note:'0 = không có' },
+      { id:'c_bolt',    label:'Bulon chân M8×60',         qty:8,  unit:'con', price:800,  note:'' },
+      { id:'c_vis',     label:'Vis + ốc',                  qty:40, unit:'con', price:100,   note:'' },
+      { id:'c_pad',     label:'Miếng đệm cao su',          qty:4,  unit:'cái', price:2500, note:'Chân bàn' },
+    ],
+    calcBOM(W,H,D,thick,woodPrice,tlth,corePrice,finishCostM2,comps,surfaceM2, manualSmv, manualRate) {
+      const topVol   = W * D * thick / 1e9;
+      const topCost  = topVol * woodPrice * tlth;
+      const legs   = comps.c_leg  || 4;
+      const legW   = comps.c_legW || 50;
+      const legH   = H - thick;         
+      const legVol = legs * legW * legW * legH / 1e9;
+      const legCost = legVol * woodPrice * tlth;
+      const aprons   = comps.c_apron || 4;
+      const apronH   = 100;
+      const aW  = 2, aD = 2;
+      const apronVol  = (aW*(W - 2*legW) + aD*(D - 2*legW)) * apronH * thick / 1e9;
+      const apronCost = apronVol * woodPrice * tlth;
+      const braces    = comps.c_brace || 0;
+      const braceVol  = braces * W * 30 * 30 / 1e9;
+      const braceCost = braceVol * woodPrice * tlth;
+
+      let totalSMV = manualSmv > 0 ? manualSmv : (SMV_RATES.prep_wood + SMV_RATES.precision_machining + SMV_RATES.sanding + SMV_RATES.frame_assembly + SMV_RATES.finishing_pu + SMV_RATES.qc_packaging);
+      const laborCostSMV = totalSMV * manualRate;
+
+      const finishCost = surfaceM2 * finishCostM2 * 1.08;
+      const boltCost   = (comps.c_bolt||0) * 800;
+      const visCost    = (comps.c_vis||0)  * 100;
+      const padCost    = (comps.c_pad||0)  * 2500;
+
+      return [
+        { name:'Gỗ mặt bàn (solid)',     spec:`${W}×${D}×${thick}mm`,  qty:topVol.toFixed(4),   unit:'m³', price:woodPrice, tlth, total:topCost },
+        { name:'Gỗ chân bàn',            spec:`${legs} chân ${legW}×${legW}mm`, qty:legVol.toFixed(4), unit:'m³', price:woodPrice, tlth, total:legCost },
+        { name:'Gỗ apron (khung đỡ)',    spec:`4 thanh ~100mm`,         qty:apronVol.toFixed(4), unit:'m³', price:woodPrice, tlth, total:apronCost },
+        ...(braces>0?[{ name:'Thanh giằng', spec:`${braces} thanh`, qty:braceVol.toFixed(4), unit:'m³', price:woodPrice, tlth, total:braceCost }]:[]),
+        { name:'Hoàn thiện bề mặt',      spec:`${surfaceM2.toFixed(3)}m²`, qty:surfaceM2.toFixed(3), unit:'m²', price:finishCostM2, tlth:1.08, total:finishCost },
+        { name:'Bulon chân M8×60',       spec:'Sxi đen',    qty:comps.c_bolt||0, unit:'con', price:800,  tlth:1.0, total:boltCost },
+        { name:'Vis + ốc',               spec:'M4×30',      qty:comps.c_vis||0,  unit:'con', price:100,   tlth:1.0, total:visCost },
+        { name:'Đệm cao su chân',        spec:'Ø40mm',      qty:comps.c_pad||0,  unit:'cái', price:2500, tlth:1.0, total:padCost },
+        { name:'Nhân công (SMV)',    spec:`${totalSMV.toFixed(0)} phút`, qty:totalSMV.toFixed(0), unit:'phút', price:manualRate, tlth:1.0, total:laborCostSMV },
+      ];
+    }
+  },
+
+  chair: {
+    label: '💺 Ghế',
+    defaultW:450, defaultH:900, defaultD:500,
+    defaultName:'Counter Stool', defaultCode:'CHR-CS-001',
+    sizeHint:'Ghế ăn H=900mm | Ghế bar H=750mm ghế ngồi | Counter stool seat H=650-700mm',
+    hasCore: false,
+    components: [
+      { id:'c_leg',     label:'Chân ghế (số lượng)',     qty:4,   unit:'cái', price:0,    note:'Tính theo gỗ' },
+      { id:'c_legW',    label:'Tiết diện chân (mm)',      qty:38,  unit:'mm',  price:0,    note:'VD: 38 = 38×38' },
+      { id:'c_rung',    label:'Thanh giằng ngang',        qty:4,   unit:'cái', price:0,    note:'Tính theo gỗ' },
+      { id:'c_seat',    label:'Loại mặt ngồi',           qty:1,   unit:'',    price:0,    note:'1=gỗ solid | 2=nệm mousse' },
+      { id:'c_mousse',  label:'Mousse nệm (nếu có) m²',  qty:0,   unit:'m²',  price:100000,note:'0 = không có nệm' },
+      { id:'c_fabric',  label:'Vải bọc nệm (nếu có) m²', qty:0,   unit:'m²',  price:140000,note:'0 = không bọc' },
+      { id:'c_back',    label:'Nan lưng ghế (số thanh)',  qty:3,   unit:'cái', price:0,    note:'Tính theo gỗ' },
+      { id:'c_arm',     label:'Tay vịn (1=Có, 0=Không)',  qty:0,   unit:'bộ',  price:0,    note:'Tính khối lượng gỗ' },
+      { id:'c_backMat', label:'Lưng (1:Mây, 2:Đan)',     qty:0,   unit:'loại',price:0,    note:'Giá thị trường/m2' },
+      { id:'c_vis',     label:'Vis + ốc',                 qty:30,  unit:'con', price:100,  note:'' },
+    ],
+    calcBOM(W,H,D,thick,woodPrice,tlth,corePrice,finishCostM2,comps,surfaceM2, manualSmv, manualRate) {
+      const legs  = comps.c_leg  || 4;
+      const legW  = comps.c_legW || 38;
+      const legH  = H * 0.72; 
+      const legVol = legs * legW * legW * legH / 1e9;
+      const legCost = legVol * woodPrice * tlth;
+      const rungs    = comps.c_rung || 4;
+      const rungLen  = W - 2*legW;
+      const rungVol  = rungs * legW * legW * rungLen / 1e9;
+      const rungCost = rungVol * woodPrice * tlth;
+      const seatType = comps.c_seat || 1;
+      const seatW = W, seatD = D * 0.85;
+      const seatVol  = seatW * seatD * thick / 1e9;
+      const seatCost = seatType === 1 ? seatVol * woodPrice * tlth : 0;
+      const backs = comps.c_back || 3;
+      const backH = H * 0.35; 
+      const backVol  = backs * 25 * 25 * backH / 1e9;
+      const backCost = backVol * woodPrice * tlth;
+      const hasArm = comps.c_arm || 0;
+      const armVol = hasArm > 0 ? (2 * (D*0.8) * 45 * 25 / 1e9) : 0;
+      const armCost = armVol * woodPrice * tlth;
+
+      let totalSMV = manualSmv > 0 ? manualSmv : (SMV_RATES.prep_wood + SMV_RATES.precision_machining + SMV_RATES.sanding + SMV_RATES.frame_assembly + SMV_RATES.finishing_pu + SMV_RATES.qc_packaging + 20);
+      const laborCostSMV = totalSMV * manualRate;
+
+      const backMatType = comps.c_backMat || 0;
+      const backAreaM2 = (W * (H*0.35)) / 1e6;
+      let backMatCost = 0; let backMatName = '';
+      if (backMatType === 1) { backMatCost = backAreaM2 * 280000; backMatName = 'Lưng bọc Mây'; }
+      else if (backMatType === 2) { backMatCost = backAreaM2 * 380000; backMatName = 'Lưng đan Rattan'; }
+      else if (backMatType === 3) { backMatCost = backAreaM2 * 200000; backMatName = 'Lưng đan Dây'; }
+
+      const finishCost  = surfaceM2 * finishCostM2 * 1.08;
+      const mousseCost  = (comps.c_mousse||0) * 100000;
+      const fabricCost  = (comps.c_fabric||0) * 140000;
+      const visCost     = (comps.c_vis||0) * 100;
+
+      return [
+        { name:'Gỗ chân ghế',    spec:`${legs} chân ${legW}×${legW}mm`, qty:legVol.toFixed(4),  unit:'m³', price:woodPrice, tlth, total:legCost },
+        { name:'Thanh giằng',    spec:`${rungs} thanh ${legW}×${legW}`, qty:rungVol.toFixed(4),  unit:'m³', price:woodPrice, tlth, total:rungCost },
+        { name:seatType===1?'Mặt ngồi gỗ solid':'Khung mặt ngồi', spec:`${seatW.toFixed(0)}×${seatD.toFixed(0)}×${thick}mm`, qty:seatVol.toFixed(4), unit:'m³', price:woodPrice, tlth, total:seatCost },
+        { name:'Nan lưng ghế',   spec:`${backs} nan 25×25mm`, qty:backVol.toFixed(4), unit:'m³', price:woodPrice, tlth, total:backCost },
+        ...(hasArm>0?[{ name:'Tay vịn gỗ', spec:`Quy cách`, qty:armVol.toFixed(4), unit:'m³', price:woodPrice, tlth, total:armCost }]:[]),
+        ...(backMatType>0?[{ name:backMatName, spec:`${backAreaM2.toFixed(3)}m²`, qty:backAreaM2.toFixed(3), unit:'m²', price:backMatCost/backAreaM2, tlth:1.0, total:backMatCost }]:[]),
+        { name:'Hoàn thiện bề mặt', spec:`${surfaceM2.toFixed(3)}m²`,  qty:surfaceM2.toFixed(3), unit:'m²', price:finishCostM2, tlth:1.08, total:finishCost },
+        ...(mousseCost>0?[{ name:'Mousse nệm', spec:'T50mm', qty:(comps.c_mousse||0).toFixed(2), unit:'m²', price:100000, tlth:1.0, total:mousseCost }]:[]),
+        ...(fabricCost>0?[{ name:'Vải bọc nệm', spec:'per m²', qty:(comps.c_fabric||0).toFixed(2), unit:'m²', price:140000, tlth:1.0, total:fabricCost }]:[]),
+        { name:'Vis + ốc',       spec:'M4×30', qty:comps.c_vis||0, unit:'con', price:100, tlth:1.0, total:visCost },
+        { name:'Nhân công (SMV)',    spec:`${totalSMV.toFixed(0)} phút`, qty:totalSMV.toFixed(0), unit:'phút', price:manualRate, tlth:1.0, total:laborCostSMV },
+      ];
+    }
+  },
+
+  bed: {
+    label: '🛏️ Giường',
+    defaultW:1600, defaultH:1200, defaultD:2000,
+    defaultName:'Queen Bed Frame', defaultCode:'BED-Q-001',
+    sizeHint:'Single: W=900 | Double: W=1200 | Queen: W=1600 | King: W=1800 (D=2000 chuẩn)',
+    hasCore: true,
+    components: [
+      { id:'c_headH',  label:'Chiều cao đầu giường (mm)', qty:1200, unit:'mm',  price:0,    note:'Tính theo gỗ' },
+      { id:'c_footH',  label:'Chiều cao chân giường (mm)',qty:400,  unit:'mm',  price:0,    note:'Tính theo gỗ' },
+      { id:'c_leg',    label:'Chân giường (số cặp)',      qty:3,    unit:'cặp', price:0,    note:'Chân đỡ giữa thanh dọc' },
+      { id:'c_slat',   label:'Nan đỡ nệm (số nan)',       qty:14,   unit:'cái', price:0,    note:'Tính theo gỗ' },
+      { id:'c_rail',   label:'Ray trượt hộc (nếu có)',    qty:0,    unit:'bộ',  price:140000,note:'0 = không hộc' },
+      { id:'c_bolt',   label:'Bulon liên kết M10',        qty:16,   unit:'con', price:1500, note:'' },
+      { id:'c_cam',    label:'Cam lock + bolt kết nối',   qty:8,    unit:'bộ',  price:10000, note:'Lắp ráp tháo rời' },
+      { id:'c_vis',    label:'Vis + ốc',                  qty:80,   unit:'con', price:100,   note:'' },
+    ],
+    calcBOM(W,H,D,thick,woodPrice,tlth,corePrice,finishCostM2,comps,surfaceM2, manualSmv, manualRate) {
+      const headH = comps.c_headH || 1200;
+      const footH = comps.c_footH || 400;
+      const headVol = W * headH * thick / 1e9;
+      const footVol = W * footH * thick / 1e9;
+      const railVol = 2 * D * 200 * thick / 1e9;
+      const legs    = (comps.c_leg||3)*2;
+      const legVol  = legs * 50 * 50 * 200 / 1e9;
+      const slats   = comps.c_slat||14;
+      const slatVol = slats * 70 * 20 * W / 1e9;
+
+      let totalSMV = manualSmv > 0 ? manualSmv : (SMV_RATES.prep_wood + SMV_RATES.precision_machining + SMV_RATES.sanding + SMV_RATES.frame_assembly + SMV_RATES.finishing_pu + SMV_RATES.qc_packaging + 60);
+      const laborCostSMV = totalSMV * manualRate;
+
+      const mdfBackM2 = (W * headH) / 1e6;
+      const mdfCost   = mdfBackM2/2.9768 * corePrice * 1.05;
+
+      const finishCost = surfaceM2 * finishCostM2 * 1.08;
+      const railCost   = (comps.c_rail||0) * 140000;
+      const boltCost   = (comps.c_bolt||0) * 1500;
+      const camCost    = (comps.c_cam||0)  * 10000;
+      const visCost    = (comps.c_vis||0)  * 100;
+
+      return [
+        { name:'Đầu giường (headboard)',spec:`${W}×${headH}×${thick}mm`, qty:headVol.toFixed(4),unit:'m³',price:woodPrice,tlth,total:headVol*woodPrice*tlth },
+        { name:'Chân giường (footboard)',spec:`${W}×${footH}×${thick}mm`,qty:footVol.toFixed(4),unit:'m³',price:woodPrice,tlth,total:footVol*woodPrice*tlth },
+        { name:'Thanh dọc (side rails)', spec:`2 × ${D}×200×${thick}mm`, qty:railVol.toFixed(4),unit:'m³',price:woodPrice,tlth,total:railVol*woodPrice*tlth },
+        { name:'Chân đỡ thanh dọc',      spec:`${legs} chân 50×50×200mm`,qty:legVol.toFixed(4), unit:'m³',price:woodPrice,tlth,total:legVol*woodPrice*tlth },
+        { name:'Nan đỡ nệm',             spec:`${slats} nan 70×20mm`,    qty:slatVol.toFixed(4),unit:'m³',price:woodPrice,tlth,total:slatVol*woodPrice*tlth },
+        { name:'Ván lót đầu giường',     spec:`${mdfBackM2.toFixed(3)}m²`,qty:(mdfBackM2/2.9768).toFixed(2),unit:'tấm',price:corePrice,tlth:1.05,total:mdfCost },
+        { name:'Hoàn thiện bề mặt',      spec:`${surfaceM2.toFixed(3)}m²`,qty:surfaceM2.toFixed(3),unit:'m²',price:finishCostM2,tlth:1.08,total:finishCost },
+        ...(comps.c_rail>0?[{ name:'Ray trượt hộc', spec:'DTC 3T', qty:comps.c_rail||0, unit:'bộ', price:140000,tlth:1.0,total:railCost }]:[]),
+        { name:'Bulon liên kết M10',spec:'Sxi đen', qty:comps.c_bolt||0,unit:'con',price:1500,tlth:1.0,total:boltCost },
+        { name:'Cam lock + bolt',   spec:'10k/bộ', qty:comps.c_cam||0, unit:'bộ', price:10000,tlth:1.0,total:camCost },
+        { name:'Vis + ốc',          spec:'M4×30',   qty:comps.c_vis||0, unit:'con',price:100,  tlth:1.0,total:visCost },
+        { name:'Nhân công (SMV)',    spec:`${totalSMV.toFixed(0)} phút`, qty:totalSMV.toFixed(0), unit:'phút', price:manualRate, tlth:1.0, total:laborCostSMV },
+      ];
+    }
+  },
+
+  sofa: {
+    label: '🛋️ Sofa',
+    defaultW:1800, defaultH:850, defaultD:900,
+    defaultName:'Sofa 3 Chỗ', defaultCode:'SFA-3S-001',
+    sizeHint:'1 chỗ W≈800 | 2 chỗ W≈1400 | 3 chỗ W≈1800 | 4 chỗ W≈2200',
+    hasCore: false,
+    components: [
+      { id:'c_seats',   label:'Số chỗ ngồi',              qty:3,    unit:'chỗ',price:0,     note:'' },
+      { id:'c_mousse_s',label:'Mousse ghế T150mm (m²)',    qty:0,    unit:'m²', price:140000,note:'Tự tính từ kích thước' },
+      { id:'c_mousse_b',label:'Mousse lưng T100mm (m²)',   qty:0,    unit:'m²', price:110000, note:'Tự tính từ kích thước' },
+      { id:'c_fabric',  label:'Vải/Da bọc (m²)',           qty:0,    unit:'m²', price:200000,note:'Tự tính, ~2.5× diện tích' },
+      { id:'c_spring',  label:'Lò xo zigzag (m)',          qty:0,    unit:'m',  price:55000, note:'Tính theo W sofa' },
+      { id:'c_leg',     label:'Chân sofa (số lượng)',      qty:6,    unit:'cái', price:30000,note:'Chân gỗ hoặc kim loại' },
+      { id:'c_webbing', label:'Dây căng đáy ghế (m)',      qty:0,    unit:'m',  price:10000,  note:'Tự tính từ kích thước' },
+      { id:'c_staple',  label:'Đinh bấm (đóng gói/100)',   qty:5,    unit:'hộp',price:15000, note:'' },
+    ],
+    calcBOM(W,H,D,thick,woodPrice,tlth,corePrice,finishCostM2,comps,surfaceM2, manualSmv, manualRate) {
+      const seats = comps.c_seats || 3;
+      const frameBaseVol = (2*D*120*thick + 3*W*120*thick) / 1e9;
+      const armVol  = 2 * D * H * thick / 1e9;
+      const backVol = W * (H*0.6) * thick / 1e9;
+      const woodCost = (frameBaseVol + armVol + backVol) * woodPrice * tlth;
+
+      let totalSMV = manualSmv > 0 ? manualSmv : (SMV_RATES.prep_wood + SMV_RATES.sanding + 180);
+      const laborCostSMV = totalSMV * manualRate;
+
+      const seatAreaM2 = W * (D * 0.55) / 1e6;
+      const mousse_s   = comps.c_mousse_s > 0 ? comps.c_mousse_s : seatAreaM2;
+      const backAreaM2 = W * (H * 0.6) / 1e6;
+      const mousse_b   = comps.c_mousse_b > 0 ? comps.c_mousse_b : backAreaM2;
+      const mousseSCost = mousse_s * 140000;
+      const mousseBCost = mousse_b * 110000;
+      const fabricM2   = comps.c_fabric > 0 ? comps.c_fabric : (seatAreaM2 + backAreaM2) * 2.5;
+      const fabricPrice = 200000;
+      const fabricCost  = fabricM2 * fabricPrice;
+      const springM    = comps.c_spring > 0 ? comps.c_spring : W/1000 * 3;
+      const springCost = springM * 55000;
+      const legCost     = (comps.c_leg||0) * 30000;
+      const webbingM    = comps.c_webbing > 0 ? comps.c_webbing : W/1000 * 8;
+      const webbingCost = webbingM * 10000;
+      const stapleCost  = (comps.c_staple||0) * 15000;
+
+      return [
+        { name:'Gỗ khung sofa',       spec:`Đáy+lưng+tay vịn`,  qty:(frameBaseVol+armVol+backVol).toFixed(4),unit:'m³',price:woodPrice,tlth,total:woodCost },
+        { name:'Mousse ghế T150mm',   spec:`${mousse_s.toFixed(3)}m²`,qty:mousse_s.toFixed(3), unit:'m²',price:140000,tlth:1.0,total:mousseSCost },
+        { name:'Mousse lưng T100mm',  spec:`${mousse_b.toFixed(3)}m²`,qty:mousse_b.toFixed(3), unit:'m²',price:110000, tlth:1.0,total:mousseBCost },
+        { name:'Vải/Da bọc',          spec:`${fabricM2.toFixed(2)}m²`,qty:fabricM2.toFixed(2),  unit:'m²',price:fabricPrice,tlth:1.0,total:fabricCost },
+        { name:'Lò xo zigzag',        spec:`${springM.toFixed(1)}m`, qty:springM.toFixed(1),  unit:'m',  price:55000, tlth:1.0,total:springCost },
+        { name:'Chân sofa',           spec:'gỗ/KL',  qty:comps.c_leg||0,  unit:'cái',price:30000,tlth:1.0,total:legCost },
+        { name:'Dây căng đáy ghế',    spec:`${webbingM.toFixed(1)}m`,qty:webbingM.toFixed(1), unit:'m',  price:10000,  tlth:1.0,total:webbingCost },
+        { name:'Đinh bấm',            spec:'100 cái/hộp',qty:comps.c_staple||0,unit:'hộp',price:15000,tlth:1.0,total:stapleCost },
+        { name:'Nhân công (SMV)',    spec:`${totalSMV.toFixed(0)} phút`, qty:totalSMV.toFixed(0), unit:'phút', price:manualRate, tlth:1.0, total:laborCostSMV },
+      ];
+    }
+  }
+};
+
+let currentType = 'cabinet';
+
+const fmt    = n  => new Intl.NumberFormat('vi-VN').format(Math.round(n));
+const ceil1  = n  => Math.ceil(n * 10) / 10;
+const getVal = id => parseFloat(document.getElementById(id)?.value) || 0;
+const getStr = id => document.getElementById(id)?.value || '';
+const getOpt = id => { const el=document.getElementById(id); return el?.options[el.selectedIndex]; };
+const compVal = id => parseFloat(document.getElementById(id)?.value) || 0;
+
+function setType(type) {
+  currentType = type;
+  document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('type-'+type).classList.add('active');
+
+  const def = PRODUCT_TYPES[type];
+
+  document.getElementById('width').value  = def.defaultW;
+  document.getElementById('height').value = def.defaultH;
+  document.getElementById('depth').value  = def.defaultD;
+  document.getElementById('productName').value = def.defaultName;
+  document.getElementById('productCode').value = def.defaultCode;
+  document.getElementById('size-hint').textContent = def.sizeHint;
+  document.getElementById('fg-core').style.display = def.hasCore ? '' : 'none';
+
+  renderComponents(def.components);
+  document.getElementById('sticky_type').textContent = def.label;
+
+  calculate();
+}
+
+function renderComponents(comps) {
+  const sec = document.getElementById('comp-section');
+  sec.innerHTML = comps.map(c => `
+    <div class="comp-row">
+      <div>
+        <div class="comp-label">${c.label}</div>
+        ${c.note ? `<div style="font-size:9px;color:rgba(255,255,255,.3);font-family:var(--mono);margin-top:2px">${c.note}</div>` : ''}
+      </div>
+      <input class="comp-qty" type="number" id="${c.id}" value="${c.qty}" min="0" step="${c.unit==='mm'?1:1}" oninput="calculate()">
+    </div>`).join('');
+}
+
+function calculate() {
+  const W = getVal('width'), H = getVal('height'), D = getVal('depth');
+  const qty             = getVal('qty');
+  const exRate          = getVal('exchangeRate');
+  const fixedOverheadPerProduct = getVal('fixedOverheadPerProduct');
+  const testCost        = getVal('testCost');
+  const shippingCost    = getVal('shippingCost');
+  const profitPct       = getVal('profitMargin') / 100;
+  const inflationPct    = getVal('inflationBuffer') / 100;
+  const commissionPct   = getVal('commission') / 100;
+
+  const manualLaborRate = getVal('laborRateInput');
+  const manualTotalSmv  = getVal('totalSmvInput');
+
+  const woodOpt   = getOpt('woodType');
+  const woodPrice = parseFloat(woodOpt?.dataset.price || 16500000);
+  const tlth      = parseFloat(woodOpt?.dataset.tlth  || 1.54);
+  const woodThick = parseFloat(woodOpt?.dataset.thick || 32);
+  const woodLabel = (woodOpt?.text || '').split('—')[0].trim();
+
+  const finishOpt      = getOpt('finish');
+  const finishCostPerM2 = parseFloat(finishOpt?.dataset.cost || 100000);
+  const finishLabel    = (finishOpt?.text || '').split('—')[0].trim();
+
+  const coreOpt          = getOpt('coreBoard');
+  const corePricePerSheet = parseFloat(coreOpt?.dataset.price || 380000);
+
+  const surfaceM2 = 2*(W*H + W*D + H*D) / 1e6;
+  const volumeM3  = W*H*D / 1e9;
+
+  const typeDef = PRODUCT_TYPES[currentType];
+  const comps = {};
+  typeDef.components.forEach(c => { comps[c.id] = compVal(c.id); });
+
+  let bomItems;
+  try {
+    bomItems = typeDef.calcBOM(W,H,D,woodThick,woodPrice,tlth,corePricePerSheet,finishCostPerM2,comps,surfaceM2, manualTotalSmv, manualLaborRate);
+  } catch(e) {
+    bomItems = [];
+  }
+
+  bomItems = bomItems.filter(b => b.total > 0);
+  const packaging = volumeM3 * 500000;
+  bomItems.push({ name:'Bao bì (carton+pallet)', spec:`Thể tích ${volumeM3.toFixed(4)} m³`, qty:volumeM3.toFixed(4), unit:'m³', price:500000, tlth:1.0, total:packaging });
+
+  const totalNVL     = bomItems.reduce((s,b) => s + (b.name !== 'Nhân công (SMV)' ? b.total : 0), 0);
+  const laborRow     = bomItems.find(b => b.name === 'Nhân công (SMV)');
+  const totalLabor   = laborRow ? laborRow.total : 0;
+  
+  const overheadPct = fixedOverheadPerProduct / 100;
+  const adjustedCogsBeforeOH = (totalNVL*(1+inflationPct)) + totalLabor + testCost + shippingCost;
+  const fobBeforeOH = adjustedCogsBeforeOH * (1+profitPct) / (1-commissionPct);
+  const fixedCostTotal = fobBeforeOH * overheadPct;
+
+  const totalCOGS    = totalNVL + totalLabor + fixedCostTotal + testCost + shippingCost;
+  const adjustedCOGS = adjustedCogsBeforeOH + fixedCostTotal;
+  const quoteVND     = adjustedCOGS * (1+profitPct) / (1-commissionPct);
+  const fobRaw       = quoteVND / exRate;
+  const fobFinal     = ceil1(fobRaw);
+  const profitVND    = quoteVND - totalCOGS;
+  const profitUSD    = profitVND / exRate;
+  const profitPctAct = profitVND / quoteVND;
+
+  const wIn = (W/25.4).toFixed(1), hIn = (H/25.4).toFixed(1), dIn = (D/25.4).toFixed(1);
+  document.getElementById('cogs_vnd').textContent   = fmt(totalCOGS)+'đ';
+  document.getElementById('fob_usd').textContent    = 'USD '+fobFinal.toFixed(2);
+  document.getElementById('profit_usd').textContent = 'USD '+profitUSD.toFixed(2);
+  document.getElementById('profit_pct').textContent = (profitPctAct*100).toFixed(1)+'% biên LN';
+  document.getElementById('volume_m3').textContent  = volumeM3.toFixed(4)+' m³';
+  document.getElementById('size_in').textContent    = `${wIn}" × ${hIn}" × ${dIn}"`;
+
+  const bkdItems = [
+    ...bomItems.filter(b => b.name !== 'Nhân công (SMV)').map(b => ({ name:b.name, cost:b.total, cls:'nvl' })),
+    { name:'Nhân công (SMV)',      cost:totalLabor,     cls:'fc' },
+    { name:'Định phí QLC',         cost:fixedCostTotal, cls:'fc' },
+    { name:'Chi phí Test',         cost:testCost,       cls:'fc' },
+    { name:'CPVC xuất khẩu',       cost:shippingCost,   cls:'fc' },
+  ];
+  const totalAll = bkdItems.reduce((s,i) => s+i.cost, 0);
+  let rowsHTML='', barHTML='';
+  bkdItems.forEach(item => {
+    const pct = totalAll>0 ? item.cost/totalAll*100 : 0;
+    if(item.cost===0) return;
+    rowsHTML += `<div class="bkd-row"><span class="nm">${item.name}</span><span class="am">${fmt(item.cost)}đ</span><span class="pc">${pct.toFixed(1)}%</span></div>`;
+    const barCls = (item.cls==='fc') ? 'gd' : '';
+    barHTML  += `<div class="bar-row"><div class="barlbl">${item.name}</div><div class="bartrk"><div class="barfil ${barCls}" style="width:${pct}%"></div></div><div class="barpct">${pct.toFixed(1)}%</div></div>`;
+  });
+  rowsHTML += `<div class="bkd-row tot"><span class="nm">TỔNG GIÁ THÀNH SX</span><span class="am">${fmt(totalCOGS)}đ</span><span class="pc">100%</span></div>`;
+  document.getElementById('breakdownRows').innerHTML = rowsHTML;
+  document.getElementById('barChart').innerHTML = barHTML;
+
+  let bomHTML = '';
+  bomItems.forEach(b => {
+    bomHTML += `<tr>
+      <td>${b.name}</td>
+      <td class="r" style="font-family:var(--mono);font-size:10px">${b.spec||''}</td>
+      <td class="r">${typeof b.qty === 'number' ? b.qty.toFixed(3) : b.qty}</td>
+      <td>${b.unit}</td>
+      <td class="r">${fmt(b.price)}</td>
+      <td class="r">${typeof b.tlth==='number'?b.tlth.toFixed(2)+'×':b.tlth}</td>
+      <td class="r">${fmt(b.total)}đ</td>
+    </tr>`;
+  });
+  bomHTML += `<tr class="tot"><td colspan="6">TỔNG CHI PHÍ NVL + BAO BÌ</td><td class="r">${fmt(totalNVL + totalLabor)}đ</td></tr>`;
+  document.getElementById('bomBody').innerHTML = bomHTML;
+
+  const margins = [0.10,0.12,0.15,0.18,0.20];
+  const nvlChanges = [-0.10,-0.05,0.00,0.05,0.10];
+  let sensHTML = '';
+  nvlChanges.forEach(nc => {
+    const lbl = nc===0 ? 'Hiện tại' : `NVL ${nc>0?'+':''}${(nc*100).toFixed(0)}%`;
+    sensHTML += `<tr><td class="rl">${lbl}</td>`;
+    margins.forEach(m => {
+      const adj  = (totalNVL*(1+nc)*(1+inflationPct)) + totalLabor + fixedCostTotal + testCost + shippingCost;
+      const fob  = ceil1(adj*(1+m)/(1-commissionPct)/exRate);
+      const isCur = Math.abs(nc)<.001 && Math.abs(m-profitPct)<.001;
+      const cls  = isCur ? 'cur' : nc<0 ? 'lo' : nc>0 ? 'hi2' : '';
+      sensHTML += `<td class="${cls}">$${fob.toFixed(2)}</td>`;
+    });
+    sensHTML += '</tr>';
+  });
+  document.getElementById('sensBody').innerHTML = sensHTML;
+
+  const today = new Date().toLocaleDateString('vi-VN');
+  document.getElementById('q_date').textContent     = today;
+  document.getElementById('q_code').textContent     = getStr('productCode');
+  document.getElementById('q_name').textContent     = getStr('productName');
+  document.getElementById('q_type').textContent     = typeDef.label;
+  document.getElementById('q_size').textContent     = `${W}×${H}×${D}mm (${wIn}"×${hIn}"×${dIn}")`;
+  document.getElementById('q_material').textContent = woodLabel;
+  document.getElementById('q_finish').textContent   = finishLabel;
+  document.getElementById('q_qty').textContent      = qty.toLocaleString()+' SP';
+  document.getElementById('q_fob').textContent      = 'USD '+fobFinal.toFixed(2);
+
+  document.getElementById('sticky_fob').textContent  = 'USD '+fobFinal.toFixed(2);
+  document.getElementById('sticky_cogs').textContent = fmt(totalCOGS)+'đ COGS';
+}
+
+function updateMarketData() {
+  document.getElementById('exchangeRate').value = 26342;
+  calculate();
+  alert("Đã cập nhật Tỷ giá (26,342 VND/USD) và đồng bộ hệ thống theo thị trường.");
+}
+
+function switchTab(name) {
+  if(window.innerWidth >= 768) return;
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  const ids = ['panel-input','panel-result','panel-bom','panel-quote'];
+  ids.forEach(id => document.getElementById(id).style.display='none');
+  if(name==='input') {
+    document.getElementById('panel-input').style.display='block';
+  } else {
+    document.getElementById('panel-result').style.display = name==='result'?'block':'none';
+    document.getElementById('panel-bom').style.display    = name==='bom'   ?'block':'none';
+    document.getElementById('panel-quote').style.display  = name==='quote' ?'block':'none';
+  }
+}
+
+function initMobileTabs() {
+  if(window.innerWidth < 768) {
+    switchTab('input');
+  } else {
+    ['panel-input','panel-result','panel-bom','panel-quote'].forEach(id => {
+      const el = document.getElementById(id);
+      if(el) el.style.display='block';
+    });
+  }
+}
+window.addEventListener('resize', initMobileTabs);
+
+function resetDefaults() {
+  const def = PRODUCT_TYPES[currentType];
+  document.getElementById('width').value  = def.defaultW;
+  document.getElementById('height').value = def.defaultH;
+  document.getElementById('depth').value  = def.defaultD;
+  document.getElementById('qty').value = 500;
+  document.getElementById('exchangeRate').value    = 26342;
+  document.getElementById('laborRateInput').value  = 1250;
+  // UPDATE MẶC ĐỊNH SMV: 200
+  document.getElementById('totalSmvInput').value   = 200;
+  document.getElementById('fixedOverheadPerProduct').value  = 8;
+  document.getElementById('testCost').value        = 50000;
+  document.getElementById('shippingCost').value    = 55000;
+  document.getElementById('profitMargin').value    = 15;
+  document.getElementById('inflationBuffer').value = 3;
+  document.getElementById('commission').value      = 5;
+  document.getElementById('woodType').selectedIndex = 0;
+  document.getElementById('finish').selectedIndex   = 0;
+  if(document.getElementById('coreBoard')) document.getElementById('coreBoard').selectedIndex = 0;
+  renderComponents(def.components);
+  calculate();
+}
+
+// ══════════════════════════════════════════════════
+// BỔ SUNG CÁC HÀM XỬ LÝ IMPORT / EXPORT EXCEL
+// ══════════════════════════════════════════════════
+function exportExcelDatabase() {
+  if (typeof XLSX === 'undefined') {
+    alert('Thư viện Excel đang được tải, vui lòng thử lại sau vài giây!');
+    return;
+  }
+  const wb = XLSX.utils.book_new();
+
+  const masterData = [['Loại', 'Mã/Tên', 'Tên/Giá', 'Giá/ĐVT', 'TLTH']];
+  dbWood.forEach(w => masterData.push(['wood', w.code, w.name, w.price, w.tlth]));
+  dbFinish.forEach(f => masterData.push(['finish', f.name, f.cost, '', '']));
+  dbAccessories.forEach(a => masterData.push(['acc', a.name, a.price, a.type, '']));
+  
+  const wsMaster = XLSX.utils.aoa_to_sheet(masterData);
+  XLSX.utils.book_append_sheet(wb, wsMaster, "Database NVL");
+  XLSX.writeFile(wb, "GiaNVL_Export.xlsx");
+}
+
+function importExcel(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  if (typeof XLSX === 'undefined') {
+    alert('Thư viện Excel đang được tải, vui lòng thử lại sau vài giây!');
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const data = new Uint8Array(e.target.result);
+    const workbook = XLSX.read(data, {type: 'array'});
+    
+    // Đọc từ sheet đầu tiên
+    const firstSheetName = workbook.SheetNames[0];
+    const worksheet = workbook.Sheets[firstSheetName];
+    const jsonData = XLSX.utils.sheet_to_json(worksheet, {header: 1});
+
+    // Bỏ qua dòng tiêu đề (row 0)
+    for (let i = 1; i < jsonData.length; i++) {
+      const parts = jsonData[i];
+      if (!parts || parts.length < 3) continue;
+
+      const type = (parts[0] || '').toString().trim().toLowerCase();
+      if (type === 'wood') {
+         dbWood = dbWood.filter(w => w.code !== (parts[1]||'').toString().trim());
+         dbWood.push({
+           code: (parts[1]||'').toString().trim(), 
+           name: (parts[2]||'').toString().trim(), 
+           price: parseFloat(parts[3]) || 0, 
+           tlth: parseFloat(parts[4]) || 1.54
+         });
+      } else if (type === 'finish') {
+         dbFinish = dbFinish.filter(f => f.name !== (parts[1]||'').toString().trim());
+         dbFinish.push({
+           name: (parts[1]||'').toString().trim(), 
+           cost: parseFloat(parts[2]) || 0
+         });
+      } else if (type === 'acc') {
+         dbAccessories = dbAccessories.filter(a => a.name !== (parts[1]||'').toString().trim());
+         dbAccessories.push({
+           name: (parts[1]||'').toString().trim(), 
+           price: parseFloat(parts[2]) || 0, 
+           type: parts[3] ? parts[3].toString().trim() : 'cái'
+         });
+      }
+    }
+    saveDatabase();
+    renderWoodList(); renderFinishList(); renderAccList();
+    alert("✅ Đã cập nhật dữ liệu từ file Excel!");
+  };
+  reader.readAsArrayBuffer(file);
+  event.target.value = '';
+}
+
+// ══════════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════════
+loadDefaultDatabase();
+setType('cabinet');
+initMobileTabs();
+</script>
+</body>
+</html>
