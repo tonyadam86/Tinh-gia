@@ -1817,84 +1817,16 @@ function reloadAndSync() {
 }
 
 // ── INIT ──
-loadDefaultDatabase();
+// FIX: Bổ sung kiểm tra LocalStorage trước khi load để không ghi đè dữ liệu đã lưu khi reload
+if (localStorage.getItem('dbWood') && JSON.parse(localStorage.getItem('dbWood')).length > 0) {
+  loadDatabase();
+  updateAllSelects();
+} else {
+  loadDefaultDatabase();
+}
 setType('cabinet');
 initMobileTabs();
 </script>
-<script>
-(function() {
-    // 1. Danh sách các biến Database cần được lưu trữ
-    const dbKeys = ['dbWoods', 'dbCores', 'dbFinishes', 'dbAccessories'];
-
-    // 2. Hàm Phục hồi dữ liệu từ LocalStorage khi khởi động app
-    function restoreAllDatabases() {
-        console.log("Đang phục hồi dữ liệu từ bộ nhớ...");
-        dbKeys.forEach(key => {
-            const savedData = localStorage.getItem(key);
-            if (savedData) {
-                try {
-                    // Nạp dữ liệu đã lưu vào biến global tương ứng
-                    const parsedData = JSON.parse(savedData);
-                    if (Array.isArray(parsedData) && parsedData.length > 0) {
-                        window[key] = parsedData;
-                    }
-                } catch (e) {
-                    console.error("Lỗi khi đọc dữ liệu " + key + ":", e);
-                }
-            }
-        });
-
-        // Kích hoạt lại các hàm hiển thị (render) có sẵn trong code cũ để cập nhật UI
-        setTimeout(() => {
-            if (typeof renderWoodList === 'function') renderWoodList();
-            if (typeof renderCoreList === 'function') renderCoreList();
-            if (typeof renderFinishList === 'function') renderFinishList();
-            if (typeof renderAccessoryList === 'function') renderAccessoryList();
-            
-            // Cập nhật các danh sách chọn (Select dropdowns) ở tab Nhập liệu
-            if (typeof updateWoodSelects === 'function') updateWoodSelects();
-            if (typeof updateCoreSelects === 'function') updateCoreSelects();
-            if (typeof updateFinishSelects === 'function') updateFinishSelects();
-            if (typeof updateAccessorySelects === 'function') updateAccessorySelects();
-            
-            console.log("Đã cập nhật giao diện từ dữ liệu cũ.");
-        }, 100);
-    }
-
-    // 3. Hàm Lưu tất cả dữ liệu hiện tại vào LocalStorage
-    function saveAllDatabases() {
-        dbKeys.forEach(key => {
-            if (window[key]) {
-                localStorage.setItem(key, JSON.stringify(window[key]));
-            }
-        });
-        console.log("Đã lưu thay đổi vào bộ nhớ.");
-    }
-
-    // 4. Cơ chế tự động lưu (Auto-save) khi có bất kỳ thay đổi nào
-    // Lắng nghe mọi sự kiện click vào các nút bấm (Thêm, Xóa, Lưu, Cập nhật)
-    document.addEventListener('click', function(event) {
-        const target = event.target.closest('button');
-        if (target) {
-            // Đợi 200ms để các hàm gốc trong code của bạn xử lý xong logic thêm/xóa
-            // sau đó chúng ta sẽ lấy kết quả cuối cùng để lưu lại.
-            setTimeout(saveAllDatabases, 200);
-        }
-    });
-
-    // 5. Chạy phục hồi dữ liệu ngay khi trang web vừa nạp xong
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', restoreAllDatabases);
-    } else {
-        restoreAllDatabases();
-    }
-    
-    // Bổ sung: Lưu dữ liệu khi người dùng đóng trình duyệt hoặc chuyển trang
-    window.addEventListener('beforeunload', saveAllDatabases);
-    
-})();
-</script>
-
 
 </body>
 </html>
