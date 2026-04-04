@@ -1575,6 +1575,11 @@ if (localStorage.getItem('dbWood') && JSON.parse(localStorage.getItem('dbWood'))
 } else { loadDefaultDatabase(); }
 initMobileTabs();
 restoreFormState(); 
+ document.addEventListener('DOMContentLoaded', function () {
+    if (!localStorage.getItem('dbWood')) {
+        loadDefaultDatabase(); // Hàm khởi tạo dữ liệu mặc định
+    }
+});
 </script>
 
 </body>
