@@ -763,6 +763,112 @@ function renderAccList() {
     </tr>`;}).join('');
 }
 
+// ══════════════════════════════════════════════════
+// EXPORT & IMPORT DATABASE FUNCTIONS
+// ══════════════════════════════════════════════════
+
+// --- CSV (Xuất/Nhập Dữ liệu) ---
+function exportDatabase() {
+  let csvContent = "data:text/csv;charset=utf-8,\uFEFF";
+  csvContent += "Category,Field1,Field2,Field3,Field4\n";
+  
+  dbWood.forEach(w => csvContent += `WOOD,"${w.code||''}","${w.name||''}",${w.price||0},${w.tlth||0}\n`);
+  dbCore.forEach(c => csvContent += `CORE,"${c.code||''}","${c.name||''}",${c.price||0},"${c.spec||''}"\n`);
+  dbFinish.forEach(f => csvContent += `FINISH,"${f.name||''}",${f.cost||0},,\n`);
+  dbAccessories.forEach(a => csvContent += `ACC,"${a.name||''}",${a.price||0},"${a.type||''}",\n`);
+  
+  const encodedUri = encodeURI(csvContent);
+  const link = document.createElement("a");
+  link.setAttribute("href", encodedUri);
+  link.setAttribute("download", "Database_NoiThat.csv");
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  showToast("Đã xuất Database ra file CSV!");
+}
+
+function importCSV(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const text = e.target.result;
+    const lines = text.split('\n');
+    
+    let newWood=[], newCore=[], newFinish=[], newAcc=[];
+    
+    for(let i=1; i<lines.length; i++) {
+      const line = lines[i].trim();
+      if(!line) continue;
+      
+      const cols = line.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(s => s.replace(/^"|"$/g, '').trim());
+      const cat = cols[0];
+      
+      if(cat === 'WOOD') newWood.push({code: cols[1], name: cols[2], price: parseFloat(cols[3])||0, tlth: parseFloat(cols[4])||0});
+      else if(cat === 'CORE') newCore.push({code: cols[1], name: cols[2], price: parseFloat(cols[3])||0, spec: cols[4]||''});
+      else if(cat === 'FINISH') newFinish.push({name: cols[1], cost: parseFloat(cols[2])||0});
+      else if(cat === 'ACC') newAcc.push({name: cols[1], price: parseFloat(cols[2])||0, type: cols[3]||''});
+    }
+    
+    if(newWood.length>0) dbWood = newWood;
+    if(newCore.length>0) dbCore = newCore;
+    if(newFinish.length>0) dbFinish = newFinish;
+    if(newAcc.length>0) dbAccessories = newAcc;
+    
+    saveDatabaseNoAlert();
+    renderWoodList(); renderCoreList(); renderFinishList(); renderAccList();
+    showToast("✅ Đã nhập Database từ file CSV!");
+    event.target.value = ''; 
+  };
+  reader.readAsText(file);
+}
+
+// --- EXCEL (Xuất/Nhập Dữ liệu) ---
+function exportExcelDatabase() {
+  if(typeof XLSX === 'undefined') { alert("Thư viện Excel chưa được tải, vui lòng kiểm tra kết nối internet!"); return; }
+  const wb = XLSX.utils.book_new();
+  
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(dbWood), "GoNguyenLieu");
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(dbCore), "VanLoi");
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(dbFinish), "HoanThien");
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(dbAccessories), "PhuKien");
+  
+  XLSX.writeFile(wb, "Database_NoiThat.xlsx");
+  showToast("Đã xuất Database ra file Excel!");
+}
+
+function importExcel(event) {
+  if(typeof XLSX === 'undefined') { alert("Thư viện Excel chưa được tải, vui lòng kiểm tra kết nối internet!"); return; }
+  const file = event.target.files[0];
+  if (!file) return;
+  
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const data = new Uint8Array(e.target.result);
+    const workbook = XLSX.read(data, {type: 'array'});
+    
+    if(workbook.Sheets["GoNguyenLieu"]) dbWood = XLSX.utils.sheet_to_json(workbook.Sheets["GoNguyenLieu"]);
+    if(workbook.Sheets["VanLoi"]) dbCore = XLSX.utils.sheet_to_json(workbook.Sheets["VanLoi"]);
+    if(workbook.Sheets["HoanThien"]) dbFinish = XLSX.utils.sheet_to_json(workbook.Sheets["HoanThien"]);
+    if(workbook.Sheets["PhuKien"]) dbAccessories = XLSX.utils.sheet_to_json(workbook.Sheets["PhuKien"]);
+    
+    saveDatabaseNoAlert();
+    renderWoodList(); renderCoreList(); renderFinishList(); renderAccList();
+    showToast("✅ Đã nhập Database từ file Excel!");
+    event.target.value = ''; 
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+function clearDatabase() {
+  if(confirm('⚠️ Bạn có chắc chắn muốn xóa TOÀN BỘ dữ liệu Database hiện tại? Hành động này không thể hoàn tác!')) {
+    dbWood = []; dbCore = []; dbFinish = []; dbAccessories = [];
+    saveDatabaseNoAlert();
+    renderWoodList(); renderCoreList(); renderFinishList(); renderAccList();
+    showToast('🗑️ Đã xóa trắng toàn bộ Database!');
+  }
+}
+
 // ─── UPDATE SELECTS ───
 function updateAllSelects() {
   const populate = (id, db, textGen, dataGen) => {
