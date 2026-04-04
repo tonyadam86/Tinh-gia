@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
@@ -235,7 +234,7 @@ body{font-family:var(--sans);background:var(--cream);color:var(--text);min-heigh
   <div class="hbtns">
     <button class="btn btn-outline" onclick="window.print()" style="display:none" id="btnPrint">In</button>
     <button class="btn btn-outline" onclick="toggleDbManager()" style="margin-right:8px;">⚙️ Database</button>
-    <button class="btn btn-gold" onclick="calculate()">Tính ▶</button>
+    <button class="btn btn-gold" onclick="showGuide()">Hướng Dẫn</button>
   </div>
 </div>
 
@@ -251,7 +250,7 @@ body{font-family:var(--sans);background:var(--cream);color:var(--text);min-heigh
 
 
   <div class="db-section">
-    <div class="db-section-title">🌳 Gỗ Nguyên Liệu (m³) — Click "Sửa" để chỉnh sửa trực tiếp</div>
+    <div class="db-section-title">🌳 Gỗ Nguyên Liệu (m³) — Sửa trực tiếp để cập nhật giá</div>
     <table class="db-table">
       <thead><tr><th>Mã</th><th>Tên Gỗ</th><th>Giá (VND/m³)</th><th>TLTH</th><th>Hành động</th></tr></thead>
       <tbody id="woodList"></tbody>
@@ -266,7 +265,7 @@ body{font-family:var(--sans);background:var(--cream);color:var(--text);min-heigh
   </div>
 
   <div class="db-section">
-    <div class="db-section-title">🪵 Ván Lõi / MDF / PB (VND/tấm) — Click "Sửa" để chỉnh giá</div>
+    <div class="db-section-title">🪵 Ván Lõi / MDF / PB (VND/tấm) — Sửa trực tiếp để cập nhật giá</div>
     <table class="db-table">
       <thead><tr><th>Mã</th><th>Tên Ván Lõi</th><th>Giá (VND/tấm)</th><th>Quy cách</th><th>Hành động</th></tr></thead>
       <tbody id="coreList"></tbody>
@@ -281,7 +280,7 @@ body{font-family:var(--sans);background:var(--cream);color:var(--text);min-heigh
   </div>
 
   <div class="db-section">
-    <div class="db-section-title">🎨 Hoàn Thiện Bề Mặt (m²) — Click "Sửa" để chỉnh giá</div>
+    <div class="db-section-title">🎨 Hoàn Thiện Bề Mặt (m²) — Sửa trực tiếp để cập nhật giá</div>
     <table class="db-table">
       <thead><tr><th>Tên Hoàn Thiện</th><th>Giá (VND/m²)</th><th></th><th></th><th>Hành động</th></tr></thead>
       <tbody id="finishList"></tbody>
@@ -295,7 +294,7 @@ body{font-family:var(--sans);background:var(--cream);color:var(--text);min-heigh
   </div>
 
   <div class="db-section">
-    <div class="db-section-title">🔧 Cấu Kiện Phụ Kiện — Click "Sửa" để chỉnh giá</div>
+    <div class="db-section-title">🔧 Cấu Kiện Phụ Kiện — Sửa trực tiếp để cập nhật giá</div>
     <table class="db-table">
       <thead><tr><th>Tên Cấu Kiện</th><th>Giá (VND/cái)</th><th>Loại</th><th></th><th>Hành động</th></tr></thead>
       <tbody id="accList"></tbody>
@@ -367,7 +366,7 @@ body{font-family:var(--sans);background:var(--cream);color:var(--text);min-heigh
 
   <div class="fg">
     <label>Gỗ chính</label>
-    <select id="woodType" onchange="calculate()">
+    <select id="woodType" onchange="syncWoodInput()">
       <option value="poplar_32" data-price="16500000" data-tlth="1.54" data-thick="32">Poplar Mỹ 32mm — 16,500k/m³</option>
     </select>
     <div class="manual-input-row">
@@ -379,7 +378,7 @@ body{font-family:var(--sans);background:var(--cream);color:var(--text);min-heigh
 
   <div class="fg" id="fg-core">
     <label>Ván lõi (MDF / PB / Ván ghép)</label>
-    <select id="coreBoard" onchange="calculate()">
+    <select id="coreBoard" onchange="syncCoreInput()">
       <option value="mdf18" data-price="380000">MDF CARB P2 18mm — 380k/tấm</option>
       <option value="mdf12" data-price="280000">MDF CARB P2 12mm — 280k/tấm</option>
       <option value="pb18"  data-price="220000">Ván dăm PB 18mm — 220k/tấm</option>
@@ -395,7 +394,7 @@ body{font-family:var(--sans);background:var(--cream);color:var(--text);min-heigh
 
   <div class="fg">
     <label>Hoàn thiện bề mặt</label>
-    <select id="finish" onchange="calculate()">
+    <select id="finish" onchange="syncFinishInput()">
       <option value="punc" data-cost="100000">Sơn PU NC — 100k/m²</option>
     </select>
     <div class="manual-input-row">
@@ -466,8 +465,7 @@ body{font-family:var(--sans);background:var(--cream);color:var(--text);min-heigh
   <div class="row3">
     <div class="fg"><label>% LN</label><input type="number" id="profitMargin" value="15" min="0" max="60" oninput="calculate()"><div class="hint">mục tiêu</div></div>
     <div class="fg"><label>% Trượt</label><input type="number" id="inflationBuffer" value="3" min="0" max="20" oninput="calculate()"><div class="hint">NVL</div></div>
-    <div class="fg"><label>% HH</label><input type="number" id="commission" value="5" min="0" max="20" oninput="calculate()"><div class="hint">commission</div></div>
-  </div>
+    </div>
 
   <div class="btn-group">
     <button class="btn btn-gold" style="flex:2" onclick="calculate()">▶ Tính giá</button>
@@ -526,7 +524,7 @@ body{font-family:var(--sans);background:var(--cream);color:var(--text);min-heigh
       <div class="qrow"><span class="ql">Thanh toán</span><span class="qv">30% ĐC · 70% trước giao hàng</span></div>
       <div class="qrow"><span class="ql">Hiệu lực</span><span class="qv">30 ngày kể từ ngày báo giá</span></div>
       <div class="qfob">
-        <div><div class="qfob-lbl">Đơn giá FOB</div><div style="font-size:9px;color:rgba(255,255,255,.35);font-family:var(--mono);margin-top:2px">Incl. LN + trượt giá + commission</div></div>
+        <div><div class="qfob-lbl">Đơn giá FOB</div><div style="font-size:9px;color:rgba(255,255,255,.35);font-family:var(--mono);margin-top:2px">Incl. LN + trượt giá</div></div>
         <div class="qfob-val" id="q_fob">USD —</div>
       </div>
     </div>
@@ -560,6 +558,24 @@ body{font-family:var(--sans);background:var(--cream);color:var(--text);min-heigh
   </div>
 </div>
 
+<div id="guideModal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.8);z-index:400;align-items:center;justify-content:center;">
+  <div style="background:var(--cream2);padding:20px;border:1px solid var(--gold);max-width:500px;width:90%;max-height:80vh;overflow-y:auto;">
+    <div style="font-family:var(--mono);font-size:14px;color:var(--gold);margin-bottom:15px;text-transform:uppercase;border-bottom:1px solid var(--border);padding-bottom:10px;">Hướng Dẫn Sử Dụng & Database</div>
+    <div style="font-family:var(--mono);font-size:11px;color:var(--text);margin-bottom:15px;line-height:1.6;">
+      <b style="color:var(--gold2)">1. Cập Nhật Nhanh Giá Vật Liệu:</b><br>
+      - Tại form chính, khi chọn một loại Gỗ/Ván lõi/Hoàn thiện, tên và giá sẽ tự động hiện ở ô nhập tay bên dưới.<br>
+      - Có thể sửa giá trực tiếp ở ô này và bấm <b>"Lưu DB"</b> để lưu đè và cập nhật vĩnh viễn vào Database mà không cần mở bảng Database (không hiện popup thông báo).<br><br>
+      <b style="color:var(--gold2)">2. Quản Lý Database Chuyên Sâu:</b><br>
+      - Bấm nút <b>"⚙️ Database"</b> trên menu.<br>
+      - Tại dòng vật liệu cần sửa, bấm <b>"Sửa"</b>, nhập giá mới và bấm <b>"Lưu"</b>. Dữ liệu sẽ lưu đè lên dữ liệu cũ và áp dụng ngay cho các lần sau.<br><br>
+      <b style="color:var(--gold2)">3. Phụ Kiện Bổ Sung & Giải Phóng Bộ Nhớ:</b><br>
+      - Thêm phụ kiện nhập tay ở mục "04 - Cấu kiện đặc thù".<br>
+      - Bấm nút <b>"↺" (Reload)</b> để tự động đồng bộ phụ kiện mới vào danh sách Database, đồng thời làm mới (giải phóng bộ nhớ đệm) form nhập liệu trên màn hình để tính sản phẩm khác mà Database đã lưu vẫn được giữ nguyên.
+    </div>
+    <button class="btn btn-gold" style="width:100%" onclick="closeGuide()">Đã Hiểu</button>
+  </div>
+</div>
+
 <script>
 // ══════════════════════════════════════════════════
 // DATABASE MANAGEMENT
@@ -579,6 +595,13 @@ function toggleDbManager() {
   }
 }
 
+function showGuide() {
+  document.getElementById('guideModal').style.display = 'flex';
+}
+function closeGuide() {
+  document.getElementById('guideModal').style.display = 'none';
+}
+
 function loadDatabase() {
   dbWood        = JSON.parse(localStorage.getItem('dbWood'))        || [];
   dbFinish      = JSON.parse(localStorage.getItem('dbFinish'))      || [];
@@ -593,7 +616,7 @@ function loadDatabase() {
 
 function saveDatabase() {
   saveDatabaseNoAlert();
-  alert('✅ Database đã lưu và đồng bộ!');
+  // Đã bỏ alert để lưu vĩnh viễn không hiện popup theo yêu cầu
 }
 
 function saveDatabaseNoAlert() {
@@ -605,17 +628,58 @@ function saveDatabaseNoAlert() {
   calculate();
 }
 
-// ─── THÊM THỦ CÔNG TỪ FORM CHÍNH ───
+// ─── ĐỒNG BỘ HIỂN THỊ DỮ LIỆU KHI CHỌN SELECT ───
+function syncWoodInput() {
+  const opt = getOpt('woodType');
+  if(opt) {
+    document.getElementById('man_wood_name').value = opt.text.split('—')[0].trim();
+    document.getElementById('man_wood_price').value = opt.dataset.price;
+  }
+  calculate();
+}
+
+function syncCoreInput() {
+  const opt = getOpt('coreBoard');
+  if(opt) {
+    document.getElementById('man_core_name').value = opt.text.split('—')[0].trim();
+    document.getElementById('man_core_price').value = opt.dataset.price;
+  }
+  calculate();
+}
+
+function syncFinishInput() {
+  const opt = getOpt('finish');
+  if(opt) {
+    document.getElementById('man_finish_name').value = opt.text.split('—')[0].trim();
+    document.getElementById('man_finish_price').value = opt.dataset.cost;
+  }
+  calculate();
+}
+
+// ─── THÊM / SỬA TRỰC TIẾP TỪ FORM CHÍNH ───
 function addManualWood() {
   const name = document.getElementById('man_wood_name').value.trim();
   const price = parseFloat(document.getElementById('man_wood_price').value) || 0;
   if(!name || price === 0) return;
-  const code = 'G-M-' + Date.now().toString().slice(-4);
-  dbWood.push({code, name, price, tlth: 1.54});
+  
+  const select = document.getElementById('woodType');
+  let existingByCode = dbWood.find(x => x.code === select.value);
+  
+  if (existingByCode && existingByCode.name === name) {
+      existingByCode.price = price; // Cập nhật trực tiếp giá
+  } else {
+      let existingByName = dbWood.find(x => x.name === name);
+      if(existingByName) {
+         existingByName.price = price;
+      } else {
+         const code = 'G-M-' + Date.now().toString().slice(-4);
+         dbWood.push({code, name, price, tlth: 1.54});
+      }
+  }
+  
   saveDatabaseNoAlert();
-  document.getElementById('woodType').value = code;
-  document.getElementById('man_wood_name').value = '';
-  document.getElementById('man_wood_price').value = '';
+  let updatedOpt = Array.from(document.getElementById('woodType').options).find(o => o.text.startsWith(name));
+  if(updatedOpt) document.getElementById('woodType').value = updatedOpt.value;
   calculate();
 }
 
@@ -623,12 +687,25 @@ function addManualCore() {
   const name = document.getElementById('man_core_name').value.trim();
   const price = parseFloat(document.getElementById('man_core_price').value) || 0;
   if(!name || price === 0) return;
-  const code = 'C-M-' + Date.now().toString().slice(-4);
-  dbCore.push({code, name, price, spec: ''});
+  
+  const select = document.getElementById('coreBoard');
+  let existingByCode = dbCore.find(c => c.code === select.value);
+  
+  if (existingByCode && existingByCode.name === name) {
+      existingByCode.price = price;
+  } else {
+      let existingByName = dbCore.find(c => c.name === name);
+      if(existingByName) {
+          existingByName.price = price;
+      } else {
+          const code = 'C-M-' + Date.now().toString().slice(-4);
+          dbCore.push({code, name, price, spec: ''});
+      }
+  }
+  
   saveDatabaseNoAlert();
-  document.getElementById('coreBoard').value = code;
-  document.getElementById('man_core_name').value = '';
-  document.getElementById('man_core_price').value = '';
+  let updatedOpt = Array.from(document.getElementById('coreBoard').options).find(o => o.text.startsWith(name));
+  if(updatedOpt) document.getElementById('coreBoard').value = updatedOpt.value;
   calculate();
 }
 
@@ -636,12 +713,24 @@ function addManualFinish() {
   const name = document.getElementById('man_finish_name').value.trim();
   const price = parseFloat(document.getElementById('man_finish_price').value) || 0;
   if(!name || price === 0) return;
-  dbFinish = dbFinish.filter(f => f.name !== name);
-  dbFinish.push({name, cost: price});
+  
+  const select = document.getElementById('finish');
+  let existingOld = dbFinish.find(f => f.name === select.value);
+  
+  if (existingOld && existingOld.name === name) {
+      existingOld.cost = price;
+  } else {
+      let existingByName = dbFinish.find(f => f.name === name);
+      if(existingByName) {
+          existingByName.cost = price;
+      } else {
+          dbFinish.push({name, cost: price});
+      }
+  }
+  
   saveDatabaseNoAlert();
-  document.getElementById('finish').value = name;
-  document.getElementById('man_finish_name').value = '';
-  document.getElementById('man_finish_price').value = '';
+  let updatedOpt = Array.from(document.getElementById('finish').options).find(o => o.text.startsWith(name));
+  if(updatedOpt) document.getElementById('finish').value = updatedOpt.value;
   calculate();
 }
 
@@ -922,6 +1011,12 @@ function updateWoodSelect() {
     select.appendChild(opt);
   });
   if(select.options.length > 0) select.value = current || select.options[0].value;
+  // Sync manual input form
+  const opt = select.options[select.selectedIndex];
+  if(opt) {
+    document.getElementById('man_wood_name').value = opt.text.split('—')[0].trim();
+    document.getElementById('man_wood_price').value = opt.dataset.price;
+  }
 }
 
 function updateCoreSelect() {
@@ -937,6 +1032,12 @@ function updateCoreSelect() {
     select.appendChild(opt);
   });
   if(select.options.length > 0) select.value = current || select.options[0].value;
+  // Sync manual input form
+  const opt = select.options[select.selectedIndex];
+  if(opt) {
+    document.getElementById('man_core_name').value = opt.text.split('—')[0].trim();
+    document.getElementById('man_core_price').value = opt.dataset.price;
+  }
 }
 
 function updateFinishSelect() {
@@ -951,6 +1052,12 @@ function updateFinishSelect() {
     select.appendChild(opt);
   });
   if(select.options.length > 0) select.value = current || select.options[0].value;
+  // Sync manual input form
+  const opt = select.options[select.selectedIndex];
+  if(opt) {
+    document.getElementById('man_finish_name').value = opt.text.split('—')[0].trim();
+    document.getElementById('man_finish_price').value = opt.dataset.cost;
+  }
 }
 
 // ─── EXPORT / IMPORT ───
@@ -1053,7 +1160,6 @@ function loadDefaultDatabase() {
   ];
   
   saveDatabaseNoAlert();
-  // alert('✅ Đã tải database mặc định!');
 }
 
 function exportExcelDatabase() {
@@ -1199,7 +1305,7 @@ const PRODUCT_TYPES = {
     }
   },
 
-  // ─── VANITY (MỚI) ───
+  // ─── VANITY ───
   vanity: {
     label:'🪞 Vanity Cabinet',
     defaultW:900, defaultH:860, defaultD:480,
@@ -1242,7 +1348,7 @@ const PRODUCT_TYPES = {
       const legCost      = (comps.c_leg||0)    * 25000;
       const visCost      = (comps.c_vis||0)    * 100;
 
-      // Mặt đá + chậu rửa (đọc từ input vanity)
+      // Mặt đá + chậu rửa
       const stonePrice = parseFloat(document.getElementById('vanity_stone_price')?.value||0) || 0;
       const sinkPrice  = parseFloat(document.getElementById('vanity_sink_price')?.value||0)  || 0;
       const sinkQty    = parseFloat(document.getElementById('vanity_sink_qty')?.value||1)     || 1;
@@ -1262,7 +1368,6 @@ const PRODUCT_TYPES = {
         {name:'Vis + ốc',           spec:'M4×30',       qty:comps.c_vis||0,   unit:'con', price:100,    tlth:1.0, total:visCost},
       ];
 
-      // Thêm mặt đá, chậu, khoan
       if(stoneCost > 0) items.push({name:'Mặt đá countertop',   spec:`${W}×${D}mm`, qty:1, unit:'tấm', price:stoneCost,   tlth:1.0, total:stoneCost});
       if(sinkCost  > 0) items.push({name:'Chậu rửa (sink)',     spec:`${sinkQty} chậu`,  qty:sinkQty, unit:'cái', price:sinkPrice,   tlth:1.0, total:sinkCost});
       if(holeDrillCost>0) items.push({name:'Khoan lỗ vòi nước', spec:`${holeQty} lỗ × 15k`, qty:holeQty, unit:'lỗ', price:15000, tlth:1.0, total:holeDrillCost});
@@ -1488,10 +1593,8 @@ function setType(type) {
   document.getElementById('size-hint').textContent = def.sizeHint;
   document.getElementById('fg-core').style.display = def.hasCore ? '' : 'none';
 
-  // Hiện/ẩn vanity section
   document.getElementById('vanity-section').style.display = (type === 'vanity') ? '' : 'none';
 
-  // Reset custom accs when switching type
   customAccList = [];
   renderCustomAccList();
 
@@ -1521,7 +1624,7 @@ function calculate() {
   const shippingCost     = getVal('shippingCost');
   const profitPct        = getVal('profitMargin') / 100;
   const inflationPct     = getVal('inflationBuffer') / 100;
-  const commissionPct    = getVal('commission') / 100;
+  // const commissionPct    = getVal('commission') / 100; // Xoá bỏ tỉ lệ hoa hồng
   const manualLaborRate  = getVal('laborRateInput');
   const manualTotalSmv   = getVal('totalSmvInput');
 
@@ -1552,7 +1655,6 @@ function calculate() {
 
   bomItems = bomItems.filter(b => b.total > 0);
 
-  // Phụ kiện nhập tay → thêm vào BOM
   customAccList.forEach(a => {
     if(a.name && a.price > 0) {
       bomItems.splice(bomItems.length - 1, 0, {
@@ -1570,12 +1672,12 @@ function calculate() {
 
   const overheadPct          = fixedOverheadPct / 100;
   const adjustedCogsBeforeOH = (totalNVL*(1+inflationPct)) + totalLabor + testCost + shippingCost;
-  const fobBeforeOH          = adjustedCogsBeforeOH * (1+profitPct) / (1-commissionPct);
+  const fobBeforeOH          = adjustedCogsBeforeOH * (1+profitPct); // đã xoá bỏ (1-commissionPct)
   const fixedCostTotal       = fobBeforeOH * overheadPct;
 
   const totalCOGS    = totalNVL + totalLabor + fixedCostTotal + testCost + shippingCost;
   const adjustedCOGS = adjustedCogsBeforeOH + fixedCostTotal;
-  const quoteVND     = adjustedCOGS * (1+profitPct) / (1-commissionPct);
+  const quoteVND     = adjustedCOGS * (1+profitPct); // đã xoá bỏ (1-commissionPct)
   const fobRaw       = quoteVND / exRate;
   const fobFinal     = ceil1(fobRaw);
   const profitVND    = quoteVND - totalCOGS;
@@ -1634,7 +1736,7 @@ function calculate() {
     sensHTML += `<tr><td class="rl">${lbl}</td>`;
     margins.forEach(m => {
       const adj = (totalNVL*(1+nc)*(1+inflationPct)) + totalLabor + fixedCostTotal + testCost + shippingCost;
-      const fob = ceil1(adj*(1+m)/(1-commissionPct)/exRate);
+      const fob = ceil1(adj*(1+m)/exRate); // đã xoá bỏ (1-commissionPct)
       const isCur = Math.abs(nc)<.001 && Math.abs(m-profitPct)<.001;
       const cls  = isCur ? 'cur' : nc<0 ? 'lo' : nc>0 ? 'hi2' : '';
       sensHTML += `<td class="${cls}">$${fob.toFixed(2)}</td>`;
@@ -1707,14 +1809,11 @@ function reloadAndSync() {
   });
   if(updated) {
     localStorage.setItem('dbAccessories', JSON.stringify(dbAccessories));
-    renderAccList();
   }
   
-  const def = PRODUCT_TYPES[currentType];
-  renderComponents(def.components);
-  customAccList = [];
-  renderCustomAccList();
-  calculate();
+  // Tải lại bộ nhớ trang để giải phóng bộ nhớ đệm. 
+  // Database vẫn được giữ nguyên do đã lưu LocalStorage
+  window.location.reload();
 }
 
 // ── INIT ──
