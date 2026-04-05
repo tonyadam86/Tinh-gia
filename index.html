@@ -2,8 +2,8 @@
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tính Giá Nội Thất Xuất Khẩu</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<title>Tính Giá Nội Thất Xuất Khẩu - Chuẩn tài chính | Cập nhật thị trường real-time</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
@@ -33,7 +33,7 @@ body{font-family:var(--sans);background:var(--cream);color:var(--text);min-heigh
 .db-toggle:hover{background:var(--navy3)}
 
 /* ── Database Manager Modal ── */
-#dbManager{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.8);z-index:300;overflow-y:auto}
+#dbManager{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.9);z-index:300;overflow-y:auto}
 .db-content{background:var(--cream);margin:20px auto;max-width:960px;border:2px solid var(--navy);max-height:90vh;overflow-y:auto}
 .db-header{background:var(--navy);color:var(--gold);padding:14px 16px;display:flex;justify-content:space-between;align-items:center;font-family:var(--mono);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em}
 .db-close{cursor:pointer;font-size:18px;color:var(--gold);background:none;border:none;padding:0;width:20px;height:20px;display:flex;align-items:center;justify-content:center}
@@ -62,7 +62,7 @@ body{font-family:var(--sans);background:var(--cream);color:var(--text);min-heigh
 .type-btn .ti{font-size:15px}
 .type-btn.active{color:var(--gold);border-bottom-color:var(--gold);background:rgba(200,168,75,.07)}
 
-/* ── Tab bar ── */
+/* ── Tab bar (mobile) ── */
 .tab-bar{background:var(--navy3);display:flex;overflow-x:auto;scrollbar-width:none;position:sticky;top:calc(var(--hh) + 44px);z-index:140}
 .tab-bar::-webkit-scrollbar{display:none}
 .tab-btn{flex:1;min-width:60px;height:var(--th);background:none;border:none;color:rgba(255,255,255,.4);font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.07em;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;border-bottom:2px solid transparent;margin-bottom:-2px;padding:0 4px;transition:all .2s}
@@ -94,7 +94,7 @@ body{font-family:var(--sans);background:var(--cream);color:var(--text);min-heigh
 .btn-group{display:flex;gap:8px;margin-top:14px}
 .btn-group .btn{flex:1}
 
-/* ── Dynamic component section ── */
+/* ── Dynamic component section (Cấu kiện đặc thù) ── */
 #comp-section{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);padding:14px;margin-top:4px}
 .comp-row{display:grid;grid-template-columns:1fr 80px;gap:8px;margin-bottom:8px;align-items:center}
 .comp-row:last-child{margin-bottom:0}
@@ -181,7 +181,7 @@ body{font-family:var(--sans);background:var(--cream);color:var(--text);min-heigh
 .qfob-lbl{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--gold)}
 .qfob-val{font-family:var(--mono);font-size:26px;font-weight:700;color:var(--gold2)}
 
-/* ── Floating bar ── */
+/* ── Floating bar (mobile) ── */
 .fsticky{position:fixed;bottom:0;left:0;right:0;background:var(--navy);border-top:2px solid var(--gold);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;z-index:300;box-shadow:0 -4px 20px rgba(0,0,0,.3)}
 .fsticky .fl{font-family:var(--mono);font-size:9px;color:var(--gold);text-transform:uppercase;letter-spacing:.1em}
 .fsticky .fv{font-family:var(--mono);font-size:22px;font-weight:700;color:var(--gold2)}
@@ -219,7 +219,6 @@ body{font-family:var(--sans);background:var(--cream);color:var(--text);min-heigh
 .manual-input-row button { background:rgba(200,168,75,.15); color:var(--gold); border:1px dashed rgba(200,168,75,.4); padding:0 12px; font-size:9px; cursor:pointer; font-family:var(--mono); text-transform:uppercase; transition:0.2s; }
 .manual-input-row button:hover { background:rgba(200,168,75,.25); }
 
-/* Toast Notification CSS */
 #toast { visibility: hidden; min-width: 280px; background-color: var(--green); color: #fff; text-align: center; border-radius: 4px; padding: 12px; position: fixed; z-index: 1000; left: 50%; bottom: 30px; font-size: 11px; transform: translateX(-50%); font-family: var(--mono); text-transform: uppercase; letter-spacing: 0.05em; font-weight: bold;}
 #toast.show { visibility: visible; -webkit-animation: fadein 0.4s, fadeout 0.4s 2.6s; animation: fadein 0.4s, fadeout 0.4s 2.6s; }
 @-webkit-keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;} }
@@ -227,7 +226,6 @@ body{font-family:var(--sans);background:var(--cream);color:var(--text);min-heigh
 @-webkit-keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }
 @keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }
 </style>
-
 </head>
 <body>
 
@@ -236,7 +234,7 @@ body{font-family:var(--sans);background:var(--cream);color:var(--text);min-heigh
 <div class="header">
   <div>
     <h1>TÍNH GIÁ NỘI THẤT XUẤT KHẨU</h1>
-    <p>FOB HCMC · Cấu kiện thực tế theo từng loại sản phẩm</p>
+    <p>FOB HCMC · Chuẩn tài chính | Cập nhật thị trường real-time</p>
   </div>
   <div class="hbtns">
     <button class="btn btn-outline" onclick="toggleDbManager()" style="margin-right:8px;">⚙️ Database</button>
@@ -257,14 +255,15 @@ body{font-family:var(--sans);background:var(--cream);color:var(--text);min-heigh
   <div class="db-section">
     <div class="db-section-title">🌳 Gỗ Nguyên Liệu (m³) — Sửa trực tiếp để cập nhật giá</div>
     <table class="db-table">
-      <thead><tr><th>Mã</th><th>Tên Gỗ</th><th>Giá (VND/m³)</th><th>TLTH</th><th>Hành động</th></tr></thead>
+      <thead><tr><th>Mã</th><th>Tên Gỗ</th><th>Giá (VND/m³)</th><th>TLTH</th><th>Độ dày (mm)</th><th>Hành động</th></tr></thead>
       <tbody id="woodList"></tbody>
     </table>
-    <div style="margin-top:10px;display:grid;grid-template-columns:1fr 1fr 1fr 1fr auto;gap:8px">
+    <div style="margin-top:10px;display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr auto;gap:8px">
       <input class="db-input" id="wood_code" placeholder="Mã (VD: G-PO-32)">
       <input class="db-input" id="wood_name" placeholder="Tên gỗ">
       <input class="db-input" id="wood_price" type="number" placeholder="Giá (VND/m³)">
       <input class="db-input" id="wood_tlth" type="number" step="0.01" placeholder="TLTH" value="1.54">
+      <input class="db-input" id="wood_thick" type="number" step="1" placeholder="Độ dày mm" value="32">
       <button class="db-btn-add" onclick="addWood()">Thêm</button>
     </div>
   </div>
@@ -323,7 +322,6 @@ body{font-family:var(--sans);background:var(--cream);color:var(--text);min-heigh
     <button onclick="toggleDbManager()">✓ Đóng</button>
   </div>
 </div>
-
   </div>
 </div>
 
@@ -458,11 +456,16 @@ body{font-family:var(--sans);background:var(--cream);color:var(--text);min-heigh
     <div class="fg"><label>% LN (Mục tiêu)</label><input type="number" id="profitMargin" value="15" min="0" max="60" oninput="calculate()"></div>
     <div class="fg"><label>% Trượt (NVL)</label><input type="number" id="inflationBuffer" value="3" min="0" max="20" oninput="calculate()"></div>
   </div>
+  <div class="row2">
+    <div class="fg"><label>Chi phí bao bì (VND/SP)</label><input type="number" id="packagingCost" value="0" placeholder="0 = tự động 500k/m³" oninput="calculate()"><div class="hint">Để 0 để dùng công thức m³ × 500.000đ</div></div>
+    <div class="fg"><label>Hệ số bao bì (đ/m³)</label><input type="number" id="packagingRate" value="500000" oninput="calculate()"></div>
+  </div>
 
   <div class="btn-group">
     <button class="btn btn-gold" style="flex:2" onclick="calculate()">▶ TÍNH GIÁ</button>
-    <button class="btn btn-outline" style="flex:1" onclick="updateMarketData()">⚡ UPDATE TỈ GIÁ</button>
+    <button class="btn btn-outline" style="flex:1" onclick="fetchExchangeRate()">🌐 UPDATE TỈ GIÁ</button>
     <button class="btn btn-outline" style="flex:1" onclick="syncAndRefresh()">💾 ĐỒNG BỘ PK</button>
+    <button class="btn btn-outline" style="flex:1" onclick="resetToDefault()">⟳ RESET</button>
   </div>
 </div>
 
@@ -516,7 +519,7 @@ body{font-family:var(--sans);background:var(--cream);color:var(--text);min-heigh
       <div class="qrow"><span class="ql">Thanh toán</span><span class="qv">30% ĐC · 70% trước giao hàng</span></div>
       <div class="qrow"><span class="ql">Hiệu lực</span><span class="qv">30 ngày kể từ ngày báo giá</span></div>
       <div class="qfob">
-        <div><div class="qfob-lbl">Đơn giá FOB</div><div style="font-size:9px;color:rgba(255,255,255,.35);font-family:var(--mono);margin-top:2px">Incl. LN + trượt giá</div></div>
+        <div><div class="qfob-lbl">Đơn giá FOB</div><div style="font-size:9px;color:rgba(255,255,255,.35);font-family:var(--mono);margin-top:2px">Incl. LN + định phí QLC</div></div>
         <div class="qfob-val" id="q_fob">USD —</div>
       </div>
     </div>
@@ -531,20 +534,36 @@ body{font-family:var(--sans);background:var(--cream);color:var(--text);min-heigh
 </div>
 
 <div id="marketModal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.8);z-index:400;align-items:center;justify-content:center;">
-  <div style="background:var(--cream2);padding:20px;border:1px solid var(--gold);max-width:400px;width:90%;">
-    <div style="font-family:var(--mono);font-size:14px;color:var(--gold);margin-bottom:15px;text-transform:uppercase;border-bottom:1px solid var(--border);padding-bottom:10px;">Cập Nhật Thị Trường (Thời gian thực)</div>
+  <div style="background:var(--cream2);padding:20px;border:1px solid var(--gold);max-width:500px;width:90%;max-height:80vh;overflow-y:auto;">
+    <div style="font-family:var(--mono);font-size:14px;color:var(--gold);margin-bottom:15px;text-transform:uppercase;border-bottom:1px solid var(--border);padding-bottom:10px;">📈 Cập Nhật Thị Trường (Real-time)</div>
     <div style="font-family:var(--mono);font-size:11px;color:var(--text);margin-bottom:15px;line-height:1.5;">
-      <b style="color:var(--gold2)">Tỉ giá USD/VND hiện tại:</b> 26,340 VND<br><br>
-      <b style="color:var(--gold2)">Bảng giá gỗ tham khảo mới nhất (VNĐ/m³):</b>
+      <b style="color:var(--gold2)">Tỉ giá USD/VND hiện tại:</b> <span id="liveExchangeRate">—</span> VND<br>
+      <button class="btn btn-outline" style="margin-top:5px;margin-bottom:15px;padding:5px 10px;font-size:9px;" onclick="fetchExchangeRateAndShow()">🔄 Lấy tỷ giá mới nhất</button>
+    </div>
+    <div style="margin-bottom:15px;">
+      <b style="color:var(--gold2)">✏️ Cập nhật giá gỗ tham khảo:</b>
       <table style="width:100%;margin-top:10px;border-collapse:collapse;font-size:11px;">
         <tr style="background:var(--navy3);color:var(--gold);">
           <th style="padding:8px;text-align:left;border:1px solid var(--border)">Loại Gỗ</th>
-          <th style="padding:8px;text-align:right;border:1px solid var(--border)">Giá Tham Khảo</th>
+          <th style="padding:8px;text-align:right;border:1px solid var(--border)">Giá mới (VND/m³)</th>
+          <th style="width:60px"></th>
         </tr>
-        <tr><td style="padding:8px;border:1px solid var(--border)">Tràm (Acacia)</td><td style="padding:8px;text-align:right;border:1px solid var(--border)">4,500,000</td></tr>
-        <tr><td style="padding:8px;border:1px solid var(--border)">Cao su (Rubber)</td><td style="padding:8px;text-align:right;border:1px solid var(--border)">5,200,000</td></tr>
-        <tr><td style="padding:8px;border:1px solid var(--border)">Tần bì (Ash)</td><td style="padding:8px;text-align:right;border:1px solid var(--border)">15,000,000</td></tr>
-        <tr><td style="padding:8px;border:1px solid var(--border)">Sồi (Oak)</td><td style="padding:8px;text-align:right;border:1px solid var(--border)">17,500,000</td></tr>
+        <tr><td style="padding:8px;border:1px solid var(--border)">Tràm (Acacia)</td>
+          <td style="padding:8px;"><input type="number" id="market_acacia" class="db-input" style="background:#333;padding:4px;" placeholder="4500000"></td>
+          <td><button onclick="updateWoodPrice('Gỗ Tràm VN', document.getElementById('market_acacia').value)" class="db-btn-edit">Cập nhật</button></td>
+        </tr>
+        <tr><td style="padding:8px;border:1px solid var(--border)">Cao su (Rubber)</td>
+          <td style="padding:8px;"><input type="number" id="market_rubber" class="db-input" style="background:#333;padding:4px;" placeholder="5200000"></td>
+          <td><button onclick="updateWoodPrice('Gỗ Cao su VN', document.getElementById('market_rubber').value)" class="db-btn-edit">Cập nhật</button></td>
+        </tr>
+        <tr><td style="padding:8px;border:1px solid var(--border)">Tần bì (Ash)</td>
+          <td style="padding:8px;"><input type="number" id="market_ash" class="db-input" style="background:#333;padding:4px;" placeholder="16500000"></td>
+          <td><button onclick="updateWoodPrice('Gỗ Tần Bì (Ash) 1C', document.getElementById('market_ash').value)" class="db-btn-edit">Cập nhật</button></td>
+        </tr>
+        <tr><td style="padding:8px;border:1px solid var(--border)">Sồi (Oak)</td>
+          <td style="padding:8px;"><input type="number" id="market_oak" class="db-input" style="background:#333;padding:4px;" placeholder="30355000"></td>
+          <td><button onclick="updateWoodPrice('Gỗ W.Oak Mỹ 1C', document.getElementById('market_oak').value)" class="db-btn-edit">Cập nhật</button></td>
+        </tr>
       </table>
     </div>
     <button class="btn btn-gold" style="width:100%" onclick="closeMarketModal()">Đóng & Áp Dụng</button>
@@ -553,16 +572,19 @@ body{font-family:var(--sans);background:var(--cream);color:var(--text);min-heigh
 
 <div id="guideModal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.8);z-index:400;align-items:center;justify-content:center;">
   <div style="background:var(--cream2);padding:20px;border:1px solid var(--gold);max-width:500px;width:90%;max-height:80vh;overflow-y:auto;">
-    <div style="font-family:var(--mono);font-size:14px;color:var(--gold);margin-bottom:15px;text-transform:uppercase;border-bottom:1px solid var(--border);padding-bottom:10px;">Hướng Dẫn Sử Dụng & Database</div>
+    <div style="font-family:var(--mono);font-size:14px;color:var(--gold);margin-bottom:15px;text-transform:uppercase;border-bottom:1px solid var(--border);padding-bottom:10px;">Hướng Dẫn Sử Dụng & Cập Nhật</div>
     <div style="font-family:var(--mono);font-size:11px;color:var(--text);margin-bottom:15px;line-height:1.6;">
-      <b style="color:var(--gold2)">1. Cập Nhật Nhanh & Tự Động Lưu (Auto-Save):</b><br>
-      - Hệ thống tự động ghi nhớ toàn bộ thông số bạn nhập ngay cả khi vô tình F5/reload trình duyệt.<br>
-      - Có thể sửa giá vật liệu trực tiếp ở ô nhập tay bên dưới các dropdown và bấm <b>"Lưu DB"</b>.<br><br>
-      <b style="color:var(--gold2)">2. Quản Lý Database Chuyên Sâu:</b><br>
-      - Bấm nút <b>"⚙️ Database"</b> trên menu.<br>
-      - Tại dòng vật liệu cần sửa, bấm <b>"Sửa"</b>, nhập giá mới và bấm <b>"Lưu"</b>.<br><br>
-      <b style="color:var(--gold2)">3. Phụ Kiện Bổ Tuyến:</b><br>
-      - Nhập tay tại phần "04 - Cấu kiện đặc thù" và bấm nút <b>"💾 ĐỒNG BỘ PK"</b> để lưu vĩnh viễn tên phụ kiện mới vào hệ thống chung mà không làm mất trạng thái form hiện tại.
+      <b style="color:var(--gold2)">🔥 Tính năng mới:</b><br>
+      - Tự động cập nhật tỷ giá USD/VND từ Internet (bấm "UPDATE TỈ GIÁ").<br>
+      - Cập nhật giá gỗ thị trường trực tiếp trong modal (biểu tượng đồng hồ).<br>
+      - Chi phí bao bì linh hoạt: nhập tay hoặc theo m³.<br>
+      - Giá phụ kiện (bản lề, ray trượt...) được lấy từ Database, có thể sửa trong mục "Cấu Kiện Phụ Kiện".<br><br>
+      <b style="color:var(--gold2)">Cách dùng:</b><br>
+      1. Chọn loại sản phẩm.<br>
+      2. Nhập kích thước, vật liệu, số lượng cấu kiện.<br>
+      3. Bấm "TÍNH GIÁ" hoặc thay đổi thông số để tự động tính.<br>
+      4. Xem bảng BOM, độ nhạy, và báo giá.<br>
+      5. Quản lý database qua nút ⚙️ Database.
     </div>
     <button class="btn btn-gold" style="width:100%" onclick="closeGuide()">Đã Hiểu</button>
   </div>
@@ -599,14 +621,16 @@ function toggleDbManager() {
 
 function showGuide() { document.getElementById('guideModal').style.display = 'flex'; }
 function closeGuide() { document.getElementById('guideModal').style.display = 'none'; }
+function closeMarketModal() { document.getElementById('marketModal').style.display = 'none'; }
+function openMarketModal() { document.getElementById('marketModal').style.display = 'flex'; }
 
 function loadDatabase() {
   dbWood        = JSON.parse(localStorage.getItem('dbWood'))        || [];
   dbFinish      = JSON.parse(localStorage.getItem('dbFinish'))      || [];
   dbAccessories = JSON.parse(localStorage.getItem('dbAccessories')) || [];
   dbCore        = JSON.parse(localStorage.getItem('dbCore'))        || [];
-  
   renderWoodList(); renderCoreList(); renderFinishList(); renderAccList();
+  updateAllSelects();
 }
 
 function saveDatabaseNoAlert() {
@@ -626,7 +650,6 @@ function syncWoodInput() {
   }
   calculate();
 }
-
 function syncCoreInput() {
   const opt = getOpt('coreBoard');
   if(opt) {
@@ -635,7 +658,6 @@ function syncCoreInput() {
   }
   calculate();
 }
-
 function syncFinishInput() {
   const opt = getOpt('finish');
   if(opt) {
@@ -649,23 +671,16 @@ function addManualWood() {
   const name = document.getElementById('man_wood_name').value.trim();
   const price = parseFloat(document.getElementById('man_wood_price').value) || 0;
   if(!name || price === 0) return;
-  
   const select = document.getElementById('woodType');
   const opt = select.options[select.selectedIndex];
-  const tlth_val = opt ? parseFloat(opt.dataset.tlth) : 1.54; 
-
+  const tlth_val = opt ? parseFloat(opt.dataset.tlth) : 1.54;
+  const thick_val = opt ? parseFloat(opt.dataset.thick) : 32;
   let existingByCode = dbWood.find(x => x.code === select.value);
-  
-  if (existingByCode && existingByCode.name === name) {
-      existingByCode.price = price;
-  } else {
-      let existingByName = dbWood.find(x => x.name === name);
-      if(existingByName) {
-         existingByName.price = price;
-      } else {
-         const code = 'G-M-' + Date.now().toString().slice(-4);
-         dbWood.push({code, name, price, tlth: tlth_val});
-      }
+  if (existingByCode && existingByCode.name === name) { existingByCode.price = price; existingByCode.tlth = tlth_val; existingByCode.thick = thick_val; }
+  else {
+    let existingByName = dbWood.find(x => x.name === name);
+    if(existingByName) { existingByName.price = price; existingByName.tlth = tlth_val; existingByName.thick = thick_val; }
+    else { const code = 'G-M-' + Date.now().toString().slice(-4); dbWood.push({code, name, price, tlth: tlth_val, thick: thick_val}); }
   }
   saveDatabaseNoAlert();
   let updatedOpt = Array.from(document.getElementById('woodType').options).find(o => o.text.startsWith(name));
@@ -673,24 +688,17 @@ function addManualWood() {
   showToast('Đã lưu dữ liệu Gỗ vào hệ thống!');
   calculate();
 }
-
 function addManualCore() {
   const name = document.getElementById('man_core_name').value.trim();
   const price = parseFloat(document.getElementById('man_core_price').value) || 0;
   if(!name || price === 0) return;
-  
   const select = document.getElementById('coreBoard');
   let existingByCode = dbCore.find(c => c.code === select.value);
-  
-  if (existingByCode && existingByCode.name === name) {
-      existingByCode.price = price;
-  } else {
-      let existingByName = dbCore.find(c => c.name === name);
-      if(existingByName) { existingByName.price = price; } 
-      else {
-          const code = 'C-M-' + Date.now().toString().slice(-4);
-          dbCore.push({code, name, price, spec: ''});
-      }
+  if (existingByCode && existingByCode.name === name) existingByCode.price = price;
+  else {
+    let existingByName = dbCore.find(c => c.name === name);
+    if(existingByName) existingByName.price = price;
+    else { const code = 'C-M-' + Date.now().toString().slice(-4); dbCore.push({code, name, price, spec: ''}); }
   }
   saveDatabaseNoAlert();
   let updatedOpt = Array.from(document.getElementById('coreBoard').options).find(o => o.text.startsWith(name));
@@ -698,21 +706,17 @@ function addManualCore() {
   showToast('Đã lưu dữ liệu Ván vào hệ thống!');
   calculate();
 }
-
 function addManualFinish() {
   const name = document.getElementById('man_finish_name').value.trim();
   const price = parseFloat(document.getElementById('man_finish_price').value) || 0;
   if(!name || price === 0) return;
-  
   const select = document.getElementById('finish');
   let existingOld = dbFinish.find(f => f.name === select.value);
-  
-  if (existingOld && existingOld.name === name) {
-      existingOld.cost = price;
-  } else {
-      let existingByName = dbFinish.find(f => f.name === name);
-      if(existingByName) { existingByName.cost = price; } 
-      else { dbFinish.push({name, cost: price}); }
+  if (existingOld && existingOld.name === name) existingOld.cost = price;
+  else {
+    let existingByName = dbFinish.find(f => f.name === name);
+    if(existingByName) existingByName.cost = price;
+    else { dbFinish.push({name, cost: price}); }
   }
   saveDatabaseNoAlert();
   let updatedOpt = Array.from(document.getElementById('finish').options).find(o => o.text.startsWith(name));
@@ -727,11 +731,12 @@ function addWood() {
   const name = document.getElementById('wood_name').value.trim();
   const price = parseFloat(document.getElementById('wood_price').value);
   const tlth = parseFloat(document.getElementById('wood_tlth').value) || 1.54;
+  const thick = parseInt(document.getElementById('wood_thick').value) || 32;
   if(!code || !name || isNaN(price)) { showToast('Vui lòng điền đủ mã, tên và giá'); return; }
   if(dbWood.find(w => w.code === code)) { showToast('Mã đã tồn tại'); return; }
-  dbWood.push({code, name, price, tlth});
+  dbWood.push({code, name, price, tlth, thick});
   saveDatabaseNoAlert(); renderWoodList(); showToast('Thêm gỗ thành công');
-  document.getElementById('wood_code').value=''; document.getElementById('wood_name').value=''; document.getElementById('wood_price').value='';
+  document.getElementById('wood_code').value=''; document.getElementById('wood_name').value=''; document.getElementById('wood_price').value=''; document.getElementById('wood_tlth').value='1.54'; document.getElementById('wood_thick').value='32';
 }
 function editWood(code) {
   const item = dbWood.find(w => w.code === code);
@@ -739,9 +744,11 @@ function editWood(code) {
   const newName = prompt('Tên Gỗ mới:', item.name); if(newName === null) return;
   const newPrice = prompt('Giá mới:', item.price); if(newPrice === null) return;
   const newTlth = prompt('TLTH mới:', item.tlth); if(newTlth === null) return;
+  const newThick = prompt('Độ dày mới (mm):', item.thick); if(newThick === null) return;
   item.name = newName || item.name;
   item.price = parseFloat(newPrice) || item.price;
   item.tlth = parseFloat(newTlth) || item.tlth;
+  item.thick = parseInt(newThick) || 32;
   saveDatabaseNoAlert(); renderWoodList(); showToast('Đã cập nhật gỗ');
 }
 function removeWood(code) {
@@ -749,7 +756,6 @@ function removeWood(code) {
   dbWood = dbWood.filter(w => w.code !== code);
   saveDatabaseNoAlert(); renderWoodList(); showToast('Đã xóa gỗ');
 }
-
 function addCore() {
   const code = document.getElementById('core_code').value.trim();
   const name = document.getElementById('core_name').value.trim();
@@ -777,7 +783,6 @@ function removeCore(code) {
   dbCore = dbCore.filter(c => c.code !== code);
   saveDatabaseNoAlert(); renderCoreList(); showToast('Đã xóa ván');
 }
-
 function addFinish() {
   const name = document.getElementById('finish_name').value.trim();
   const cost = parseFloat(document.getElementById('finish_cost').value);
@@ -799,7 +804,6 @@ function removeFinish(name) {
   dbFinish = dbFinish.filter(f => f.name !== name);
   saveDatabaseNoAlert(); renderFinishList(); showToast('Đã xóa hoàn thiện');
 }
-
 function addAccessory() {
   const name = document.getElementById('acc_name').value.trim();
   const price = parseFloat(document.getElementById('acc_price').value);
@@ -829,25 +833,28 @@ function clearDatabase() {
   dbWood = []; dbCore = []; dbFinish = []; dbAccessories = [];
   saveDatabaseNoAlert(); loadDatabase(); showToast('Đã xóa tất cả Database');
 }
+function updateWoodPrice(woodName, newPrice) {
+  const priceNum = parseFloat(newPrice);
+  if(isNaN(priceNum) || priceNum <=0) { showToast('Giá không hợp lệ'); return; }
+  const wood = dbWood.find(w => w.name === woodName);
+  if(wood) { wood.price = priceNum; saveDatabaseNoAlert(); showToast(`Đã cập nhật ${woodName} giá ${fmt(priceNum)}đ/m³`); }
+  else showToast('Không tìm thấy loại gỗ trong database');
+}
 
 // ── EXPORT / IMPORT CSV & EXCEL ──
 function exportDatabase() {
-  let csv = "Type,Code,Name,Price,Spec_or_TLTH_or_Type\n";
-  dbWood.forEach(w => csv += `Wood,${w.code},${w.name},${w.price},${w.tlth}\n`);
-  dbCore.forEach(c => csv += `Core,${c.code},${c.name},${c.price},${c.spec||''}\n`);
-  dbFinish.forEach(f => csv += `Finish,,${f.name},${f.cost},\n`);
-  dbAccessories.forEach(a => csv += `Accessory,,${a.name},${a.price},${a.type||''}\n`);
-  
+  let csv = "Type,Code,Name,Price,Spec_or_TLTH_or_Type,Thick\n";
+  dbWood.forEach(w => csv += `Wood,${w.code},${w.name},${w.price},${w.tlth},${w.thick}\n`);
+  dbCore.forEach(c => csv += `Core,${c.code},${c.name},${c.price},${c.spec||''},\n`);
+  dbFinish.forEach(f => csv += `Finish,,${f.name},${f.cost},,\n`);
+  dbAccessories.forEach(a => csv += `Accessory,,${a.name},${a.price},${a.type||''},\n`);
   const blob = new Blob([new Uint8Array([0xEF, 0xBB, 0xBF]), csv], {type: "text/csv;charset=utf-8;"});
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
-  a.href = url;
-  a.download = "Furniture_DB.csv";
-  a.click();
+  a.href = url; a.download = "Furniture_DB.csv"; a.click();
   URL.revokeObjectURL(url);
   showToast('Đã xuất Database ra file CSV');
 }
-
 function importCSV(event) {
   const file = event.target.files[0];
   if(!file) return;
@@ -859,7 +866,7 @@ function importCSV(event) {
           const parts = lines[i].split(',');
           if(parts.length < 4) continue;
           const type = parts[0];
-          if(type === 'Wood') w.push({code:parts[1], name:parts[2], price:parseFloat(parts[3]), tlth:parseFloat(parts[4])||1.54});
+          if(type === 'Wood') w.push({code:parts[1], name:parts[2], price:parseFloat(parts[3]), tlth:parseFloat(parts[4])||1.54, thick:parseInt(parts[5])||32});
           else if(type === 'Core') c.push({code:parts[1], name:parts[2], price:parseFloat(parts[3]), spec:parts[4]||''});
           else if(type === 'Finish') f.push({name:parts[2], cost:parseFloat(parts[3])});
           else if(type === 'Accessory') a.push({name:parts[2], price:parseFloat(parts[3]), type:parts[4]||''});
@@ -873,7 +880,6 @@ function importCSV(event) {
   };
   reader.readAsText(file);
 }
-
 function exportExcelDatabase() {
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(dbWood), "Wood");
@@ -883,7 +889,6 @@ function exportExcelDatabase() {
   XLSX.writeFile(wb, "Furniture_DB.xlsx");
   showToast('Đã xuất Database ra Excel');
 }
-
 function importExcel(event) {
   const file = event.target.files[0];
   if(!file) return;
@@ -896,87 +901,93 @@ function importExcel(event) {
       if(workbook.Sheets["Core"]) dbCore = XLSX.utils.sheet_to_json(workbook.Sheets["Core"]);
       if(workbook.Sheets["Finish"]) dbFinish = XLSX.utils.sheet_to_json(workbook.Sheets["Finish"]);
       if(workbook.Sheets["Accessories"]) dbAccessories = XLSX.utils.sheet_to_json(workbook.Sheets["Accessories"]);
-      saveDatabaseNoAlert();
-      loadDatabase();
+      saveDatabaseNoAlert(); loadDatabase();
       showToast('Import Excel thành công');
     } catch (err) {
       showToast('Lỗi đọc file Excel');
-      console.error(err);
     }
   };
   reader.readAsArrayBuffer(file);
 }
 
-
 // RENDER LISTS
 function renderWoodList() {
   const tbody = document.getElementById('woodList');
-  tbody.innerHTML = dbWood.map(w => `
-    <tr id="wood-row-${w.code}">
-      <td>${w.code}</td><td>${w.name}</td><td><b>${fmt(w.price)}</b></td><td>${w.tlth.toFixed(2)}</td>
-      <td><button class="db-btn-edit" onclick="editWood('${w.code}')">Sửa</button><button class="db-btn-del" onclick="removeWood('${w.code}')">Xóa</button></td>
-    </tr>`).join('');
+  tbody.innerHTML = dbWood.map(w => `<tr><td>${w.code}</td><td>${w.name}</td><td><b>${fmt(w.price)}</b></td><td>${w.tlth.toFixed(2)}</td><td>${w.thick||32}</td><td><button class="db-btn-edit" onclick="editWood('${w.code}')">Sửa</button><button class="db-btn-del" onclick="removeWood('${w.code}')">Xóa</button></td></tr>`).join('');
 }
 function renderCoreList() {
   const tbody = document.getElementById('coreList');
-  tbody.innerHTML = dbCore.map(c => `
-    <tr id="core-row-${c.code}">
-      <td>${c.code}</td><td>${c.name}</td><td><b>${fmt(c.price)}</b></td><td>${c.spec||''}</td>
-      <td><button class="db-btn-edit" onclick="editCore('${c.code}')">Sửa</button><button class="db-btn-del" onclick="removeCore('${c.code}')">Xóa</button></td>
-    </tr>`).join('');
+  tbody.innerHTML = dbCore.map(c => `<tr><td>${c.code}</td><td>${c.name}</td><td><b>${fmt(c.price)}</b></td><td>${c.spec||''}</td><td><button class="db-btn-edit" onclick="editCore('${c.code}')">Sửa</button><button class="db-btn-del" onclick="removeCore('${c.code}')">Xóa</button></td></tr>`).join('');
 }
 function renderFinishList() {
   const tbody = document.getElementById('finishList');
-  tbody.innerHTML = dbFinish.map(f => {
-    const safeId = f.name.replace(/[^a-z0-9]/gi,'_');
-    return `<tr id="finish-row-${safeId}">
-      <td>${f.name}</td><td><b>${fmt(f.cost)}</b></td><td></td><td></td>
-      <td><button class="db-btn-edit" onclick="editFinish('${f.name}')">Sửa</button><button class="db-btn-del" onclick="removeFinish('${f.name}')">Xóa</button></td>
-    </tr>`;}).join('');
+  tbody.innerHTML = dbFinish.map(f => `<tr><td>${f.name}</td><td><b>${fmt(f.cost)}</b></td><td></td><td></td><td><button class="db-btn-edit" onclick="editFinish('${f.name}')">Sửa</button><button class="db-btn-del" onclick="removeFinish('${f.name}')">Xóa</button></td></tr>`).join('');
 }
 function renderAccList() {
   const tbody = document.getElementById('accList');
-  tbody.innerHTML = dbAccessories.map(a => {
-    const safeId = a.name.replace(/[^a-z0-9]/gi,'_');
-    return `<tr id="acc-row-${safeId}">
-      <td>${a.name}</td><td><b>${fmt(a.price)}</b></td><td>${a.type}</td><td></td>
-      <td><button class="db-btn-edit" onclick="editAccessory('${a.name}')">Sửa</button><button class="db-btn-del" onclick="removeAccessory('${a.name}')">Xóa</button></td>
-    </tr>`;}).join('');
+  tbody.innerHTML = dbAccessories.map(a => `<tr><td>${a.name}</td><td><b>${fmt(a.price)}</b></td><td>${a.type}</td><td></td><td><button class="db-btn-edit" onclick="editAccessory('${a.name}')">Sửa</button><button class="db-btn-del" onclick="removeAccessory('${a.name}')">Xóa</button></td></tr>`).join('');
 }
 
-// ─── UPDATE SELECTS ───
 function updateAllSelects() {
-  const populate = (id, db, textGen, dataGen) => {
-    const sel = document.getElementById(id);
+  const populateWood = () => {
+    const sel = document.getElementById('woodType');
     if(!sel) return;
     const cur = sel.value;
     sel.innerHTML = '';
-    db.forEach(item => {
+    dbWood.forEach(w => {
       const opt = document.createElement('option');
-      opt.value = item.code || item.name;
-      opt.textContent = textGen(item);
-      dataGen(opt, item);
+      opt.value = w.code;
+      opt.textContent = `${w.name} — ${fmt(w.price)}/m³`;
+      opt.dataset.price = w.price;
+      opt.dataset.tlth = w.tlth || 1.54;
+      opt.dataset.thick = w.thick || 32;
       sel.appendChild(opt);
     });
     if(sel.options.length > 0) sel.value = cur || sel.options[0].value;
   };
-
-  populate('woodType', dbWood, w => `${w.name} — ${fmt(w.price)}/m³`, (opt, w) => { opt.dataset.price=w.price; opt.dataset.tlth=w.tlth; opt.dataset.thick='32'; });
-  populate('coreBoard', dbCore, c => `${c.name} ${c.spec} — ${fmt(c.price)}/tấm`, (opt, c) => { opt.dataset.price=c.price; });
-  populate('finish', dbFinish, f => `${f.name} — ${fmt(f.cost)}/m²`, (opt, f) => { opt.dataset.cost=f.cost; });
+  const populateCore = () => {
+    const sel = document.getElementById('coreBoard');
+    if(!sel) return;
+    const cur = sel.value;
+    sel.innerHTML = '';
+    dbCore.forEach(c => {
+      const opt = document.createElement('option');
+      opt.value = c.code;
+      opt.textContent = `${c.name} ${c.spec} — ${fmt(c.price)}/tấm`;
+      opt.dataset.price = c.price;
+      sel.appendChild(opt);
+    });
+    if(sel.options.length > 0) sel.value = cur || sel.options[0].value;
+  };
+  const populateFinish = () => {
+    const sel = document.getElementById('finish');
+    if(!sel) return;
+    const cur = sel.value;
+    sel.innerHTML = '';
+    dbFinish.forEach(f => {
+      const opt = document.createElement('option');
+      opt.value = f.name;
+      opt.textContent = `${f.name} — ${fmt(f.cost)}/m²`;
+      opt.dataset.cost = f.cost;
+      sel.appendChild(opt);
+    });
+    if(sel.options.length > 0) sel.value = cur || sel.options[0].value;
+  };
+  populateWood();
+  populateCore();
+  populateFinish();
 }
 
-// ─── Mặc định dữ liệu ───
 function loadDefaultDatabase() {
   dbWood = [
-    {code:'G-TR-25',name:'Gỗ Tràm VN',price:3800000,tlth:1.7},
-    {code:'G-CS-26',name:'Gỗ Cao su VN',price:4500000,tlth:1.45},
-    {code:'G-PO-26',name:'Gỗ Poplar Mỹ',price:13776500,tlth:1.54},
-    {code:'G-OA-32',name:'Gỗ W.Oak Mỹ 1C',price:30355000,tlth:1.54},
-    {code:'G-WA-32',name:'Gỗ Óc Chó (Walnut) 1C',price:55000000,tlth:1.54},
-    {code:'G-AS-32',name:'Gỗ Tần Bì (Ash) 1C',price:16500000,tlth:1.54},
-    {code:'G-PI-26',name:'Gỗ Thông (Pine) NewZealand',price:7500000,tlth:1.35},
-    {code:'G-EU-26',name:'Gỗ Bạch Đàn (Eucalyptus)',price:5800000,tlth:1.6},
+    {code:'G-TR-25',name:'Gỗ Tràm VN',price:3800000,tlth:1.7, thick:32},
+    {code:'G-CS-26',name:'Gỗ Cao su VN',price:4500000,tlth:1.45, thick:32},
+    {code:'G-PO-26',name:'Gỗ Poplar Mỹ',price:13776500,tlth:1.54, thick:32},
+    {code:'G-OA-32',name:'Gỗ W.Oak Mỹ 1C',price:30355000,tlth:1.54, thick:32},
+    {code:'G-WA-32',name:'Gỗ Óc Chó (Walnut) 1C',price:55000000,tlth:1.54, thick:32},
+    {code:'G-AS-32',name:'Gỗ Tần Bì (Ash) 1C',price:16500000,tlth:1.54, thick:32},
+    {code:'G-PI-26',name:'Gỗ Thông (Pine) NewZealand',price:7500000,tlth:1.35, thick:32},
+    {code:'G-EU-26',name:'Gỗ Bạch Đàn (Eucalyptus)',price:5800000,tlth:1.6, thick:32},
   ];
   dbCore = [
     {code:'MDF09',name:'MDF CARB P2 09mm',price:220000,spec:'1220×2440mm'},
@@ -1011,6 +1022,9 @@ function loadDefaultDatabase() {
     {name:'Tay nắm hợp kim mờ 128mm',price:18000,type:'cái'},
     {name:'Chân nhựa đen D50xH20',price:5000,type:'cái'},
     {name:'Chốt cam + chốt gỗ (Bộ)',price:2500,type:'bộ'},
+    {name:'Chân sofa',price:30000,type:'cái'},
+    {name:'Bulon chân M8×60',price:800,type:'con'},
+    {name:'Miếng đệm cao su',price:2500,type:'cái'},
   ];
   saveDatabaseNoAlert();
   showToast('Đã khôi phục và mở rộng dữ liệu mặc định');
@@ -1020,22 +1034,16 @@ function loadDefaultDatabase() {
 // CUSTOM ACCESSORIES
 // ══════════════════════════════════════════════════
 let customAccList = [];
-
 function addCustomAcc() { customAccList.push({name:'', price:0}); renderCustomAccList(); calculate();}
 function removeCustomAcc(idx) { customAccList.splice(idx,1); renderCustomAccList(); calculate(); }
 function renderCustomAccList() {
   const wrap = document.getElementById('custom-acc-list');
   if(customAccList.length === 0) { wrap.innerHTML = ''; return; }
-  wrap.innerHTML = customAccList.map((a,i) => `
-    <div class="custom-acc-row">
-      <input class="custom-acc-name" type="text" placeholder="Tên phụ kiện..." value="${a.name}" oninput="customAccList[${i}].name=this.value; calculate()">
-      <input class="custom-acc-price" type="number" placeholder="Giá (đ)" value="${a.price||''}" oninput="customAccList[${i}].price=parseFloat(this.value)||0; calculate()">
-      <button class="custom-acc-del" onclick="removeCustomAcc(${i})">✕</button>
-    </div>`).join('');
+  wrap.innerHTML = customAccList.map((a,i) => `<div class="custom-acc-row"><input class="custom-acc-name" type="text" placeholder="Tên phụ kiện..." value="${a.name}" oninput="customAccList[${i}].name=this.value; calculate()"><input class="custom-acc-price" type="number" placeholder="Giá (đ)" value="${a.price||''}" oninput="customAccList[${i}].price=parseFloat(this.value)||0; calculate()"><button class="custom-acc-del" onclick="removeCustomAcc(${i})">✕</button></div>`).join('');
 }
 
 // ══════════════════════════════════════════════════
-// PRODUCT TYPE DEFINITIONS
+// PRODUCT TYPE DEFINITIONS (đầy đủ các component cho từng loại)
 // ══════════════════════════════════════════════════
 let LABOR_COST_PER_MINUTE = 1250;
 const SMV_RATES = {
@@ -1044,6 +1052,11 @@ const SMV_RATES = {
   finishing_pu:120, accessory_install:30, qc_packaging:40,
 };
 
+function getAccPrice(accessoryName, defaultPrice) {
+  const acc = dbAccessories.find(a => a.name === accessoryName);
+  return acc ? acc.price : defaultPrice;
+}
+
 const PRODUCT_TYPES = {
   cabinet: {
     label:'🗄️ Tủ / Kệ', defaultW:610, defaultH:760, defaultD:400,
@@ -1051,40 +1064,34 @@ const PRODUCT_TYPES = {
     sizeHint:'20"=508 | 24"=610 | 30"=762 | 36"=914 | 48"=1219 | 60"=1524 | 72"=1829',
     hasCore:true,
     components:[
-      {id:'c_hinge',  label:'Bản lề BGC 62×78mm',   qty:4,  unit:'cái', price:12000,  note:'Cửa có bản lề'},
-      {id:'c_rail',   label:'Ray trượt bi 3T L350',  qty:2,  unit:'bộ',  price:140000, note:'Ngăn kéo (0 = không có)'},
-      {id:'c_handle', label:'Tay nắm tròn Ø30mm',   qty:4,  unit:'cái', price:10000,  note:''},
-      {id:'c_shelf',  label:'Kệ ngang thêm (MDF)',   qty:2,  unit:'tấm', price:0,      note:'Kệ tính tự động từ kích thước'},
-      {id:'c_door',   label:'Cửa (1 cánh = W×H gỗ)',qty:1,  unit:'cái', price:0,      note:'Tính theo diện tích gỗ'},
-      {id:'c_vis',    label:'Vis + ốc + bulon',      qty:60, unit:'con', price:100,    note:''},
-      {id:'c_rattan_price', label:'Giá Rattan/Đan dây', qty:0, unit:'đ/m²', price:0, note:'Ốp mây/đan dây (0 = không có)'},
-      {id:'c_rattan_offset', label:'Offset viền Rattan', qty:50, unit:'mm', price:0, note:'Trừ đi phần khung viền'},
-      {id:'c_rattan_front_pct', label:'% Mặt trước Rattan', qty:100, unit:'%', price:0, note:'Tỉ lệ cánh/mặt hộc'},
-      {id:'c_rattan_sides', label:'Số mặt hông Rattan', qty:0, unit:'mặt', price:0, note:'(0, 1 hoặc 2)'},
-      {id:'c_side_core', label:'Hông ván lõi (1=Có)', qty:0, unit:'cái', price:0, note:'Sử dụng MDF thay vì gỗ cho Hông'},
-      {id:'c_block_qty', label:'Bọ gỗ l.kết (SL)', qty:0, unit:'cái', price:0, note:'Quy đổi thành m³ gỗ'},
-      {id:'c_block_l', label:'Dài bọ gỗ (mm)', qty:50, unit:'mm', price:0, note:''},
-      {id:'c_block_w', label:'Rộng bọ gỗ (mm)', qty:30, unit:'mm', price:0, note:''},
-      {id:'c_block_t', label:'Dày bọ gỗ (mm)', qty:30, unit:'mm', price:0, note:''},
+      {id:'c_hinge',  label:'Bản lề BGC 62×78mm',   qty:4,  unit:'cái', priceKey:'Bản lề BGC thường 62×78mm', defaultPrice:12000, note:'Cửa có bản lề'},
+      {id:'c_rail',   label:'Ray trượt bi 3T L350',  qty:2,  unit:'bộ',  priceKey:'Ray trượt bi 3T L350', defaultPrice:140000, note:'Ngăn kéo (0 = không có)'},
+      {id:'c_handle', label:'Tay nắm tròn Ø30mm',   qty:4,  unit:'cái', priceKey:'Tay nắm tròn Ø30mm Gỗ', defaultPrice:10000, note:''},
+      {id:'c_shelf',  label:'Kệ ngang thêm (MDF)',   qty:2,  unit:'tấm', priceKey:'', defaultPrice:0, note:'Kệ tính tự động từ kích thước'},
+      {id:'c_door',   label:'Cửa (1 cánh = W×H gỗ)',qty:1,  unit:'cái', priceKey:'', defaultPrice:0, note:'Tính theo diện tích gỗ'},
+      {id:'c_vis',    label:'Vis + ốc + bulon',      qty:60, unit:'con', priceKey:'', defaultPrice:100, note:''},
+      {id:'c_rattan_price', label:'Giá Rattan/Đan dây', qty:0, unit:'đ/m²', priceKey:'', defaultPrice:0, note:'Ốp mây/đan dây (0 = không có)'},
+      {id:'c_rattan_offset', label:'Offset viền Rattan', qty:50, unit:'mm', priceKey:'', defaultPrice:0, note:'Trừ đi phần khung viền'},
+      {id:'c_rattan_front_pct', label:'% Mặt trước Rattan', qty:100, unit:'%', priceKey:'', defaultPrice:0, note:'Tỉ lệ cánh/mặt hộc'},
+      {id:'c_rattan_sides', label:'Số mặt hông Rattan', qty:0, unit:'mặt', priceKey:'', defaultPrice:0, note:'(0, 1 hoặc 2)'},
+      {id:'c_side_core', label:'Hông ván lõi (1=Có)', qty:0, unit:'cái', priceKey:'', defaultPrice:0, note:'Sử dụng MDF thay vì gỗ cho Hông'},
+      {id:'c_block_qty', label:'Bọ gỗ l.kết (SL)', qty:0, unit:'cái', priceKey:'', defaultPrice:0, note:'Quy đổi thành m³ gỗ'},
+      {id:'c_block_l', label:'Dài bọ gỗ (mm)', qty:50, unit:'mm', priceKey:'', defaultPrice:0, note:''},
+      {id:'c_block_w', label:'Rộng bọ gỗ (mm)', qty:30, unit:'mm', priceKey:'', defaultPrice:0, note:''},
+      {id:'c_block_t', label:'Dày bọ gỗ (mm)', qty:30, unit:'mm', priceKey:'', defaultPrice:0, note:''},
     ],
     calcBOM(W,H,D,thick,woodPrice,tlth,corePrice,finishCostM2,comps,manualSmv,manualRate) {
-      const surfaceM2 = 2*(W*H + W*D + H*D) / 1e6; // Diện tích sơn bao ngoài
+      const surfaceM2 = 2*(W*H + W*D + H*D) / 1e6;
       const woodPanelMM2 = 2*H*D + 2*W*D;
       const doors = comps.c_door||0;
       const doorMM2 = doors * W * H;
-      
       let finalWoodPanelMM2 = woodPanelMM2;
       let finalMdfM2 = (W*H/1e6) + ((comps.c_shelf||2) * W*D/1e6);
-
-      // --- LOGIC: Hông Tủ bằng Ván Lõi ---
       if (comps.c_side_core === 1) {
-          finalWoodPanelMM2 -= 2*H*D;  // Trừ phần diện tích hông khỏi tính toán gỗ
-          finalMdfM2 += 2*H*D/1e6;     // Thêm vào diện tích ván lõi (MDF)
+          finalWoodPanelMM2 -= 2*H*D;
+          finalMdfM2 += 2*H*D/1e6;
       }
-      
       const woodVol = (finalWoodPanelMM2 + doorMM2) * thick / 1e9;
-      
-      // --- LOGIC: Diện tích Rattan/Đan dây ---
       let rattanAreaM2 = 0;
       if (comps.c_rattan_price > 0) {
           const offset = comps.c_rattan_offset || 0;
@@ -1095,23 +1102,22 @@ const PRODUCT_TYPES = {
           let d_in = Math.max(0, D - 2*offset);
           rattanAreaM2 = (w_in * h_in / 1e6) * frontPct + sides * (d_in * h_in / 1e6);
       }
-
-      // --- LOGIC: Bọ gỗ liên kết ---
       const blockVol = (comps.c_block_qty||0) * (comps.c_block_l||50) * (comps.c_block_w||30) * (comps.c_block_t||30) / 1e9;
-      
       let totalSMV = manualSmv > 0 ? manualSmv : (
         SMV_RATES.prep_wood + SMV_RATES.precision_machining + SMV_RATES.sanding +
         SMV_RATES.frame_assembly + (doors>0||(comps.c_rail||0)>0 ? SMV_RATES.drawer_door_assembly : 0) +
         SMV_RATES.finishing_pu + SMV_RATES.accessory_install + SMV_RATES.qc_packaging
       );
-      
+      const hingePrice = getAccPrice('Bản lề BGC thường 62×78mm', 12000);
+      const railPrice = getAccPrice('Ray trượt bi 3T L350', 140000);
+      const handlePrice = getAccPrice('Tay nắm tròn Ø30mm Gỗ', 10000);
       return [
         {name:'Gỗ khung + cửa', spec:`${thick}mm`, qty:woodVol.toFixed(4), unit:'m³', price:woodPrice, tlth, total:woodVol*woodPrice*tlth},
         {name:'Ván lõi lưng+kệ+hông', spec:`${finalMdfM2.toFixed(3)}m²`, qty:(finalMdfM2/2.9768).toFixed(2), unit:'tấm', price:corePrice, tlth:1.05, total:(finalMdfM2/2.9768)*corePrice*1.05},
         {name:'Hoàn thiện bề mặt', spec:`${surfaceM2.toFixed(3)}m²`, qty:surfaceM2.toFixed(3), unit:'m²', price:finishCostM2, tlth:1.08, total:surfaceM2*finishCostM2*1.08},
-        {name:'Bản lề', qty:comps.c_hinge||0, unit:'cái', price:12000, tlth:1.0, total:(comps.c_hinge||0)*12000},
-        {name:'Ray trượt', qty:comps.c_rail||0, unit:'bộ', price:140000, tlth:1.0, total:(comps.c_rail||0)*140000},
-        {name:'Tay nắm', qty:comps.c_handle||0, unit:'cái', price:10000, tlth:1.0, total:(comps.c_handle||0)*10000},
+        {name:'Bản lề', qty:comps.c_hinge||0, unit:'cái', price:hingePrice, tlth:1.0, total:(comps.c_hinge||0)*hingePrice},
+        {name:'Ray trượt', qty:comps.c_rail||0, unit:'bộ', price:railPrice, tlth:1.0, total:(comps.c_rail||0)*railPrice},
+        {name:'Tay nắm', qty:comps.c_handle||0, unit:'cái', price:handlePrice, tlth:1.0, total:(comps.c_handle||0)*handlePrice},
         {name:'Vis + ốc + bulon', qty:comps.c_vis||0, unit:'con', price:100, tlth:1.0, total:(comps.c_vis||0)*100},
         ...(rattanAreaM2 > 0 ? [{name:'Ốp Rattan/Đan dây', spec:`${rattanAreaM2.toFixed(3)}m²`, qty:rattanAreaM2.toFixed(3), unit:'m²', price:comps.c_rattan_price, tlth:1.1, total:rattanAreaM2*comps.c_rattan_price*1.1}] : []),
         ...(blockVol > 0 ? [{name:'Bọ gỗ liên kết', spec:`${comps.c_block_qty} cái`, qty:blockVol.toFixed(4), unit:'m³', price:woodPrice, tlth, total:blockVol*woodPrice*tlth}] : []),
@@ -1119,43 +1125,37 @@ const PRODUCT_TYPES = {
       ];
     }
   },
-
   vanity: {
     label:'🪞 Vanity Cabinet', defaultW:900, defaultH:860, defaultD:480,
     defaultName:'Bathroom Vanity 36"', defaultCode:'VAN-36-001',
     sizeHint:'24"=610 | 30"=762 | 36"=914 | 42"=1067 | 48"=1219 | 60"=1524',
     hasCore:true,
     components:[
-      {id:'c_hinge',  label:'Bản lề BGC', qty:4, unit:'cái', price:12000, note:''},
-      {id:'c_rail',   label:'Ray hộc kéo', qty:2, unit:'bộ', price:140000, note:''},
-      {id:'c_handle', label:'Tay nắm', qty:4, unit:'cái', price:10000, note:''},
-      {id:'c_shelf',  label:'Kệ ngang', qty:1, unit:'tấm', price:0, note:''},
-      {id:'c_door',   label:'Số cửa', qty:2, unit:'cái', price:0, note:''},
-      {id:'c_leg',    label:'Chân cabinet', qty:0, unit:'cái', price:25000, note:''},
-      {id:'c_vis',    label:'Vis + ốc', qty:60, unit:'con', price:100, note:''},
-      {id:'c_rattan_price', label:'Giá Rattan/Đan dây', qty:0, unit:'đ/m²', price:0, note:'Ốp mây/đan dây (0 = không có)'},
-      {id:'c_rattan_offset', label:'Offset viền Rattan', qty:50, unit:'mm', price:0, note:'Trừ đi phần khung viền'},
-      {id:'c_rattan_front_pct', label:'% Mặt trước Rattan', qty:100, unit:'%', price:0, note:'Tỉ lệ cánh/mặt hộc'},
-      {id:'c_rattan_sides', label:'Số mặt hông Rattan', qty:0, unit:'mặt', price:0, note:'(0, 1 hoặc 2)'},
-      {id:'c_side_core', label:'Hông ván lõi (1=Có)', qty:0, unit:'cái', price:0, note:'Sử dụng MDF thay vì gỗ cho Hông'},
-      {id:'c_block_qty', label:'Bọ gỗ l.kết (SL)', qty:0, unit:'cái', price:0, note:'Quy đổi thành m³ gỗ'},
-      {id:'c_block_l', label:'Dài bọ gỗ (mm)', qty:50, unit:'mm', price:0, note:''},
-      {id:'c_block_w', label:'Rộng bọ gỗ (mm)', qty:30, unit:'mm', price:0, note:''},
-      {id:'c_block_t', label:'Dày bọ gỗ (mm)', qty:30, unit:'mm', price:0, note:''},
+      {id:'c_hinge',  label:'Bản lề BGC', qty:4, unit:'cái', priceKey:'Bản lề BGC thường 62×78mm', defaultPrice:12000, note:''},
+      {id:'c_rail',   label:'Ray hộc kéo', qty:2, unit:'bộ', priceKey:'Ray trượt bi 3T L350', defaultPrice:140000, note:''},
+      {id:'c_handle', label:'Tay nắm', qty:4, unit:'cái', priceKey:'Tay nắm tròn Ø30mm Gỗ', defaultPrice:10000, note:''},
+      {id:'c_shelf',  label:'Kệ ngang', qty:1, unit:'tấm', priceKey:'', defaultPrice:0, note:''},
+      {id:'c_door',   label:'Số cửa', qty:2, unit:'cái', priceKey:'', defaultPrice:0, note:''},
+      {id:'c_leg',    label:'Chân cabinet', qty:0, unit:'cái', priceKey:'Chân nhựa đen D50xH20', defaultPrice:5000, note:''},
+      {id:'c_vis',    label:'Vis + ốc', qty:60, unit:'con', priceKey:'', defaultPrice:100, note:''},
+      {id:'c_rattan_price', label:'Giá Rattan/Đan dây', qty:0, unit:'đ/m²', priceKey:'', defaultPrice:0, note:'Ốp mây/đan dây (0 = không có)'},
+      {id:'c_rattan_offset', label:'Offset viền Rattan', qty:50, unit:'mm', priceKey:'', defaultPrice:0, note:''},
+      {id:'c_rattan_front_pct', label:'% Mặt trước Rattan', qty:100, unit:'%', priceKey:'', defaultPrice:0, note:''},
+      {id:'c_rattan_sides', label:'Số mặt hông Rattan', qty:0, unit:'mặt', priceKey:'', defaultPrice:0, note:''},
+      {id:'c_side_core', label:'Hông ván lõi (1=Có)', qty:0, unit:'cái', priceKey:'', defaultPrice:0, note:''},
+      {id:'c_block_qty', label:'Bọ gỗ l.kết (SL)', qty:0, unit:'cái', priceKey:'', defaultPrice:0, note:''},
+      {id:'c_block_l', label:'Dài bọ gỗ (mm)', qty:50, unit:'mm', priceKey:'', defaultPrice:0, note:''},
+      {id:'c_block_w', label:'Rộng bọ gỗ (mm)', qty:30, unit:'mm', priceKey:'', defaultPrice:0, note:''},
+      {id:'c_block_t', label:'Dày bọ gỗ (mm)', qty:30, unit:'mm', priceKey:'', defaultPrice:0, note:''},
     ],
     calcBOM(W,H,D,thick,woodPrice,tlth,corePrice,finishCostM2,comps,manualSmv,manualRate) {
       const surfaceM2 = 2*(W*H + W*D + H*D) / 1e6;
-      
       let finalWoodVol = ((2*H*D + 2*W*D) + ((comps.c_door||2) * (W/2) * H)) * thick / 1e9;
       let finalMdfM2 = (W*H/1e6) + ((comps.c_shelf||1) * W*D/1e6);
-      
-      // --- LOGIC: Hông Tủ bằng Ván Lõi ---
       if (comps.c_side_core === 1) {
           finalWoodVol -= (2*H*D) * thick / 1e9;
           finalMdfM2 += (2*H*D) / 1e6;
       }
-
-      // --- LOGIC: Diện tích Rattan/Đan dây ---
       let rattanAreaM2 = 0;
       if (comps.c_rattan_price > 0) {
           const offset = comps.c_rattan_offset || 0;
@@ -1166,75 +1166,69 @@ const PRODUCT_TYPES = {
           let d_in = Math.max(0, D - 2*offset);
           rattanAreaM2 = (w_in * h_in / 1e6) * frontPct + sides * (d_in * h_in / 1e6);
       }
-
-      // --- LOGIC: Bọ gỗ liên kết ---
       const blockVol = (comps.c_block_qty||0) * (comps.c_block_l||50) * (comps.c_block_w||30) * (comps.c_block_t||30) / 1e9;
-      
       let totalSMV = manualSmv > 0 ? manualSmv : (SMV_RATES.prep_wood + SMV_RATES.sanding + SMV_RATES.frame_assembly + SMV_RATES.drawer_door_assembly + SMV_RATES.finishing_pu + 60);
-      
+      const hingePrice = getAccPrice('Bản lề BGC thường 62×78mm', 12000);
+      const railPrice = getAccPrice('Ray trượt bi 3T L350', 140000);
+      const handlePrice = getAccPrice('Tay nắm tròn Ø30mm Gỗ', 10000);
+      const legPrice = getAccPrice('Chân nhựa đen D50xH20', 5000);
       const items = [
         {name:'Gỗ khung + cánh', qty:finalWoodVol.toFixed(4), unit:'m³', price:woodPrice, tlth, total:finalWoodVol*woodPrice*tlth},
         {name:'Ván lõi lưng+kệ+hông', qty:(finalMdfM2/2.9768).toFixed(2), unit:'tấm', price:corePrice, tlth:1.05, total:(finalMdfM2/2.9768)*corePrice*1.05},
         {name:'Hoàn thiện bề mặt', qty:surfaceM2.toFixed(3),unit:'m²', price:finishCostM2, tlth:1.08, total:surfaceM2*finishCostM2*1.08},
-        {name:'Bản lề', qty:comps.c_hinge||0, unit:'cái', price:12000, tlth:1.0, total:(comps.c_hinge||0)*12000},
-        {name:'Ray trượt', qty:comps.c_rail||0, unit:'bộ', price:140000, tlth:1.0, total:(comps.c_rail||0)*140000},
-        {name:'Tay nắm', qty:comps.c_handle||0, unit:'cái', price:10000, tlth:1.0, total:(comps.c_handle||0)*10000},
-        ...(comps.c_leg>0 ? [{name:'Chân cabinet', qty:comps.c_leg, unit:'cái', price:25000, tlth:1.0, total:comps.c_leg*25000}] : []),
+        {name:'Bản lề', qty:comps.c_hinge||0, unit:'cái', price:hingePrice, tlth:1.0, total:(comps.c_hinge||0)*hingePrice},
+        {name:'Ray trượt', qty:comps.c_rail||0, unit:'bộ', price:railPrice, tlth:1.0, total:(comps.c_rail||0)*railPrice},
+        {name:'Tay nắm', qty:comps.c_handle||0, unit:'cái', price:handlePrice, tlth:1.0, total:(comps.c_handle||0)*handlePrice},
+        ...(comps.c_leg>0 ? [{name:'Chân cabinet', qty:comps.c_leg, unit:'cái', price:legPrice, tlth:1.0, total:comps.c_leg*legPrice}] : []),
         {name:'Vis + ốc', qty:comps.c_vis||0, unit:'con', price:100, tlth:1.0, total:(comps.c_vis||0)*100},
         ...(rattanAreaM2 > 0 ? [{name:'Ốp Rattan/Đan dây', spec:`${rattanAreaM2.toFixed(3)}m²`, qty:rattanAreaM2.toFixed(3), unit:'m²', price:comps.c_rattan_price, tlth:1.1, total:rattanAreaM2*comps.c_rattan_price*1.1}] : []),
         ...(blockVol > 0 ? [{name:'Bọ gỗ liên kết', spec:`${comps.c_block_qty} cái`, qty:blockVol.toFixed(4), unit:'m³', price:woodPrice, tlth, total:blockVol*woodPrice*tlth}] : [])
       ];
-
       if(comps.vanity_stone_price > 0) items.push({name:'Mặt đá', qty:1, unit:'tấm', price:comps.vanity_stone_price, tlth:1.0, total:comps.vanity_stone_price});
       if(comps.vanity_sink_price > 0) items.push({name:'Chậu rửa', qty:comps.vanity_sink_qty, unit:'cái', price:comps.vanity_sink_price, tlth:1.0, total:comps.vanity_sink_price*comps.vanity_sink_qty});
       if(comps.vanity_holes > 0) items.push({name:'Khoan lỗ', qty:comps.vanity_holes, unit:'lỗ', price:15000, tlth:1.0, total:comps.vanity_holes*15000});
-
       items.push({name:'Nhân công (SMV)', qty:totalSMV.toFixed(0), unit:'phút', price:manualRate, tlth:1.0, total:totalSMV*manualRate});
       return items;
     }
   },
-
   table: {
     label:'🪑 Bàn', defaultW:900, defaultH:750, defaultD:600,
     defaultName:'Dining Table 36"', defaultCode:'TBL-36-DIN',
     sizeHint:'Bàn ăn: 740-760mm | Bàn cafe: 420-450mm',
     hasCore:false,
     components:[
-      {id:'c_leg',   label:'Chân bàn', qty:4, unit:'cái', price:0, note:''},
-      {id:'c_legW',  label:'Tiết diện chân (mm)', qty:50, unit:'mm', price:0, note:''},
-      {id:'c_apron', label:'Thanh ngang apron', qty:4, unit:'cái', price:0, note:''},
-      {id:'c_bolt',  label:'Bulon chân M8×60', qty:8, unit:'con', price:800, note:''},
-      {id:'c_pad',   label:'Miếng đệm cao su', qty:4, unit:'cái', price:2500,note:''},
-      {id:'c_block_qty', label:'Bọ gỗ l.kết (SL)', qty:0, unit:'cái', price:0, note:'Quy đổi thành m³ gỗ'},
-      {id:'c_block_l', label:'Dài bọ gỗ (mm)', qty:50, unit:'mm', price:0, note:''},
-      {id:'c_block_w', label:'Rộng bọ gỗ (mm)', qty:30, unit:'mm', price:0, note:''},
-      {id:'c_block_t', label:'Dày bọ gỗ (mm)', qty:30, unit:'mm', price:0, note:''},
+      {id:'c_leg',   label:'Chân bàn', qty:4, unit:'cái', priceKey:'', defaultPrice:0, note:''},
+      {id:'c_legW',  label:'Tiết diện chân (mm)', qty:50, unit:'mm', priceKey:'', defaultPrice:0, note:''},
+      {id:'c_apron', label:'Thanh ngang apron', qty:4, unit:'cái', priceKey:'', defaultPrice:0, note:''},
+      {id:'c_bolt',  label:'Bulon chân M8×60', qty:8, unit:'con', priceKey:'', defaultPrice:800, note:''},
+      {id:'c_pad',   label:'Miếng đệm cao su', qty:4, unit:'cái', priceKey:'', defaultPrice:2500,note:''},
+      {id:'c_block_qty', label:'Bọ gỗ l.kết (SL)', qty:0, unit:'cái', priceKey:'', defaultPrice:0, note:''},
+      {id:'c_block_l', label:'Dài bọ gỗ (mm)', qty:50, unit:'mm', priceKey:'', defaultPrice:0, note:''},
+      {id:'c_block_w', label:'Rộng bọ gỗ (mm)', qty:30, unit:'mm', priceKey:'', defaultPrice:0, note:''},
+      {id:'c_block_t', label:'Dày bọ gỗ (mm)', qty:30, unit:'mm', priceKey:'', defaultPrice:0, note:''},
     ],
     calcBOM(W,H,D,thick,woodPrice,tlth,corePrice,finishCostM2,comps,manualSmv,manualRate) {
       const legW = comps.c_legW || 50; const legs = comps.c_leg || 4;
       const legVol = legs * legW * legW * (H - thick) / 1e9;
       const apronVol = (2*(W - 2*legW) + 2*(D - 2*legW)) * 100 * thick / 1e9;
       const topVol = W * D * thick / 1e9;
-      
       const surfaceM2 = (W*D*2 + 2*(W+D)*thick + legs*4*legW*(H-thick) + (W+D)*2*100*2)/1e6;
-      
-      // --- LOGIC: Bọ gỗ liên kết ---
       const blockVol = (comps.c_block_qty||0) * (comps.c_block_l||50) * (comps.c_block_w||30) * (comps.c_block_t||30) / 1e9;
-
       let totalSMV = manualSmv > 0 ? manualSmv : (SMV_RATES.prep_wood + SMV_RATES.sanding + SMV_RATES.frame_assembly + SMV_RATES.finishing_pu + 30);
+      const boltPrice = getAccPrice('Bulon chân M8×60', 800);
+      const padPrice = getAccPrice('Miếng đệm cao su', 2500);
       return [
         {name:'Gỗ mặt bàn', qty:topVol.toFixed(4), unit:'m³', price:woodPrice, tlth, total:topVol*woodPrice*tlth},
         {name:'Gỗ chân bàn', qty:legVol.toFixed(4), unit:'m³', price:woodPrice, tlth, total:legVol*woodPrice*tlth},
         {name:'Gỗ apron', qty:apronVol.toFixed(4), unit:'m³', price:woodPrice, tlth, total:apronVol*woodPrice*tlth},
         {name:'Hoàn thiện bề mặt', qty:surfaceM2.toFixed(3),unit:'m²', price:finishCostM2, tlth:1.08,total:surfaceM2*finishCostM2*1.08},
-        {name:'Bulon chân M8×60', qty:comps.c_bolt||0, unit:'con', price:800, tlth:1.0, total:(comps.c_bolt||0)*800},
-        {name:'Đệm cao su chân', qty:comps.c_pad||0, unit:'cái', price:2500, tlth:1.0, total:(comps.c_pad||0)*2500},
+        {name:'Bulon chân M8×60', qty:comps.c_bolt||0, unit:'con', price:boltPrice, tlth:1.0, total:(comps.c_bolt||0)*boltPrice},
+        {name:'Đệm cao su chân', qty:comps.c_pad||0, unit:'cái', price:padPrice, tlth:1.0, total:(comps.c_pad||0)*padPrice},
         ...(blockVol > 0 ? [{name:'Bọ gỗ liên kết', spec:`${comps.c_block_qty} cái`, qty:blockVol.toFixed(4), unit:'m³', price:woodPrice, tlth, total:blockVol*woodPrice*tlth}] : []),
         {name:'Nhân công (SMV)', qty:totalSMV.toFixed(0), unit:'phút', price:manualRate, tlth:1.0, total:totalSMV*manualRate},
       ];
     }
   },
-
   chair: {
     label:'💺 Ghế', defaultW:450, defaultH:900, defaultD:500,
     defaultName:'Counter Stool', defaultCode:'CHR-CS-001',
@@ -1267,7 +1261,7 @@ const PRODUCT_TYPES = {
       {id:'c_back_mousse', label:'Mousse nệm lưng m²', qty:0, unit:'m²', price:100000, note:''},
       {id:'c_back_fabric', label:'Vải bọc lưng m²', qty:0, unit:'m²', price:140000, note:''},
       {id:'c_back_rattan_price', label:'Giá Rattan/Dây lưng', qty:0, unit:'đ/m²', price:0, note:''},
-      {id:'c_block_qty', label:'Bọ gỗ l.kết (SL)', qty:0, unit:'cái', price:0, note:'Quy đổi thành m³ gỗ'},
+      {id:'c_block_qty', label:'Bọ gỗ l.kết (SL)', qty:0, unit:'cái', price:0, note:''},
       {id:'c_block_l', label:'Dài bọ gỗ (mm)', qty:50, unit:'mm', price:0, note:''},
       {id:'c_block_w', label:'Rộng bọ gỗ (mm)', qty:30, unit:'mm', price:0, note:''},
       {id:'c_block_t', label:'Dày bọ gỗ (mm)', qty:30, unit:'mm', price:0, note:''},
@@ -1278,51 +1272,28 @@ const PRODUCT_TYPES = {
       const rungs=comps.c_rung||0, rungW=comps.c_rungW||30, rungT=comps.c_rungT||20;
       const backs=comps.c_back||0, backW=comps.c_backW||40, backT=comps.c_backT||20;
       const arms=comps.c_arm||0, armW=comps.c_armW||40, armT=comps.c_armT||20;
-      
       const actRungL = comps.c_rungL > 0 ? comps.c_rungL : (W-2*legW);
       const actBackL = comps.c_backL > 0 ? comps.c_backL : (H*0.35);
-
       const legVol = frameType === 2 ? legs*legW*legW*(H*0.72)/1e9 : 0;
       const rungVol = frameType === 2 ? rungs*rungW*rungT*actRungL/1e9 : 0;
-      
       const seatType = comps.c_seat || 1;
       const seatAreaM2 = W*(D*0.85)/1e6;
       const seatVol = seatType === 1 ? seatAreaM2*thick/1000 : 0;
-      
       const apronVol = (comps.c_seat_apron||0) * (W*0.8) * (comps.c_seat_apronW||60) * (comps.c_seat_apronT||20) / 1e9;
-
       const backType = comps.c_back_type || 1;
       const backAreaM2 = W*(actBackL)/1e6;
-      const backVol = backType === 1 ? backs*backW*backT*actBackL/1e9 : (backs*backW*backT*actBackL/1e9)*0.3; // Dự trù 30% khung nếu là rattan/nệm
+      const backVol = backType === 1 ? backs*backW*backT*actBackL/1e9 : (backs*backW*backT*actBackL/1e9)*0.3;
       const armVol=arms*armW*armT*D/1e9;
-      
-      const surfaceM2 = (
-          (frameType===2 ? legs*4*legW*H + rungs*2*(rungW+rungT)*W : 0) + 
-          (seatType===1 ? W*D*2 : 0) + 
-          (backType===1 ? backs*2*(backW+backT)*actBackL : 0) + 
-          (arms*2*(armW+armT)*D) +
-          (comps.c_seat_apron>0 ? comps.c_seat_apron*2*(comps.c_seat_apronW+comps.c_seat_apronT)*(W*0.8) : 0)
-      ) / 1e6;
-
-      // --- LOGIC: Bọ gỗ liên kết ---
+      const surfaceM2 = ((frameType===2 ? legs*4*legW*H + rungs*2*(rungW+rungT)*W : 0) + (seatType===1 ? W*D*2 : 0) + (backType===1 ? backs*2*(backW+backT)*actBackL : 0) + (arms*2*(armW+armT)*D) + (comps.c_seat_apron>0 ? comps.c_seat_apron*2*(comps.c_seat_apronW+comps.c_seat_apronT)*(W*0.8) : 0)) / 1e6;
       const blockVol = (comps.c_block_qty||0) * (comps.c_block_l||50) * (comps.c_block_w||30) * (comps.c_block_t||30) / 1e9;
-
       let totalSMV=manualSmv>0?manualSmv:(SMV_RATES.prep_wood+SMV_RATES.precision_machining+SMV_RATES.sanding+SMV_RATES.frame_assembly+SMV_RATES.finishing_pu+30);
-      
       let items = [];
-      
-      if (frameType === 1 && comps.c_metal_price > 0) {
-          items.push({name:'Khung kim loại', qty:1, unit:'bộ', price:comps.c_metal_price, tlth:1.0, total:comps.c_metal_price});
-      } else if (frameType === 2) {
+      if (frameType === 1 && comps.c_metal_price > 0) items.push({name:'Khung kim loại', qty:1, unit:'bộ', price:comps.c_metal_price, tlth:1.0, total:comps.c_metal_price});
+      else if (frameType === 2) {
           items.push({name:'Gỗ chân ghế', qty:legVol.toFixed(4), unit:'m³', price:woodPrice, tlth, total:legVol*woodPrice*tlth});
           if(rungVol > 0) items.push({name:'Giằng chân', qty:rungVol.toFixed(4), unit:'m³', price:woodPrice, tlth, total:rungVol*woodPrice*tlth});
       }
-
-      if (apronVol > 0) {
-          items.push({name:'Gỗ apron mặt ngồi', qty:apronVol.toFixed(4), unit:'m³', price:woodPrice, tlth, total:apronVol*woodPrice*tlth});
-      }
-      
-      // Tính toán mặt ngồi
+      if (apronVol > 0) items.push({name:'Gỗ apron mặt ngồi', qty:apronVol.toFixed(4), unit:'m³', price:woodPrice, tlth, total:apronVol*woodPrice*tlth});
       if (seatType === 1) items.push({name:'Mặt ngồi (Solid)', qty:seatVol.toFixed(4), unit:'m³', price:woodPrice, tlth, total:seatVol*woodPrice*tlth});
       if (seatType === 2) items.push({name:'Mặt ngồi (Plywood/Ván)', qty:(seatAreaM2/2.9768).toFixed(2), unit:'tấm', price:corePrice, tlth:1.05, total:(seatAreaM2/2.9768)*corePrice*1.05});
       if (seatType >= 4 && comps.c_seat_rattan_price > 0) items.push({name:'Mặt ngồi Rattan/Đan dây', qty:seatAreaM2.toFixed(3), unit:'m²', price:comps.c_seat_rattan_price, tlth:1.1, total:seatAreaM2*comps.c_seat_rattan_price*1.1});
@@ -1330,27 +1301,19 @@ const PRODUCT_TYPES = {
           if(comps.c_mousse>0) items.push({name:'Mousse nệm mặt ngồi', qty:comps.c_mousse, unit:'m²', price:100000, tlth:1.0, total:comps.c_mousse*100000});
           if(comps.c_fabric>0) items.push({name:'Vải bọc mặt ngồi', qty:comps.c_fabric, unit:'m²', price:140000, tlth:1.0, total:comps.c_fabric*140000});
       }
-      
-      // Tính toán lưng ghế
       if (backVol > 0) items.push({name:'Khung/Nan lưng', qty:backVol.toFixed(4), unit:'m³', price:woodPrice, tlth, total:backVol*woodPrice*tlth});
       if (backType === 2) {
           if(comps.c_back_mousse>0) items.push({name:'Mousse nệm lưng', qty:comps.c_back_mousse, unit:'m²', price:100000, tlth:1.0, total:comps.c_back_mousse*100000});
           if(comps.c_back_fabric>0) items.push({name:'Vải bọc lưng', qty:comps.c_back_fabric, unit:'m²', price:140000, tlth:1.0, total:comps.c_back_fabric*140000});
       }
       if (backType >= 3 && comps.c_back_rattan_price > 0) items.push({name:'Lưng Rattan/Đan dây', qty:backAreaM2.toFixed(3), unit:'m²', price:comps.c_back_rattan_price, tlth:1.1, total:backAreaM2*comps.c_back_rattan_price*1.1});
-
       if (armVol > 0) items.push({name:'Tay vịn', qty:armVol.toFixed(4), unit:'m³', price:woodPrice, tlth, total:armVol*woodPrice*tlth});
-
       if (surfaceM2 > 0) items.push({name:'Hoàn thiện bề mặt', qty:surfaceM2.toFixed(3),unit:'m²', price:finishCostM2, tlth:1.08, total:surfaceM2*finishCostM2*1.08});
-      
       if(blockVol > 0) items.push({name:'Bọ gỗ liên kết', spec:`${comps.c_block_qty} cái`, qty:blockVol.toFixed(4), unit:'m³', price:woodPrice, tlth, total:blockVol*woodPrice*tlth});
-
       items.push({name:'Nhân công (SMV)', qty:totalSMV.toFixed(0), unit:'phút', price:manualRate, tlth:1.0, total:totalSMV*manualRate});
-
       return items;
     }
   },
-
   bed: {
     label:'🛏️ Giường', defaultW:1600, defaultH:1200, defaultD:2000,
     defaultName:'Queen Bed Frame', defaultCode:'BED-Q-001',
@@ -1367,7 +1330,7 @@ const PRODUCT_TYPES = {
       {id:'c_slat',  label:'Nan đỡ nệm', qty:14, unit:'cái', price:0, note:''},
       {id:'c_bolt',  label:'Bulon M10', qty:16, unit:'con', price:1500, note:''},
       {id:'c_cam',   label:'Cam lock', qty:8, unit:'bộ', price:10000, note:''},
-      {id:'c_block_qty', label:'Bọ gỗ l.kết (SL)', qty:0, unit:'cái', price:0, note:'Quy đổi thành m³ gỗ'},
+      {id:'c_block_qty', label:'Bọ gỗ l.kết (SL)', qty:0, unit:'cái', price:0, note:''},
       {id:'c_block_l', label:'Dài bọ gỗ (mm)', qty:50, unit:'mm', price:0, note:''},
       {id:'c_block_w', label:'Rộng bọ gỗ (mm)', qty:30, unit:'mm', price:0, note:''},
       {id:'c_block_t', label:'Dày bọ gỗ (mm)', qty:30, unit:'mm', price:0, note:''},
@@ -1375,50 +1338,34 @@ const PRODUCT_TYPES = {
     calcBOM(W,H,D,thick,woodPrice,tlth,corePrice,finishCostM2,comps,manualSmv,manualRate) {
       const headType = comps.c_head_type || 1;
       const headAreaM2 = W*(comps.c_headH||1200)/1e6;
-      
-      let headVol = 0;
-      let headCoreM2 = 0;
-      if (headType === 1) headCoreM2 = headAreaM2; // Full ván
-      if (headType === 2) headVol = W*(comps.c_headH||1200)*thick/1e9; // Solid
-      if (headType === 3 || headType === 4) {
-          headVol = (W*(comps.c_headH||1200)*thick/1e9) * 0.25; // Khung gỗ chiếm khoảng 25% diện tích Headboard
-          headCoreM2 = headAreaM2 * 0.8; // Lớp ván nền nệm / rattan
-      }
-
+      let headVol = 0, headCoreM2 = 0;
+      if (headType === 1) headCoreM2 = headAreaM2;
+      if (headType === 2) headVol = W*(comps.c_headH||1200)*thick/1e9;
+      if (headType === 3 || headType === 4) { headVol = (W*(comps.c_headH||1200)*thick/1e9) * 0.25; headCoreM2 = headAreaM2 * 0.8; }
       const footVol=W*(comps.c_footH||400)*thick/1e9;
       const railVol=2*D*200*thick/1e9;
       const slatVol=(comps.c_slat||14)*70*20*W/1e9;
       const surfaceM2 = (W*(comps.c_headH||1200)*2 + W*(comps.c_footH||400)*2 + D*200*2*2) / 1e6;
-
-      // --- LOGIC: Bọ gỗ liên kết ---
       const blockVol = (comps.c_block_qty||0) * (comps.c_block_l||50) * (comps.c_block_w||30) * (comps.c_block_t||30) / 1e9;
-
       let totalSMV=manualSmv>0?manualSmv:(SMV_RATES.prep_wood+SMV_RATES.sanding+SMV_RATES.finishing_pu+60);
-      
       let items = [];
       if (headVol + footVol > 0) items.push({name:'Gỗ khung đầu + chân giường', qty:(headVol+footVol).toFixed(4), unit:'m³', price:woodPrice, tlth, total:(headVol+footVol)*woodPrice*tlth});
       if (headCoreM2 > 0) items.push({name:'Ván lõi nền Headboard', qty:(headCoreM2/2.9768).toFixed(2), unit:'tấm', price:corePrice, tlth:1.05, total:(headCoreM2/2.9768)*corePrice*1.05});
-      
       if (headType === 3 && comps.c_head_rattan_price > 0) items.push({name:'Ốp Rattan/Đan dây Headboard', qty:headAreaM2.toFixed(3), unit:'m²', price:comps.c_head_rattan_price, tlth:1.1, total:headAreaM2*comps.c_head_rattan_price*1.1});
       if (headType === 4) {
           if(comps.c_head_mousse > 0) items.push({name:'Mousse nệm Headboard', qty:comps.c_head_mousse, unit:'m²', price:100000, tlth:1.0, total:comps.c_head_mousse*100000});
           if(comps.c_head_fabric > 0) items.push({name:'Vải bọc Headboard', qty:comps.c_head_fabric, unit:'m²', price:140000, tlth:1.0, total:comps.c_head_fabric*140000});
       }
-
       items.push({name:'Thanh dọc', qty:railVol.toFixed(4), unit:'m³', price:woodPrice, tlth, total:railVol*woodPrice*tlth});
       items.push({name:'Nan đỡ nệm', qty:slatVol.toFixed(4), unit:'m³', price:woodPrice, tlth, total:slatVol*woodPrice*tlth});
       items.push({name:'Hoàn thiện bề mặt', qty:surfaceM2.toFixed(3),unit:'m²', price:finishCostM2, tlth:1.08, total:surfaceM2*finishCostM2*1.08});
       items.push({name:'Bulon liên kết', qty:comps.c_bolt||0, unit:'con', price:1500, tlth:1.0, total:(comps.c_bolt||0)*1500});
       items.push({name:'Cam lock', qty:comps.c_cam||0, unit:'bộ', price:10000, tlth:1.0, total:(comps.c_cam||0)*10000});
-      
       if(blockVol > 0) items.push({name:'Bọ gỗ liên kết', spec:`${comps.c_block_qty} cái`, qty:blockVol.toFixed(4), unit:'m³', price:woodPrice, tlth, total:blockVol*woodPrice*tlth});
-      
       items.push({name:'Nhân công (SMV)', qty:totalSMV.toFixed(0), unit:'phút', price:manualRate, tlth:1.0, total:totalSMV*manualRate});
-      
       return items;
     }
   },
-
   sofa: {
     label:'🛋️ Sofa', defaultW:1800, defaultH:850, defaultD:900,
     defaultName:'Sofa 3 Chỗ', defaultCode:'SFA-3S-001',
@@ -1429,27 +1376,25 @@ const PRODUCT_TYPES = {
       {id:'c_mousse_b', label:'Mousse lưng T100mm', qty:0, unit:'m²', price:110000, note:''},
       {id:'c_fabric',   label:'Vải/Da bọc', qty:0, unit:'m²', price:200000, note:''},
       {id:'c_leg',      label:'Chân sofa', qty:6, unit:'cái', price:30000, note:''},
-      {id:'c_block_qty', label:'Bọ gỗ l.kết (SL)', qty:0, unit:'cái', price:0, note:'Quy đổi thành m³ gỗ'},
+      {id:'c_block_qty', label:'Bọ gỗ l.kết (SL)', qty:0, unit:'cái', price:0, note:''},
       {id:'c_block_l', label:'Dài bọ gỗ (mm)', qty:50, unit:'mm', price:0, note:''},
       {id:'c_block_w', label:'Rộng bọ gỗ (mm)', qty:30, unit:'mm', price:0, note:''},
       {id:'c_block_t', label:'Dày bọ gỗ (mm)', qty:30, unit:'mm', price:0, note:''},
     ],
     calcBOM(W,H,D,thick,woodPrice,tlth,corePrice,finishCostM2,comps,manualSmv,manualRate) {
-      const woodVol=(2*D*120*thick + 3*W*120*thick)/1e9; // Khung đáy
+      const woodVol=(2*D*120*thick + 3*W*120*thick)/1e9;
       const mousse_s=comps.c_mousse_s||W*(D*0.55)/1e6;
       const mousse_b=comps.c_mousse_b||W*(H*0.6)/1e6;
       const fabricM2=comps.c_fabric||(mousse_s+mousse_b)*2.5;
-
-      // --- LOGIC: Bọ gỗ liên kết ---
       const blockVol = (comps.c_block_qty||0) * (comps.c_block_l||50) * (comps.c_block_w||30) * (comps.c_block_t||30) / 1e9;
-
       let totalSMV=manualSmv>0?manualSmv:(SMV_RATES.prep_wood+SMV_RATES.sanding+180);
+      const legPrice = getAccPrice('Chân sofa', 30000);
       return [
         {name:'Khung gỗ đáy', qty:woodVol.toFixed(4), unit:'m³', price:woodPrice, tlth, total:woodVol*woodPrice*tlth},
         {name:'Mousse ghế', qty:mousse_s.toFixed(3), unit:'m²', price:140000, tlth:1.0, total:mousse_s*140000},
         {name:'Mousse lưng', qty:mousse_b.toFixed(3), unit:'m²', price:110000, tlth:1.0, total:mousse_b*110000},
         {name:'Vải/Da bọc', qty:fabricM2.toFixed(2), unit:'m²', price:200000, tlth:1.0, total:fabricM2*200000},
-        {name:'Chân sofa', qty:comps.c_leg||0, unit:'cái', price:30000, tlth:1.0, total:(comps.c_leg||0)*30000},
+        {name:'Chân sofa', qty:comps.c_leg||0, unit:'cái', price:legPrice, tlth:1.0, total:(comps.c_leg||0)*legPrice},
         ...(blockVol > 0 ? [{name:'Bọ gỗ liên kết', spec:`${comps.c_block_qty} cái`, qty:blockVol.toFixed(4), unit:'m³', price:woodPrice, tlth, total:blockVol*woodPrice*tlth}] : []),
         {name:'Nhân công (SMV)', qty:totalSMV.toFixed(0), unit:'phút', price:manualRate, tlth:1.0, total:totalSMV*manualRate},
       ];
@@ -1458,7 +1403,6 @@ const PRODUCT_TYPES = {
 };
 
 let currentType = 'cabinet';
-
 const fmt    = n  => new Intl.NumberFormat('vi-VN').format(Math.round(n));
 const ceil1  = n  => Math.ceil(n * 10) / 10;
 const getVal = id => parseFloat(document.getElementById(id)?.value) || 0;
@@ -1470,73 +1414,42 @@ function setType(type, bypassCalc = false) {
   currentType = type;
   document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active'));
   document.getElementById('type-'+type).classList.add('active');
-
   const def = PRODUCT_TYPES[type];
-  document.getElementById('width').value       = def.defaultW;
-  document.getElementById('height').value      = def.defaultH;
-  document.getElementById('depth').value       = def.defaultD;
+  document.getElementById('width').value = def.defaultW;
+  document.getElementById('height').value = def.defaultH;
+  document.getElementById('depth').value = def.defaultD;
   document.getElementById('productName').value = def.defaultName;
   document.getElementById('productCode').value = def.defaultCode;
   document.getElementById('size-hint').textContent = def.sizeHint;
   document.getElementById('fg-core').style.display = def.hasCore ? '' : 'none';
   document.getElementById('vanity-section').style.display = (type === 'vanity') ? '' : 'none';
-
   customAccList = [];
   renderCustomAccList();
   renderComponents(def.components);
   document.getElementById('sticky_type').textContent = def.label;
-  
   if(!bypassCalc) calculate();
 }
 
 function renderComponents(comps) {
   const sec = document.getElementById('comp-section');
-  sec.innerHTML = comps.map(c => `
-    <div class="comp-row">
-      <div>
-        <div class="comp-label">${c.label}</div>
-        ${c.note ? `<div style="font-size:9px;color:rgba(255,255,255,.3);font-family:var(--mono);margin-top:2px">${c.note}</div>` : ''}
-      </div>
-      <input class="comp-qty" type="number" id="${c.id}" value="${c.qty}" min="0" step="1" oninput="calculate()">
-    </div>`).join('');
+  sec.innerHTML = comps.map(c => `<div class="comp-row"><div><div class="comp-label">${c.label}</div>${c.note ? `<div style="font-size:9px;color:rgba(255,255,255,.3);font-family:var(--mono);margin-top:2px">${c.note}</div>` : ''}</div><input class="comp-qty" type="number" id="${c.id}" value="${c.qty}" min="0" step="1" oninput="calculate()"></div>`).join('');
 }
 
-// ══════════════════════════════════════════════════
-// STATE PERSISTENCE LOGIC
-// ══════════════════════════════════════════════════
 let isRestoring = false;
-
 function saveFormState() {
   if (isRestoring) return;
-  const state = {
-    currentType: currentType,
-    productName: getStr('productName'), productCode: getStr('productCode'),
-    width: getStr('width'), height: getStr('height'), depth: getStr('depth'),
-    qty: getStr('qty'),
-    woodType: getStr('woodType'), coreBoard: getStr('coreBoard'), finish: getStr('finish'),
-    laborRateInput: getStr('laborRateInput'), totalSmvInput: getStr('totalSmvInput'),
-    exchangeRate: getStr('exchangeRate'), fixedOverheadPerProduct: getStr('fixedOverheadPerProduct'),
-    testCost: getStr('testCost'), shippingCost: getStr('shippingCost'),
-    profitMargin: getStr('profitMargin'), inflationBuffer: getStr('inflationBuffer'),
-    vanity_stone_price: getStr('vanity_stone_price'), vanity_sink_price: getStr('vanity_sink_price'),
-    vanity_sink_qty: getStr('vanity_sink_qty'), vanity_holes: getStr('vanity_holes'),
-    customAccList: customAccList
-  };
-  
+  const state = { currentType, productName: getStr('productName'), productCode: getStr('productCode'), width: getStr('width'), height: getStr('height'), depth: getStr('depth'), qty: getStr('qty'), woodType: getStr('woodType'), coreBoard: getStr('coreBoard'), finish: getStr('finish'), laborRateInput: getStr('laborRateInput'), totalSmvInput: getStr('totalSmvInput'), exchangeRate: getStr('exchangeRate'), fixedOverheadPerProduct: getStr('fixedOverheadPerProduct'), testCost: getStr('testCost'), shippingCost: getStr('shippingCost'), profitMargin: getStr('profitMargin'), inflationBuffer: getStr('inflationBuffer'), vanity_stone_price: getStr('vanity_stone_price'), vanity_sink_price: getStr('vanity_sink_price'), vanity_sink_qty: getStr('vanity_sink_qty'), vanity_holes: getStr('vanity_holes'), packagingCost: getStr('packagingCost'), packagingRate: getStr('packagingRate'), customAccList };
   const def = PRODUCT_TYPES[currentType];
-  if(def) { def.components.forEach(c => { state[c.id] = getStr(c.id); }); }
+  if(def) def.components.forEach(c => { state[c.id] = getStr(c.id); });
   localStorage.setItem('appFormState', JSON.stringify(state));
 }
-
 function restoreFormState() {
   const stateJson = localStorage.getItem('appFormState');
   if(!stateJson) { setType('cabinet'); return; }
-  
   isRestoring = true;
   try {
     const state = JSON.parse(stateJson);
-    if(state.currentType) setType(state.currentType, true); 
-
+    if(state.currentType) setType(state.currentType, true);
     const restoreVal = (id, val) => { if(document.getElementById(id) && val !== undefined) document.getElementById(id).value = val; };
     restoreVal('productName', state.productName); restoreVal('productCode', state.productCode);
     restoreVal('width', state.width); restoreVal('height', state.height); restoreVal('depth', state.depth);
@@ -1547,12 +1460,10 @@ function restoreFormState() {
     restoreVal('profitMargin', state.profitMargin); restoreVal('inflationBuffer', state.inflationBuffer);
     restoreVal('vanity_stone_price', state.vanity_stone_price); restoreVal('vanity_sink_price', state.vanity_sink_price);
     restoreVal('vanity_sink_qty', state.vanity_sink_qty); restoreVal('vanity_holes', state.vanity_holes);
-
+    restoreVal('packagingCost', state.packagingCost); restoreVal('packagingRate', state.packagingRate);
     if(state.customAccList) { customAccList = state.customAccList; renderCustomAccList(); }
-    
     const def = PRODUCT_TYPES[state.currentType || currentType];
-    if(def) { def.components.forEach(c => { restoreVal(c.id, state[c.id]); }); }
-    
+    if(def) def.components.forEach(c => { restoreVal(c.id, state[c.id]); });
     syncWoodInput(); syncCoreInput(); syncFinishInput();
   } catch(e) { console.error(e); setType('cabinet'); }
   isRestoring = false;
@@ -1560,40 +1471,58 @@ function restoreFormState() {
 }
 
 // ══════════════════════════════════════════════════
-// CORE CALCULATION LOGIC
+// CORE CALCULATION LOGIC (ĐÃ SỬA LỖI FALLBACK)
 // ══════════════════════════════════════════════════
+async function fetchExchangeRate() {
+  try {
+    const res = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
+    const data = await res.json();
+    const vndRate = data.rates.VND;
+    if(vndRate) { document.getElementById('exchangeRate').value = vndRate; showToast(`Tỷ giá cập nhật: ${vndRate} VND/USD`); calculate(); }
+    else showToast('Không thể lấy tỷ giá');
+  } catch(e) { showToast('Lỗi kết nối API tỷ giá'); }
+}
+async function fetchExchangeRateAndShow() {
+  try {
+    const res = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
+    const data = await res.json();
+    const vndRate = data.rates.VND;
+    if(vndRate) { document.getElementById('liveExchangeRate').innerText = vndRate; document.getElementById('exchangeRate').value = vndRate; showToast(`Tỷ giá cập nhật: ${vndRate}`); calculate(); }
+    else document.getElementById('liveExchangeRate').innerText = 'Lỗi tải';
+  } catch(e) { document.getElementById('liveExchangeRate').innerText = 'Lỗi kết nối'; }
+}
+
 function calculate() {
-  if (isRestoring) return; // Không tính khi đang phục hồi form
-  
+  if (isRestoring) return;
   const W = getVal('width'), H = getVal('height'), D = getVal('depth');
+  if(W < 50 || H < 50 || D < 20) { showToast('Kích thước quá nhỏ (tối thiểu W≥50, H≥50, D≥20 mm)'); return; }
   const qty = getVal('qty');
   const exRate = getVal('exchangeRate');
-  const fixedOverheadPct = getVal('fixedOverheadPerProduct');
+  const fixedOverheadPct = getVal('fixedOverheadPerProduct') / 100;
   const testCost = getVal('testCost');
   const shippingCost = getVal('shippingCost');
   const profitPct = getVal('profitMargin') / 100;
   const inflationPct = getVal('inflationBuffer') / 100;
   const manualLaborRate = getVal('laborRateInput');
   const manualTotalSmv = getVal('totalSmvInput');
+  const packagingCostManual = getVal('packagingCost');
+  const packagingRate = getVal('packagingRate');
 
   const woodOpt = getOpt('woodType');
-  const woodPrice = parseFloat(woodOpt?.dataset.price || 16500000);
-  const tlth = parseFloat(woodOpt?.dataset.tlth || 1.54);
-  const woodThick = parseFloat(woodOpt?.dataset.thick || 32);
-  const woodLabel = (woodOpt?.text || '').split('—')[0].trim();
-
+  const woodPrice = woodOpt ? parseFloat(woodOpt.dataset.price) : 4500000;
+  const tlth = woodOpt ? parseFloat(woodOpt.dataset.tlth) : 1.54;
+  const woodThick = woodOpt ? parseFloat(woodOpt.dataset.thick) : 32;
+  const woodLabel = woodOpt ? woodOpt.text.split('—')[0].trim() : 'Gỗ mặc định';
   const finishOpt = getOpt('finish');
-  const finishCostPerM2 = parseFloat(finishOpt?.dataset.cost || 100000);
-  const finishLabel = (finishOpt?.text || '').split('—')[0].trim();
-
+  const finishCostPerM2 = finishOpt ? parseFloat(finishOpt.dataset.cost) : 100000;
+  const finishLabel = finishOpt ? finishOpt.text.split('—')[0].trim() : 'Hoàn thiện mặc định';
   const coreOpt = getOpt('coreBoard');
-  const corePricePerSheet = parseFloat(coreOpt?.dataset.price || 380000);
-
+  const corePricePerSheet = coreOpt ? parseFloat(coreOpt.dataset.price) : 380000;
+  
   const volumeM3 = W*H*D / 1e9;
   const typeDef = PRODUCT_TYPES[currentType];
   const comps = {};
   typeDef.components.forEach(c => { comps[c.id] = compVal(c.id); });
-
   if (currentType === 'vanity') {
     comps.vanity_stone_price = getVal('vanity_stone_price');
     comps.vanity_sink_price = getVal('vanity_sink_price');
@@ -1602,48 +1531,36 @@ function calculate() {
   }
 
   let bomItems;
-  try {
-    bomItems = typeDef.calcBOM(W,H,D,woodThick,woodPrice,tlth,corePricePerSheet,finishCostPerM2,comps,manualTotalSmv,manualLaborRate);
-  } catch(e) { bomItems = []; }
-
+  try { bomItems = typeDef.calcBOM(W,H,D,woodThick,woodPrice,tlth,corePricePerSheet,finishCostPerM2,comps,manualTotalSmv,manualLaborRate); } catch(e) { bomItems = []; }
   bomItems = bomItems.filter(b => b.total > 0);
-
-  customAccList.forEach(a => {
-    if(a.name && a.price > 0) {
-      bomItems.splice(bomItems.length - 1, 0, { name: a.name, spec:'(nhập tay)', qty:1, unit:'bộ', price:a.price, tlth:1.0, total:a.price });
-    }
-  });
-
-  const packaging = volumeM3 * 500000;
-  bomItems.push({name:'Bao bì (carton/pallet)', spec:`${volumeM3.toFixed(3)} m³`, qty:volumeM3.toFixed(3), unit:'m³', price:500000, tlth:1.0, total:packaging});
+  customAccList.forEach(a => { if(a.name && a.price > 0) bomItems.splice(bomItems.length - 1, 0, { name: a.name, spec:'(nhập tay)', qty:1, unit:'bộ', price:a.price, tlth:1.0, total:a.price }); });
+  let packaging = packagingCostManual;
+  if(packaging === 0) packaging = volumeM3 * packagingRate;
+  bomItems.push({name:'Bao bì (carton/pallet)', spec:`${volumeM3.toFixed(3)} m³`, qty:volumeM3.toFixed(3), unit:'m³', price:packagingRate, tlth:1.0, total:packaging});
 
   const totalNVL = bomItems.reduce((s,b) => s + (b.name !== 'Nhân công (SMV)' ? b.total : 0), 0);
   const laborRow = bomItems.find(b => b.name === 'Nhân công (SMV)');
   const totalLabor = laborRow ? laborRow.total : 0;
 
-  const overheadPct = fixedOverheadPct / 100;
-  const adjustedCogsBeforeOH = (totalNVL*(1+inflationPct)) + totalLabor + testCost + shippingCost;
-  // Sửa lỗi sensitivity định phí:
-  const fobBeforeOH = adjustedCogsBeforeOH * (1+profitPct);
-  const fixedCostTotal = fobBeforeOH * overheadPct;
-
-  const totalCOGS = totalNVL + totalLabor + fixedCostTotal + testCost + shippingCost;
-  const adjustedCOGS = adjustedCogsBeforeOH + fixedCostTotal;
-  const quoteVND = adjustedCOGS * (1+profitPct); 
+  const C = (totalNVL * (1 + inflationPct)) + totalLabor + testCost + shippingCost + packaging;
+  const denominator = 1 - fixedOverheadPct - profitPct;
+  if (denominator <= 0) { showToast('Lỗi: Tổng định phí + lợi nhuận vượt quá 100% giá bán!'); return; }
+  const quoteVND = C / denominator;
+  const fixedCostTotal = quoteVND * fixedOverheadPct;
+  const profitVND = quoteVND * profitPct;
+  const totalCOGS = C + fixedCostTotal;
   const fobRaw = quoteVND / exRate;
   const fobFinal = ceil1(fobRaw);
-  const profitVND = quoteVND - totalCOGS;
   const profitUSD = profitVND / exRate;
   const profitPctAct = profitVND / quoteVND;
 
   const wIn = (W/25.4).toFixed(1), hIn = (H/25.4).toFixed(1), dIn = (D/25.4).toFixed(1);
-
-  document.getElementById('cogs_vnd').textContent   = fmt(totalCOGS)+'đ';
-  document.getElementById('fob_usd').textContent    = 'USD '+fobFinal.toFixed(2);
+  document.getElementById('cogs_vnd').textContent = fmt(totalCOGS)+'đ';
+  document.getElementById('fob_usd').textContent = 'USD '+fobFinal.toFixed(2);
   document.getElementById('profit_usd').textContent = 'USD '+profitUSD.toFixed(2);
   document.getElementById('profit_pct').textContent = (profitPctAct*100).toFixed(1)+'% biên LN';
-  document.getElementById('volume_m3').textContent  = volumeM3.toFixed(4)+' m³';
-  document.getElementById('size_in').textContent    = `${wIn}" × ${hIn}" × ${dIn}"`;
+  document.getElementById('volume_m3').textContent = volumeM3.toFixed(4)+' m³';
+  document.getElementById('size_in').textContent = `${wIn}" × ${hIn}" × ${dIn}"`;
 
   const bkdItems = [
     ...bomItems.filter(b => b.name !== 'Nhân công (SMV)').map(b => ({name:b.name, cost:b.total, cls:'nvl'})),
@@ -1666,9 +1583,7 @@ function calculate() {
   document.getElementById('barChart').innerHTML = barHTML;
 
   let bomHTML = '';
-  bomItems.forEach(b => {
-    bomHTML += `<tr><td>${b.name}</td><td class="r" style="font-family:var(--mono);font-size:10px">${b.spec||''}</td><td class="r">${typeof b.qty==='number'?b.qty.toFixed(3):b.qty}</td><td>${b.unit}</td><td class="r">${fmt(b.price)}</td><td class="r">${typeof b.tlth==='number'?b.tlth.toFixed(2)+'×':b.tlth}</td><td class="r">${fmt(b.total)}đ</td></tr>`;
-  });
+  bomItems.forEach(b => { bomHTML += `<tr><td>${b.name}</td><td class="r" style="font-family:var(--mono);font-size:10px">${b.spec||''}</td><td class="r">${typeof b.qty==='number'?b.qty.toFixed(3):b.qty}</td><td>${b.unit}</td><td class="r">${fmt(b.price)}</td><td class="r">${typeof b.tlth==='number'?b.tlth.toFixed(2)+'×':b.tlth}</td><td class="r">${fmt(b.total)}đ</td></tr>`; });
   bomHTML += `<tr class="tot"><td colspan="6">TỔNG NVL + NHÂN CÔNG</td><td class="r">${fmt(totalNVL+totalLabor)}đ</td></tr>`;
   document.getElementById('bomBody').innerHTML = bomHTML;
 
@@ -1679,13 +1594,11 @@ function calculate() {
     const lbl = nc===0 ? 'Hiện tại' : `NVL ${nc>0?'+':''}${(nc*100).toFixed(0)}%`;
     sensHTML += `<tr><td class="rl">${lbl}</td>`;
     margins.forEach(m => {
-      // Tính lại Định phí theo biên LN mới
-      const adjCogsBeforeOH = (totalNVL*(1+nc)*(1+inflationPct)) + totalLabor + testCost + shippingCost;
-      const adjFobBeforeOH = adjCogsBeforeOH * (1+m);
-      const adjFixedCost = adjFobBeforeOH * overheadPct;
-      const adjCOGS = adjCogsBeforeOH + adjFixedCost;
-      const adjQuoteVND = adjCOGS * (1+m);
-      const fob = ceil1(adjQuoteVND/exRate);
+      const adjC = (totalNVL * (1 + nc) * (1 + inflationPct)) + totalLabor + testCost + shippingCost + packaging;
+      const adjDenom = 1 - fixedOverheadPct - m;
+      if (adjDenom <= 0) { sensHTML += `<td>---</td>`; return; }
+      const adjP = adjC / adjDenom;
+      const fob = ceil1(adjP / exRate);
       const isCur = Math.abs(nc)<.001 && Math.abs(m-profitPct)<.001;
       const cls = isCur ? 'cur' : nc<0 ? 'lo' : nc>0 ? 'hi2' : '';
       sensHTML += `<td class="${cls}">$${fob.toFixed(2)}</td>`;
@@ -1704,68 +1617,204 @@ function calculate() {
   document.getElementById('q_finish').textContent = finishLabel;
   document.getElementById('q_qty').textContent = qty.toLocaleString()+' SP';
   document.getElementById('q_fob').textContent = 'USD '+fobFinal.toFixed(2);
-
   document.getElementById('sticky_fob').textContent = 'USD '+fobFinal.toFixed(2);
   document.getElementById('sticky_cogs').textContent = fmt(totalCOGS)+'đ COGS';
-
-  saveFormState(); // Auto save mọi lúc
+  saveFormState();
 }
 
 function syncAndRefresh() {
   let updated = false;
-  customAccList.forEach(a => {
-    if(a.name && a.price > 0 && !dbAccessories.find(db => db.name === a.name)) {
-      dbAccessories.push({name: a.name, price: a.price, type: 'cái'});
-      updated = true;
-    }
-  });
-  if(updated) {
-    saveDatabaseNoAlert();
-    showToast('✅ Đã đồng bộ phụ kiện vào Database!');
-  } else {
-    showToast('⚡ Form đã cập nhật hoàn tất!');
-  }
+  customAccList.forEach(a => { if(a.name && a.price > 0 && !dbAccessories.find(db => db.name === a.name)) { dbAccessories.push({name: a.name, price: a.price, type: 'cái'}); updated = true; } });
+  if(updated) { saveDatabaseNoAlert(); showToast('✅ Đã đồng bộ phụ kiện vào Database!'); } else showToast('⚡ Form đã cập nhật hoàn tất!');
   calculate();
 }
-
-function updateMarketData() {
-  document.getElementById('exchangeRate').value = 26340;
-  document.getElementById('marketModal').style.display = 'flex';
-  calculate();
-}
-function closeMarketModal() { document.getElementById('marketModal').style.display = 'none'; }
-
+function updateMarketData() { openMarketModal(); }
 function switchTab(name) {
   if(window.innerWidth >= 768) return;
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   document.getElementById('tab-'+name).classList.add('active');
   const ids = ['panel-input','panel-result','panel-bom','panel-quote'];
   ids.forEach(id => document.getElementById(id).style.display='none');
-  if(name==='input') { document.getElementById('panel-input').style.display='block'; } 
+  if(name==='input') document.getElementById('panel-input').style.display='block';
   else {
     document.getElementById('panel-result').style.display = name==='result'?'block':'none';
     document.getElementById('panel-bom').style.display    = name==='bom'   ?'block':'none';
     document.getElementById('panel-quote').style.display  = name==='quote' ?'block':'none';
   }
 }
-
 function initMobileTabs() {
-  if(window.innerWidth < 768) { switchTab('input'); } 
-  else {
-    ['panel-input','panel-result','panel-bom','panel-quote'].forEach(id => {
-      const el = document.getElementById(id); if(el) el.style.display='block';
-    });
-  }
+  if(window.innerWidth < 768) switchTab('input');
+  else ['panel-input','panel-result','panel-bom','panel-quote'].forEach(id => { const el = document.getElementById(id); if(el) el.style.display='block'; });
 }
 window.addEventListener('resize', initMobileTabs);
 
-// ── INIT ──
-if (localStorage.getItem('dbWood') && JSON.parse(localStorage.getItem('dbWood')).length > 0) {
-  loadDatabase(); updateAllSelects();
-} else { loadDefaultDatabase(); }
-initMobileTabs();
-restoreFormState(); 
-</script>
+function resetToDefault() {
+  if(confirm('Khôi phục tất cả thông số về mặc định?')) {
+    setType(currentType, false);
+    customAccList = [];
+    renderCustomAccList();
+    calculate();
+    showToast('Đã reset về cấu hình mặc định');
+  }
+}
 
+if (localStorage.getItem('dbWood') && JSON.parse(localStorage.getItem('dbWood')).length > 0) { loadDatabase(); updateAllSelects(); } else loadDefaultDatabase();
+initMobileTabs();
+restoreFormState();
+</script>
+<style>
+  /* Style bổ sung cho các tính năng mới */
+  .extra-fin-section { background: rgba(200, 168, 75, 0.05); border: 1px dashed var(--gold); padding: 12px; margin-top: 15px; }
+  .kpi.variance-pos::before { background: var(--red) !important; }
+  .kpi.variance-neg::before { background: var(--green) !important; }
+  .val.red { color: var(--red) !important; }
+  .val.green { color: var(--green) !important; }
+</style>
+
+<script>
+(function() {
+    // 1. CHÈN GIAO DIỆN INPUT MỚI
+    function injectInputs() {
+        const productInfoPanel = document.querySelector('.left-panel');
+        if (!productInfoPanel) return;
+
+        const extraHtml = `
+            <div class="slabel">Thông số tài chính bổ sung</div>
+            <div class="extra-fin-section">
+                <div class="row2">
+                    <div class="fg">
+                        <label>Nhà máy báo giá ($)</label>
+                        <input type="number" id="ext_factory_quote" step="0.01" placeholder="0.00" oninput="calculate()">
+                    </div>
+                    <div class="fg">
+                        <label>Margin mục tiêu (%)</label>
+                        <input type="number" id="ext_target_margin" step="0.1" placeholder="%" oninput="calculate()">
+                    </div>
+                </div>
+                <div class="fg" style="margin-top:10px">
+                    <p style="font-size:9px; color:var(--muted); font-family:var(--mono)">* Dùng để so sánh chênh lệch và tính FOB theo Margin.</p>
+                </div>
+            </div>
+        `;
+        // Chèn vào sau phần thông tin sản phẩm (thường là sau divider đầu tiên hoặc sau cụm kích thước)
+        productInfoPanel.insertAdjacentHTML('beforeend', extraHtml);
+    }
+
+    // 2. CHÈN THẺ KPI MỚI VÀO BẢNG KẾT QUẢ
+    function injectKPIs() {
+        const kpiGrid = document.querySelector('.kpi-grid');
+        if (!kpiGrid) return;
+
+        const kpiHtml = `
+            <div id="kpi_variance" class="kpi">
+                <label>Chênh lệch giá</label>
+                <div class="val" id="val_variance">$0.00</div>
+                <div class="sub" id="sub_variance">Vs. Nhà máy</div>
+            </div>
+            <div id="kpi_target_fob" class="kpi hi">
+                <label>FOB (Target Margin)</label>
+                <div class="val" id="val_target_fob">$0.00</div>
+                <div class="sub">Theo % Margin mục tiêu</div>
+            </div>
+        `;
+        kpiGrid.insertAdjacentHTML('beforeend', kpiHtml);
+    }
+
+    // 3. TỰ ĐỘNG LƯU DATABASE (AUTO-SAVE)
+    // Bao bọc các hàm cập nhật database để kích hoạt lưu localStorage
+    const dbFunctions = [
+        'addWood', 'saveEditWood', 'deleteWood',
+        'addCore', 'saveEditCore', 'deleteCore',
+        'addFinish', 'saveEditFinish', 'deleteFinish',
+        'addAccessory', 'saveEditAcc', 'deleteAcc',
+        'importCSV', 'importExcel'
+    ];
+
+    function saveAllToLocal() {
+        if(typeof dbWood !== 'undefined') localStorage.setItem('dbWood', JSON.stringify(dbWood));
+        if(typeof dbCore !== 'undefined') localStorage.setItem('dbCore', JSON.stringify(dbCore));
+        if(typeof dbFinish !== 'undefined') localStorage.setItem('dbFinish', JSON.stringify(dbFinish));
+        if(typeof dbAcc !== 'undefined') localStorage.setItem('dbAcc', JSON.stringify(dbAcc));
+        console.log("Database auto-saved to localStorage.");
+    }
+
+    dbFunctions.forEach(fnName => {
+        if (typeof window[fnName] === 'function') {
+            const original = window[fnName];
+            window[fnName] = function() {
+                const result = original.apply(this, arguments);
+                saveAllToLocal();
+                return result;
+            };
+        }
+    });
+
+    // 4. MỞ RỘNG LOGIC TÍNH TOÁN (MONKEY PATCH CALCULATE)
+    if (typeof window.calculate === 'function') {
+        const originalCalculate = window.calculate;
+        window.calculate = function() {
+            // Chạy logic cũ trước
+            originalCalculate.apply(this, arguments);
+
+            try {
+                // Lấy dữ liệu từ code cũ (Dựa trên biến global hoặc DOM)
+                // Giả định fobUSD là biến chứa giá FOB hiện tại trong code của bạn
+                const currentFobText = document.querySelector('.qfob-val')?.innerText || "$0";
+                const currentFOB = parseFloat(currentFobText.replace('$', '')) || 0;
+                
+                // Lấy các chi phí từ bảng Breakdown để tính ngược giá vốn (nếu cần)
+                // Ở đây ta tính FOB Target dựa trên cấu trúc: FOB = Cost / (1 - Margin%)
+                // Giả sử Cost = Tổng các chi phí chưa bao gồm Profit của hệ thống cũ.
+                // Để đơn giản và chính xác, ta lấy totalVND (tổng giá vốn) từ hàm calculate cũ.
+                const totalCostVND = window.totalVND || 0; 
+                const rate = window.exchangeRate || 25000;
+
+                // A. Tính Chênh lệch
+                const factoryQuote = parseFloat(document.getElementById('ext_factory_quote').value) || 0;
+                const varianceKpi = document.getElementById('kpi_variance');
+                const varianceVal = document.getElementById('val_variance');
+                
+                if (factoryQuote > 0) {
+                    const diff = currentFOB - factoryQuote;
+                    varianceVal.innerText = (diff >= 0 ? '+' : '') + '$' + diff.toFixed(2);
+                    if (diff > 0) {
+                        varianceKpi.className = 'kpi variance-pos';
+                        varianceVal.className = 'val red';
+                    } else {
+                        varianceKpi.className = 'kpi variance-neg';
+                        varianceVal.className = 'val green';
+                    }
+                } else {
+                    varianceVal.innerText = "$0.00";
+                    varianceKpi.className = 'kpi';
+                    varianceVal.className = 'val';
+                }
+
+                // B. Tính FOB theo Margin mục tiêu
+                const targetMargin = parseFloat(document.getElementById('ext_target_margin').value) || 0;
+                const targetFobVal = document.getElementById('val_target_fob');
+                
+                if (targetMargin > 0 && targetMargin < 100) {
+                    // Công thức: FOB = Cost_VND / (1 - Margin%) / Ti_gia
+                    const fobByMargin = (totalCostVND / (1 - targetMargin / 100)) / rate;
+                    targetFobVal.innerText = '$' + fobByMargin.toFixed(2);
+                } else {
+                    targetFobVal.innerText = '---';
+                }
+            } catch (e) {
+                console.error("Lỗi tính toán phần mở rộng:", e);
+            }
+        };
+    }
+
+    // Khởi tạo khi trang load xong
+    window.addEventListener('DOMContentLoaded', () => {
+        injectInputs();
+        injectKPIs();
+        // Gọi lại calculate để update giao diện nếu có dữ liệu cũ
+        if(typeof calculate === 'function') calculate();
+    });
+})();
+</script>
 </body>
 </html>
