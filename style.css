@@ -1071,56 +1071,37 @@ body {
     print-color-adjust: exact !important;
   }
 
-  /* Ẩn các thành phần không cần thiết khi in */
+  / Ẩn tất cả các thành phần không cần thiết */
   .header, .type-bar, .tab-bar, .fsticky, .kpi-grid, .bkd, .sens,
   .btn-group, .btn, .left-panel, .db-actions, .hbtns, .btn-add-new,
   .add-form, .manual-input-row, #dbManager, .vanity-box, .custom-acc-wrap,
   .comp-row, .toast, .type-btn, .tab-btn, .db-section, .db-manager,
-  .print-hide {
+  .print-hide, .tab-bar, .type-bar, .bomt, #panel-bom, #panel-result,
+  #panel-input, .right-panel, .tab-panel {
     display: none !important;
   }
 
-  /* Chỉ hiển thị panel báo giá và BOM */
-  .right-panel, #panel-quote, #panel-bom {
+  /* Chỉ hiển thị báo giá */
+  #panel-quote {
     display: block !important;
     width: 100% !important;
     margin: 0 !important;
     padding: 0 !important;
+    background: white !important;
   }
 
-  /* Bảng BOM */
-  .bomt {
-    overflow-x: visible !important;
-    margin: 0 !important;
-  }
-  .bomt table {
-    width: 100% !important;
-    border-collapse: collapse !important;
-    font-size: 10pt !important;
-  }
-  .bomt th, .bomt td {
-    border: 1px solid #000 !important;
-    padding: 6px !important;
-  }
-
-  /* Báo giá */
+  /* Định dạng khung báo giá */
   .qbox {
     border: 1px solid #000 !important;
     margin: 0 !important;
     padding: 15px !important;
+    page-break-inside: avoid;
   }
   .qbox::before {
     content: none !important;
   }
   .qrow {
     border-bottom: 1px solid #000 !important;
-  }	
-  .company-row, .address-row, .qrow {
-  display: flex !important;
-}
-  .company-row .ql, .company-row .qv {
-    font-weight: bold;
-    font-size: 12pt;
   }
   .qfob {
     border-top: 2px solid #000 !important;
