@@ -303,26 +303,6 @@ body {
   transform: scale(1.1);
 }
 
-.db-btn-edit, .db-btn-del {
-  border: none;
-  border-radius: 4px;
-  padding: 4px 10px;
-  font-family: var(--mono);
-  font-size: 10px;
-  font-weight: bold;
-  cursor: pointer;
-  margin: 0 2px;
-  display: inline-block;
-}
-.db-btn-edit {
-  background: var(--gold);
-  color: #000000;
-}
-.db-btn-del {
-  background: var(--red);
-  color: white;
-}
-
 .db-actions {
   display: flex;
   gap: 10px;
@@ -1057,8 +1037,9 @@ body {
   }
 }
 
+/* ========== IN ẤN: NỀN TRẮNG, CHỮ ĐEN, CHỈ BÁO GIÁ ========== */
 @media print {
-  /* Reset toàn bộ màu sắc và nền */
+  /* Reset tất cả về trắng đen */
   body, body * {
     background: white !important;
     background-color: white !important;
@@ -1070,58 +1051,22 @@ body {
     print-color-adjust: exact !important;
   }
 
-  /* Ẩn mọi đường link (URL) hiển thị khi in (do trình duyệt thêm) */
-  a[href]:after {
-    content: none !important;
-  }
-  /* Ẩn header/footer mặc định của trình duyệt (không thể CSS, nhưng có thể giảm margin) */
-  @page {
-    margin: 0.5cm;
-    size: auto;
-  }
-
   /* Ẩn toàn bộ các thành phần giao diện, các panel khác, BOM */
-  .header,
-  .type-bar,
-  .tab-bar,
-  .fsticky,
-  .kpi-grid,
-  .bkd,
-  .sens,
-  .btn-group,
-  .btn,
-  .left-panel,
-  .db-actions,
-  .hbtns,
-  .btn-add-new,
-  .add-form,
-  .manual-input-row,
-  #dbManager,
-  .vanity-box,
-  .custom-acc-wrap,
-  .comp-row,
-  .toast,
-  .type-btn,
-  .tab-btn,
-  .db-section,
-  .db-manager,
-  .bomt,
-  #panel-bom,
-  #panel-result,
-  #panel-input,
-  /* Ẩn tất cả các tab-panel khác trừ panel-quote */
+  .header, .type-bar, .tab-bar, .fsticky, .kpi-grid, .bkd, .sens,
+  .btn-group, .btn, .left-panel, .db-actions, .hbtns, .btn-add-new,
+  .add-form, .manual-input-row, #dbManager, .vanity-box, .custom-acc-wrap,
+  .comp-row, .toast, .type-btn, .tab-btn, .db-section, .db-manager,
+  .bomt, #panel-bom, #panel-result, #panel-input, .right-panel > :not(#panel-quote),
   .tab-panel:not(#panel-quote) {
     display: none !important;
   }
 
-  /* Hiển thị vùng chứa báo giá */
-  .right-panel,
-  #panel-quote,
-  #panel-quote * {
+  /* Chỉ hiển thị panel báo giá và nội dung của nó */
+  .right-panel, #panel-quote, #panel-quote * {
     display: block !important;
   }
 
-  /* Đảm bảo khung báo giá hiển thị đúng */
+  /* Định dạng khung báo giá */
   .qbox {
     border: 1px solid #000 !important;
     margin: 0 auto !important;
@@ -1129,7 +1074,6 @@ body {
     width: 90% !important;
     max-width: 800px !important;
     page-break-inside: avoid;
-    background: white !important;
   }
   .qbox::before {
     content: none !important;
@@ -1145,7 +1089,6 @@ body {
     display: inline-block !important;
     color: black !important;
     font-size: 12pt !important;
-    background: white !important;
   }
   .qfob {
     border-top: 2px solid #000 !important;
@@ -1156,7 +1099,15 @@ body {
   .qfob-lbl, .qfob-val {
     color: black !important;
     font-size: 14pt !important;
-    background: transparent !important;
+  }
+
+  /* Loại bỏ URL in thêm từ trình duyệt */
+  a[href]:after {
+    content: none !important;
+  }
+  @page {
+    margin: 0.5cm;
+    size: auto;
   }
 
   /* Đảm bảo font chữ dễ đọc */
