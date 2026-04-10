@@ -1114,16 +1114,17 @@ body {
     width: 100%;
     margin: 0;
     padding: 0;
-    background: white;
-    color: black;
+    background: white !important;
+    color: black !important;
   }
 
-  /* Đảm bảo chữ đen trên nền trắng cho mọi thành phần */
-  body, .qbox, .qrow, .ql, .qv, .qfob, .qfob-lbl, .qfob-val, 
-  .bomt, .bomt table, .bomt th, .bomt td {
+  /* Buộc tất cả các phần tử trong bản in có nền trắng, chữ đen */
+  * {
+    background-color: white !important;
     color: black !important;
-    background: white !important;
     border-color: #aaa !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
   }
 
   /* Bảng BOM */
@@ -1148,10 +1149,9 @@ body {
 
   /* Khung báo giá */
   .qbox {
-    border: 1px solid #ccc;
-    box-shadow: none;
-    background: white;
-    color: black;
+    border: 1px solid #aaa !important;
+    background: white !important;
+    color: black !important;
     page-break-inside: avoid;
     margin: 0;
     padding: 15px;
@@ -1163,34 +1163,28 @@ body {
     display: flex;
     justify-content: space-between;
     padding: 6px 0;
-    border-bottom: 1px dashed #aaa;
+    border-bottom: 1px solid #aaa !important;
     break-inside: avoid;
   }
-  .ql {
-    color: black;
-    font-weight: normal;
-  }
-  .qv {
-    color: black;
-    font-weight: bold;
+  .ql, .qv {
+    color: black !important;
   }
   .qfob {
-    background: #f0f0f0;
-    border-top: 2px solid #000;
+    background: #f0f0f0 !important;
+    border-top: 2px solid #000 !important;
     padding: 12px;
     margin-top: 16px;
   }
-  .qfob-lbl {
-    color: black;
+  .qfob-lbl, .qfob-val {
+    color: black !important;
   }
   .qfob-val {
-    color: black;
     font-size: 18pt;
   }
 
   /* Toàn bộ nội dung vừa khổ giấy */
   body {
-    background: white;
+    background: white !important;
     font-size: 11pt;
     line-height: 1.4;
     margin: 0;
