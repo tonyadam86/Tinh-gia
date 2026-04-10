@@ -1071,26 +1071,22 @@ body {
     print-color-adjust: exact !important;
   }
 
-  / Ẩn tất cả các thành phần không cần thiết */
+  /* Ẩn tất cả các thành phần không cần thiết, bao gồm toàn bộ left-panel, tab-bar, type-bar, ... */
   .header, .type-bar, .tab-bar, .fsticky, .kpi-grid, .bkd, .sens,
   .btn-group, .btn, .left-panel, .db-actions, .hbtns, .btn-add-new,
   .add-form, .manual-input-row, #dbManager, .vanity-box, .custom-acc-wrap,
   .comp-row, .toast, .type-btn, .tab-btn, .db-section, .db-manager,
-  .print-hide, .tab-bar, .type-bar, .bomt, #panel-bom, #panel-result,
-  #panel-input, .right-panel, .tab-panel {
+  .print-hide, .bomt, #panel-bom, #panel-result, #panel-input,
+  .right-panel, .tab-panel, .main, .right-panel * {
     display: none !important;
   }
 
-  /* Chỉ hiển thị báo giá */
-  #panel-quote {
+  /* Chỉ hiển thị panel báo giá và nội dung bên trong nó */
+  #panel-quote, #panel-quote * {
     display: block !important;
-    width: 100% !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    background: white !important;
   }
 
-  /* Định dạng khung báo giá */
+  /* Đảm bảo khung báo giá hiển thị đúng */
   .qbox {
     border: 1px solid #000 !important;
     margin: 0 !important;
@@ -1102,10 +1098,17 @@ body {
   }
   .qrow {
     border-bottom: 1px solid #000 !important;
+    display: flex !important;
+    justify-content: space-between !important;
   }
   .qfob {
     border-top: 2px solid #000 !important;
     background: #f0f0f0 !important;
+  }
+
+  /* Đảm bảo các thành phần bên trong qbox không bị ẩn */
+  .qbox .ql, .qbox .qv, .qbox .qfob-lbl, .qbox .qfob-val {
+    display: inline-block !important;
   }
 }
 
