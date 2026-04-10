@@ -1,14 +1,14 @@
 {
-  "name": "Tên ứng dụng (dài)",
-  "short_name": "Tên ngắn",
-  "description": "Mô tả ngắn",
+  "name": "Furniture Cost Calculator",
+  "short_name": "FurnitureCost",
+  "description": "Tính giá nội thất xuất khẩu",
   "start_url": ".",
   "display": "standalone",
   "theme_color": "#e6b422",
   "background_color": "#000000",
   "icons": [
     {
-      "src": "icons/icon.png",
+      "src": "icon.png",
       "sizes": "512x512",
       "type": "image/png"
     }
