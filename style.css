@@ -1057,9 +1057,8 @@ body {
   }
 }
 
-/* ========== IN ẤN: NỀN TRẮNG, CHỮ ĐEN ========== */
 @media print {
-  /* Reset màu sắc cho in */
+  /* Reset toàn bộ màu sắc và nền */
   body, body * {
     background: white !important;
     background-color: white !important;
@@ -1071,7 +1070,17 @@ body {
     print-color-adjust: exact !important;
   }
 
-  /* Ẩn toàn bộ giao diện điều khiển, các panel khác, BOM */
+  /* Ẩn mọi đường link (URL) hiển thị khi in (do trình duyệt thêm) */
+  a[href]:after {
+    content: none !important;
+  }
+  /* Ẩn header/footer mặc định của trình duyệt (không thể CSS, nhưng có thể giảm margin) */
+  @page {
+    margin: 0.5cm;
+    size: auto;
+  }
+
+  /* Ẩn toàn bộ các thành phần giao diện, các panel khác, BOM */
   .header,
   .type-bar,
   .tab-bar,
@@ -1099,29 +1108,20 @@ body {
   .bomt,
   #panel-bom,
   #panel-result,
-  #panel-input {
+  #panel-input,
+  /* Ẩn tất cả các tab-panel khác trừ panel-quote */
+  .tab-panel:not(#panel-quote) {
     display: none !important;
   }
 
-  /* Giữ lại vùng chứa báo giá (right-panel và tab-panel chỉ cho phép hiển thị #panel-quote) */
+  /* Hiển thị vùng chứa báo giá */
   .right-panel,
-  .tab-panel {
+  #panel-quote,
+  #panel-quote * {
     display: block !important;
-    width: 100% !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    background: white !important;
   }
 
-  /* Chỉ hiển thị đúng panel báo giá, các tab-panel khác vẫn ẩn (nhưng đã ẩn ở trên) */
-  #panel-quote {
-    display: block !important;
-    width: 100% !important;
-    margin: 0 !important;
-    padding: 0 !important;
-  }
-
-  /* Định dạng khung báo giá */
+  /* Đảm bảo khung báo giá hiển thị đúng */
   .qbox {
     border: 1px solid #000 !important;
     margin: 0 auto !important;
@@ -1129,6 +1129,7 @@ body {
     width: 90% !important;
     max-width: 800px !important;
     page-break-inside: avoid;
+    background: white !important;
   }
   .qbox::before {
     content: none !important;
@@ -1144,6 +1145,7 @@ body {
     display: inline-block !important;
     color: black !important;
     font-size: 12pt !important;
+    background: white !important;
   }
   .qfob {
     border-top: 2px solid #000 !important;
@@ -1154,9 +1156,10 @@ body {
   .qfob-lbl, .qfob-val {
     color: black !important;
     font-size: 14pt !important;
+    background: transparent !important;
   }
 
-  /* Đảm bảo chữ không bị mờ hoặc ẩn */
+  /* Đảm bảo font chữ dễ đọc */
   body, .qbox, .qrow, .ql, .qv, .qfob, .qfob-lbl, .qfob-val {
     font-family: Arial, Helvetica, sans-serif !important;
     line-height: 1.4 !important;
