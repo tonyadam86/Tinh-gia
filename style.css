@@ -1059,7 +1059,7 @@ body {
 
 /* ========== IN ẤN: NỀN TRẮNG, CHỮ ĐEN ========== */
 @media print {
-  /* Reset toàn bộ màu sắc cho in */
+  /* Reset màu sắc cho in */
   body, body * {
     background: white !important;
     background-color: white !important;
@@ -1071,44 +1071,95 @@ body {
     print-color-adjust: exact !important;
   }
 
-  /* Ẩn tất cả các thành phần không cần thiết, bao gồm toàn bộ left-panel, tab-bar, type-bar, ... */
-  .header, .type-bar, .tab-bar, .fsticky, .kpi-grid, .bkd, .sens,
-  .btn-group, .btn, .left-panel, .db-actions, .hbtns, .btn-add-new,
-  .add-form, .manual-input-row, #dbManager, .vanity-box, .custom-acc-wrap,
-  .comp-row, .toast, .type-btn, .tab-btn, .db-section, .db-manager,
-  .print-hide, .bomt, #panel-bom, #panel-result, #panel-input,
-  .right-panel, .tab-panel, .main, .right-panel * {
+  /* Ẩn toàn bộ giao diện điều khiển, các panel khác, BOM */
+  .header,
+  .type-bar,
+  .tab-bar,
+  .fsticky,
+  .kpi-grid,
+  .bkd,
+  .sens,
+  .btn-group,
+  .btn,
+  .left-panel,
+  .db-actions,
+  .hbtns,
+  .btn-add-new,
+  .add-form,
+  .manual-input-row,
+  #dbManager,
+  .vanity-box,
+  .custom-acc-wrap,
+  .comp-row,
+  .toast,
+  .type-btn,
+  .tab-btn,
+  .db-section,
+  .db-manager,
+  .bomt,
+  #panel-bom,
+  #panel-result,
+  #panel-input {
     display: none !important;
   }
 
-  /* Chỉ hiển thị panel báo giá và nội dung bên trong nó */
-  #panel-quote, #panel-quote * {
+  /* Giữ lại vùng chứa báo giá (right-panel và tab-panel chỉ cho phép hiển thị #panel-quote) */
+  .right-panel,
+  .tab-panel {
     display: block !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: white !important;
   }
 
-  /* Đảm bảo khung báo giá hiển thị đúng */
+  /* Chỉ hiển thị đúng panel báo giá, các tab-panel khác vẫn ẩn (nhưng đã ẩn ở trên) */
+  #panel-quote {
+    display: block !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Định dạng khung báo giá */
   .qbox {
     border: 1px solid #000 !important;
-    margin: 0 !important;
-    padding: 15px !important;
+    margin: 0 auto !important;
+    padding: 20px !important;
+    width: 90% !important;
+    max-width: 800px !important;
     page-break-inside: avoid;
   }
   .qbox::before {
     content: none !important;
   }
   .qrow {
-    border-bottom: 1px solid #000 !important;
     display: flex !important;
     justify-content: space-between !important;
+    border-bottom: 1px solid #000 !important;
+    padding: 8px 0 !important;
+    margin: 0 !important;
+  }
+  .ql, .qv {
+    display: inline-block !important;
+    color: black !important;
+    font-size: 12pt !important;
   }
   .qfob {
     border-top: 2px solid #000 !important;
     background: #f0f0f0 !important;
+    padding: 16px !important;
+    margin-top: 20px !important;
+  }
+  .qfob-lbl, .qfob-val {
+    color: black !important;
+    font-size: 14pt !important;
   }
 
-  /* Đảm bảo các thành phần bên trong qbox không bị ẩn */
-  .qbox .ql, .qbox .qv, .qbox .qfob-lbl, .qbox .qfob-val {
-    display: inline-block !important;
+  /* Đảm bảo chữ không bị mờ hoặc ẩn */
+  body, .qbox, .qrow, .ql, .qv, .qfob, .qfob-lbl, .qfob-val {
+    font-family: Arial, Helvetica, sans-serif !important;
+    line-height: 1.4 !important;
   }
 }
 
