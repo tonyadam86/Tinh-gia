@@ -1472,13 +1472,22 @@ function checkTargetPrice() {
   }
   const diff = currentFOB - target;
   const diffPercent = (Math.abs(diff) / target) * 100;
-  if (diffPercent > 15) {
+  
+  if (diffPercent > 30) {
     warningDiv.style.display = 'block';
     warningDiv.style.backgroundColor = '#2c0e0b';
     warningDiv.style.color = '#ff9999';
     warningDiv.style.border = '1px solid var(--red)';
-    warningDiv.innerHTML = `⚠️ CẢNH BÁO: Giá FOB hiện tại (USD ${currentFOB.toFixed(2)}) chênh lệch ${diffPercent.toFixed(1)}% so với giá mục tiêu (USD ${target.toFixed(2)}). Vượt quá ngưỡng cho phép 15%. Hãy sử dụng nút "Tối ưu giá" để điều chỉnh.`;
-  } else {
+    warningDiv.innerHTML = `🚫 KHÔNG NHẬN ĐƠN HÀNG. Giá FOB (USD ${currentFOB.toFixed(2)}) chênh lệch ${diffPercent.toFixed(1)}% so với mục tiêu (USD ${target.toFixed(2)}), vượt ngưỡng 30%. Không thể chấp nhận.`;
+  } 
+  else if (diffPercent > 20) {
+    warningDiv.style.display = 'block';
+    warningDiv.style.backgroundColor = '#4a2e00';
+    warningDiv.style.color = '#ffcc66';
+    warningDiv.style.border = '1px solid #ffaa33';
+    warningDiv.innerHTML = `⚠️ XEM LẠI BÁO GIÁ. Giá FOB hiện tại (USD ${currentFOB.toFixed(2)}) chênh lệch ${diffPercent.toFixed(1)}% so với mục tiêu (USD ${target.toFixed(2)}), vượt quá 20% nhưng chưa quá 30%. Cần rà soát lại tính giá.`;
+  }
+  else {
     warningDiv.style.display = 'block';
     warningDiv.style.backgroundColor = '#0a1f14';
     warningDiv.style.color = '#aaffaa';
