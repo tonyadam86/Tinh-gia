@@ -1037,12 +1037,13 @@ body {
   }
 }
 
-/* ========== IN ẤN: ĐÚNG KHỔ GIẤY A4, NỀN TRẮNG, CHỮ ĐEN, CHỈ BÁO GIÁ ========== */
+/* ========== IN ẤN: BÁO GIÁ GỌN TRONG 1 TRANG A4 ========== */
 @media print {
   @page {
     size: A4;
-    margin: 1.8cm 1.5cm;
+    margin: 0.6cm 0.5cm;
   }
+  /* Reset về trắng đen */
   body, body * {
     background: white !important;
     background-color: white !important;
@@ -1053,17 +1054,22 @@ body {
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
   }
+  /* Ẩn toàn bộ giao diện điều khiển, nút bấm, link thừa */
   .header, .type-bar, .tab-bar, .fsticky, .kpi-grid, .bkd, .sens,
   .btn-group, .btn, .left-panel, .db-actions, .hbtns, .btn-add-new,
   .add-form, .manual-input-row, #dbManager, .vanity-box, .custom-acc-wrap,
   .comp-row, .toast, .type-btn, .tab-btn, .db-section, .db-manager,
   .bomt, #panel-bom, #panel-result, #panel-input,
-  .tab-panel:not(#panel-quote), button, .btn-gold, .btn-outline, .print-hide {
+  .tab-panel:not(#panel-quote), button, .btn-gold, .btn-outline, .print-hide,
+  #optimizeBtn, #approveBtn, a[href], .qfob a, .quote-footer a,
+  .qbox a, .right-panel a, .btn-group a {
     display: none !important;
   }
+  /* Chỉ hiển thị vùng báo giá */
   .right-panel, #panel-quote, #panel-quote * {
     display: block !important;
   }
+  /* Khung báo giá chính */
   .qbox {
     border: none !important;
     margin: 0 !important;
@@ -1076,134 +1082,70 @@ body {
   .qbox::before {
     content: none !important;
   }
+  /* Header báo giá (tùy chỉnh nếu có) */
   .quote-header {
     display: flex !important;
     justify-content: space-between !important;
     align-items: center !important;
-    margin-bottom: 20px !important;
-    padding-bottom: 10px !important;
-    border-bottom: 2px solid #000 !important;
-  }
-  .quote-logo {
-    max-width: 120px !important;
-    height: auto !important;
-  }
-  .quote-company {
-    text-align: right !important;
+    margin-bottom: 10px !important;
+    padding-bottom: 6px !important;
+    border-bottom: 1px solid #000 !important;
   }
   .quote-company h2 {
-    margin: 0 0 5px !important;
-    font-size: 18pt !important;
-    font-weight: bold !important;
+    font-size: 12pt !important;
+    margin: 0 !important;
   }
   .quote-company p {
-    margin: 2px 0 !important;
-    font-size: 10pt !important;
-    color: #333 !important;
+    font-size: 8pt !important;
+    margin: 0 !important;
   }
   .quote-title {
     text-align: center !important;
-    margin: 20px 0 !important;
+    margin: 8px 0 !important;
   }
   .quote-title h1 {
-    font-size: 22pt !important;
-    font-weight: bold !important;
-    letter-spacing: 2px !important;
-    text-transform: uppercase !important;
+    font-size: 14pt !important;
     margin: 0 !important;
   }
-  .quote-title p {
-    font-size: 10pt !important;
-    font-style: italic !important;
-    margin-top: 5px !important;
-  }
-  .quote-info {
+  /* Các dòng thông tin */
+  .qrow {
     display: flex !important;
     justify-content: space-between !important;
-    margin-bottom: 20px !important;
-    padding: 10px 0 !important;
-    border-top: 1px solid #ccc !important;
-    border-bottom: 1px solid #ccc !important;
+    padding: 3px 0 !important;
+    font-size: 9pt !important;
+    border-bottom: none !important;
   }
-  .info-col {
-    width: 48% !important;
+  .ql, .qv {
+    font-size: 9pt !important;
   }
-  .info-col p {
-    margin: 4px 0 !important;
-    font-size: 10pt !important;
-  }
-  .info-col strong {
-    font-weight: bold !important;
-  }
-  .quote-items {
-    width: 100% !important;
-    border-collapse: collapse !important;
-    margin: 15px 0 !important;
-    font-size: 10pt !important;
-  }
-  .quote-items th, .quote-items td {
-    border: 1px solid #000 !important;
-    padding: 8px !important;
-    text-align: left !important;
-  }
-  .quote-items th {
-    background: #f0f0f0 !important;
-    font-weight: bold !important;
-  }
-  .quote-items td {
-    vertical-align: top !important;
-  }
-  .quote-total {
-    margin-top: 20px !important;
-    text-align: right !important;
-    border-top: 2px solid #000 !important;
-    padding-top: 10px !important;
-  }
-  .total-row {
-    display: flex !important;
-    justify-content: flex-end !important;
-    margin: 5px 0 !important;
-  }
-  .total-label {
-    width: 150px !important;
-    font-weight: bold !important;
-  }
-  .total-value {
-    width: 150px !important;
-    text-align: right !important;
-    font-weight: bold !important;
-  }
-  .fob-row {
-    margin-top: 10px !important;
-    padding-top: 10px !important;
+  /* Khung FOB */
+  .qfob {
+    padding: 6px 0 !important;
+    margin-top: 8px !important;
     border-top: 1px solid #000 !important;
   }
-  .fob-label {
-    font-size: 14pt !important;
+  .qfob-lbl {
+    font-size: 10pt !important;
+  }
+  .qfob-val {
+    font-size: 13pt !important;
     font-weight: bold !important;
   }
-  .fob-value {
-    font-size: 16pt !important;
-    font-weight: bold !important;
-    color: #000 !important;
+  /* Đảm bảo nội dung không bị cắt */
+  body, .qbox, .right-panel {
+    overflow: visible !important;
+    max-height: none !important;
   }
-  .quote-footer {
-    margin-top: 30px !important;
-    padding-top: 10px !important;
-    border-top: 1px solid #ccc !important;
-    text-align: center !important;
-    font-size: 9pt !important;
-    color: #666 !important;
+  .quote-items, .quote-total, .quote-footer {
+    page-break-inside: avoid;
   }
-  a[href]:after {
-    content: none !important;
-  }
+  /* Ẩn mọi đường link và chân trang thừa */
   a, a:link, a:visited {
     text-decoration: none !important;
     color: black !important;
   }
-  .quote-items, .quote-total, .quote-footer {
-    page-break-inside: avoid;
+  a[href]:after {
+    content: none !important;
   }
 }
 
