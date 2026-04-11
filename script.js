@@ -1501,6 +1501,21 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('finishInner')?.addEventListener('change', calculate);
   setType('vanity');
   calculate();
+
+  // Lắng nghe sự kiện thay đổi localStorage từ các tab/window khác
+  window.addEventListener('storage', function(e) {
+    if (e.key && (e.key.startsWith('dbWood') || e.key.startsWith('dbFinish') || 
+                   e.key.startsWith('dbAccessories') || e.key.startsWith('dbCore') || 
+                   e.key.startsWith('dbPackaging'))) {
+      showToast('📢 Có người dùng khác vừa cập nhật database!');
+      loadDatabase();
+      calculate();
+      if (document.getElementById('dbManager').style.display === 'block') {
+        renderDbManager();
+      }
+    }
+  });
+
   window.onclick = function (e) {
     const modal = document.getElementById('dbManager'); if (e.target === modal) toggleDbManager();
     const guideModal = document.getElementById('guideModal'); if (e.target === guideModal) closeGuide();
