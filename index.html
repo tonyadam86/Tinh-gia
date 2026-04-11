@@ -1,19 +1,20 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#e6b422">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="FurnitureCost">
-<link rel="apple-touch-icon" href="icon.png">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, shrink-to-fit=no">
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, shrink-to-fit=no">
-<title>Tính Giá Nội Thất Xuất Khẩu</title>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, shrink-to-fit=no">
+  <title>Tính Giá Nội Thất Xuất Khẩu</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#e6b422">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="FurnitureCost">
+  <link rel="apple-touch-icon" href="icon.png">
+  <!-- Google Fonts & XLSX -->
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <!-- CSS riêng -->
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <div id="toast">Thông báo</div>
@@ -65,10 +66,11 @@
   <div class="row2"><div class="fg"><label>Tỷ giá USD/VND</label><input type="number" id="exchangeRate" value="26342" oninput="calculate()"></div><div class="fg"><label>Định phí QLC (%)</label><input type="number" id="fixedOverheadPerProduct" value="5" step="0.1" oninput="calculate()"></div></div>
   <div class="row2"><div class="fg"><label>Test (CARB/FSC) đ/SP</label><input type="number" id="testCost" value="50000" oninput="calculate()"></div><div class="fg"><label>CPVC XK đ/SP</label><input type="number" id="shippingCost" value="55000" oninput="calculate()"></div></div>
   <div class="row2"><div class="fg"><label>% LN mục tiêu</label><input type="number" id="profitMargin" value="15" oninput="calculate()"></div><div class="fg"><label>% Trượt NVL</label><input type="number" id="inflationBuffer" value="1" oninput="calculate()"></div></div>
-  <div class="row2"><div class="fg"><label>Chiết khấu theo SL (%)</label><input type="number" id="discountPercent" value="0" step="0.5" oninput="calculate()"></div><div class="fg"></div></div>
+  <div class="row2"><div class="fg"><label>Chiết khấu theo SL (%)</label><input type="number" id="discountPercent" value="0" step="0.5" oninput="calculate()"></div><div class="fg"><label>💰 Giá mục tiêu FOB (USD)</label><input type="number" id="targetFOB" value="0" step="1" oninput="checkTargetPrice()"></div></div>
   <div class="row2"><div class="fg"><label>Giá đóng gói (VND/SP)</label><input type="number" id="packagingCost" value="0" oninput="calculate()"></div><div class="fg"><label>Loại bao bì</label><select id="packagingType" onchange="updatePackagingRateFromType();calculate()"></select></div></div>
   <div class="row2"><div class="fg"><label>Hệ số bao bì (đ/m³)</label><input type="number" id="packagingRate" value="500000" readonly></div></div>
-  <div class="btn-group"><button class="btn btn-gold" onclick="calculate()">▶ TÍNH GIÁ</button><button class="btn btn-outline" onclick="fetchExchangeRate()">🌐 TỈ GIÁ</button><button class="btn btn-outline" onclick="syncAndRefresh()">💾 ĐỒNG BỘ</button><button class="btn btn-outline" onclick="resetToDefault()">⟳ RESET</button></div>
+  <div class="btn-group"><button class="btn btn-gold" onclick="calculate()">▶ TÍNH GIÁ</button><button class="btn btn-outline" onclick="fetchExchangeRate()">🌐 TỈ GIÁ</button><button class="btn btn-outline" onclick="syncAndRefresh()">💾 ĐỒNG BỘ</button><button class="btn btn-outline" onclick="resetToDefault()">⟳ RESET</button><button class="btn btn-outline" id="optimizeBtn" onclick="optimizePriceToTarget()">🎯 Tối ưu giá</button><button class="btn btn-gold" id="approveBtn" onclick="approveQuote()">✅ Phê duyệt báo giá</button></div>
+  <div id="targetWarning" style="margin-top:12px; font-size:11px; padding:8px; border-radius:6px; display:none;"></div>
 </div>
 <div class="right-panel">
   <div class="tab-panel active" id="panel-result">
@@ -99,19 +101,12 @@
   <span class="ql">Email</span>
   <span class="qv" id="q_email">sales@furnitureexport.vn</span>
 </div>
-<div class="qrow"><span class="ql">Mã SP</span><span class="qv" id="q_code">—</span></div><div class="qrow"><span class="ql">Tên SP</span><span class="qv" id="q_name">—</span></div><div class="qrow"><span class="ql">Loại</span><span class="qv" id="q_type">—</span></div><div class="qrow"><span class="ql">Kích thước</span><span class="qv" id="q_size">—</span></div><div class="qrow"><span class="ql">Nguyên liệu</span><span class="qv" id="q_material">—</span></div><div class="qrow"><span class="ql">Hoàn thiện</span><span class="qv" id="q_finish">—</span></div><div class="qrow"><span class="ql">SLDK</span><span class="qv" id="q_qty">—</span></div><div class="qrow"><span class="ql">Đóng gói</span><span class="qv" id="q_packaging">—</span></div><div class="qrow"><span class="ql">Chiết khấu</span><span class="qv" id="q_discount">—</span></div><div class="qfob"><div><div class="qfob-lbl">FOB sau chiết khấu</div></div><div class="qfob-val" id="q_fob">USD —</div></div></div>
-    <div class="btn-group"><button class="btn btn-gold" onclick="printQuote()">🖨 IN</button><button class="btn btn-outline" onclick="window.print()">📄 PDF</button></div>
+<div class="qrow"><span class="ql">Mã SP</span><span class="qv" id="q_code">—</span></div><div class="qrow"><span class="ql">Tên SP</span><span class="qv" id="q_name">—</span></div><div class="qrow"><span class="ql">Loại</span><span class="qv" id="q_type">—</span></div><div class="qrow"><span class="ql">Kích thước</span><span class="qv" id="q_size">—</span></div><div class="qrow"><span class="ql">Nguyên liệu</span><span class="qv" id="q_material">—</span></div><div class="qrow"><span class="ql">Hoàn thiện</span><span class="qv" id="q_finish">—</span></div><div class="qrow"><span class="ql">SLDK</span><span class="qv" id="q_qty">—</span></div><div class="qrow"><span class="ql">Đóng gói</span><span class="qv" id="q_packaging">—</span></div><div class="qrow"><span class="ql">Chiết khấu</span><span class="qv" id="q_discount">—</span></div><div class="qrow"><span class="ql">Trạng thái</span><span class="qv" id="q_status">⏳ Chưa duyệt</span></div><div class="qfob"><div><div class="qfob-lbl">FOB sau chiết khấu</div></div><div class="qfob-val" id="q_fob">USD —</div></div></div>
+    <div class="btn-group"><button class="btn btn-gold" onclick="exportQuoteToPDF()">📄 Xuất PDF</button></div>
   </div>
 </div></div>
 <div class="fsticky"><div><div class="fl" id="sticky_type">TỦ KỆ</div><div class="fc" id="sticky_cogs">—</div></div><div class="fv" id="sticky_fob">USD —</div></div>
-<div id="guideModal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.8);z-index:400;align-items:center;justify-content:center;"><div style="background:var(--cream2);padding:20px;border:1px solid var(--gold);max-width:500px"><div style="font-family:var(--mono);color:var(--gold);margin-bottom:15px">Hướng Dẫn</div><div style="font-size:11px;line-height:1.6"><b>Công thức FOB:</b><br/>COGS = NVL_sau_trượt + NC + Bao bì + Định phí + Test/XK<br/>FOB = (COGS / tỷ giá) / (1 - LN%) × (1 - CK%)<br/><br/>
-<b>Cập nhật mới:</b><br/>1. Chọn loại sản phẩm (Vanity, Tủ, Bàn...).<br/>
-<br/>2. Nhập kích thước, vật liệu, số lượng cấu kiện (hộc kéo, vách ngăn...).<br/>
-<br/>3. Bấm "TÍNH GIÁ" hoặc thay đổi thông số để tự động tính.<br/>
-<br/>4. Xem bảng BOM, độ nhạy, và báo giá.<br/>
-<br/>5. Quản lý database qua nút ⚙️ Database.<br/>
-<br/>6. In hoặc xuất PDF báo giá chuyên nghiệp.<br/>
-<b>Kết quả kỳ vọng:</b><br/>cập nhật giá theo độ dày cấu kiện để tianh giá tối ưu hơn.<br/></div><button class="btn btn-gold" style="width:100%;margin-top:15px" onclick="closeGuide()">Đã Hiểu</button></div></div>
+<div id="guideModal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.8);z-index:400;align-items:center;justify-content:center;"><div style="background:var(--cream2);padding:20px;border:1px solid var(--gold);max-width:500px"><div style="font-family:var(--mono);color:var(--gold);margin-bottom:15px">Hướng Dẫn</div><div style="font-size:11px;line-height:1.6"><b>Công thức FOB:</b><br/>COGS = NVL_sau_trượt + NC + Bao bì + Định phí + Test/XK<br/>FOB = (COGS / tỷ giá) / (1 - LN%) × (1 - CK%)<br/><br/><b>Cập nhật mới:</b><br/>- Nhập giá mục tiêu USD, hệ thống cảnh báo nếu chênh lệch >15%.<br/>- Nút "Tối ưu giá" tự động điều chỉnh lợi nhuận.<br/>- "Phê duyệt báo giá" khóa phiên bản chào hàng.<br/>- Xuất PDF chuẩn báo giá.<br/></div><button class="btn btn-gold" style="width:100%;margin-top:15px" onclick="closeGuide()">Đã Hiểu</button></div></div>
 
 <script src="script.js"></script>
 </body>

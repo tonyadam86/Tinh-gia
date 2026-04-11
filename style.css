@@ -1039,13 +1039,10 @@ body {
 
 /* ========== IN ẤN: ĐÚNG KHỔ GIẤY A4, NỀN TRẮNG, CHỮ ĐEN, CHỈ BÁO GIÁ ========== */
 @media print {
-  /* Khổ giấy A4, lề chuẩn */
   @page {
     size: A4;
     margin: 1.8cm 1.5cm;
   }
-
-  /* Reset toàn bộ về trắng đen, loại bỏ màu nền */
   body, body * {
     background: white !important;
     background-color: white !important;
@@ -1056,8 +1053,6 @@ body {
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
   }
-
-  /* Ẩn toàn bộ giao diện điều khiển */
   .header, .type-bar, .tab-bar, .fsticky, .kpi-grid, .bkd, .sens,
   .btn-group, .btn, .left-panel, .db-actions, .hbtns, .btn-add-new,
   .add-form, .manual-input-row, #dbManager, .vanity-box, .custom-acc-wrap,
@@ -1066,13 +1061,9 @@ body {
   .tab-panel:not(#panel-quote), button, .btn-gold, .btn-outline, .print-hide {
     display: none !important;
   }
-
-  /* Chỉ hiển thị vùng báo giá */
   .right-panel, #panel-quote, #panel-quote * {
     display: block !important;
   }
-
-  /* Khung báo giá chính */
   .qbox {
     border: none !important;
     margin: 0 !important;
@@ -1085,8 +1076,6 @@ body {
   .qbox::before {
     content: none !important;
   }
-
-  /* Header báo giá (logo + thông tin công ty) */
   .quote-header {
     display: flex !important;
     justify-content: space-between !important;
@@ -1112,8 +1101,6 @@ body {
     font-size: 10pt !important;
     color: #333 !important;
   }
-
-  /* Tiêu đề báo giá */
   .quote-title {
     text-align: center !important;
     margin: 20px 0 !important;
@@ -1130,8 +1117,6 @@ body {
     font-style: italic !important;
     margin-top: 5px !important;
   }
-
-  /* Thông tin khách hàng và sản phẩm */
   .quote-info {
     display: flex !important;
     justify-content: space-between !important;
@@ -1150,8 +1135,6 @@ body {
   .info-col strong {
     font-weight: bold !important;
   }
-
-  /* Bảng chi tiết đơn hàng (nếu có) - bạn có thể tái sử dụng .qrow nhưng nên dạng bảng */
   .quote-items {
     width: 100% !important;
     border-collapse: collapse !important;
@@ -1170,8 +1153,6 @@ body {
   .quote-items td {
     vertical-align: top !important;
   }
-
-  /* Tổng cộng và FOB */
   .quote-total {
     margin-top: 20px !important;
     text-align: right !important;
@@ -1206,8 +1187,6 @@ body {
     font-weight: bold !important;
     color: #000 !important;
   }
-
-  /* Footer */
   .quote-footer {
     margin-top: 30px !important;
     padding-top: 10px !important;
@@ -1216,8 +1195,6 @@ body {
     font-size: 9pt !important;
     color: #666 !important;
   }
-
-  /* Loại bỏ link thừa */
   a[href]:after {
     content: none !important;
   }
@@ -1225,8 +1202,6 @@ body {
     text-decoration: none !important;
     color: black !important;
   }
-
-  /* Ngắt trang tránh cắt giữa chừng */
   .quote-items, .quote-total, .quote-footer {
     page-break-inside: avoid;
   }
