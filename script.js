@@ -488,6 +488,11 @@ function getFabricPriceFromType(fabricType) {
   return getAccPrice(fabricType, 140000);
 }
 
+// Hàm tính diện tích có oversize (dùng chung)
+function getAreaWithOversize(w_mm, h_mm, oversize = 40) {
+  return (w_mm + oversize) * (h_mm + oversize) / 1e6;
+}
+
 const PRODUCT_TYPES = {
   cabinet: {
     label: '🗄️ Tủ / Kệ', defaultW: 610, defaultH: 760, defaultD: 400, defaultName: 'TV Stand Cabinet 24"', defaultCode: 'CAB-24-TVS', hasCore: true, sizeHint: '20"=508 | 24"=610 | 30"=762 | 36"=914 | 48"=1219',
@@ -527,7 +532,8 @@ const PRODUCT_TYPES = {
       { id: 'c_block_w', label: 'Rộng bọ gỗ (mm)', qty: 30, unit: 'mm' },
       { id: 'c_block_t', label: 'Dày bọ gỗ (mm)', qty: 30, unit: 'mm' },
       { id: 'c_extra_leg', label: 'Chân phụ bổ sung', qty: 0, unit: 'cái', priceKey: 'Chân nhựa đen D50xH20', defaultPrice: 5000 },
-      { id: 'c_rattan_price', label: 'Giá Rattan/Đan dây (đ/m²)', qty: 0, unit: 'đ/m²' },
+      { id: 'c_rattan_price', label: 'Giá Rattan (đ/m²)', qty: 0, unit: 'đ/m²' },
+      { id: 'c_string_price', label: 'Giá Dây đan (đ/m²)', qty: 0, unit: 'đ/m²' },
       { id: 'c_rattan_offset', label: 'Offset viền Rattan (mm)', qty: 50, unit: 'mm' },
       { id: 'c_rattan_front_pct', label: '% Mặt trước Rattan (%)', qty: 100, unit: '%' },
       { id: 'c_rattan_sides', label: 'Số mặt hông Rattan', qty: 0, unit: 'mặt' }
@@ -555,7 +561,20 @@ const PRODUCT_TYPES = {
       const doorQty = comps.c_door || 1; if (doorQty > 0 && comps.core_door_thick > 0) addCorePart('Cánh tủ', doorQty * (W / doorQty) * H / 1e6, comps.core_door_thick || 18);
       const drawerQty = comps.c_drawer_qty || 0; if (drawerQty > 0) { const drawerHeight = 100; const drawerThick = comps.drawer_thick || 12; let totalDrawerAreaM2 = (2 * D * (drawerQty * drawerHeight) + (W * D) + ((drawerQty - 1) * W * 15) + (drawerQty * W * drawerHeight)) / 1e6; totalDrawerAreaM2 *= 1.05; addCorePart('Hộc kéo (hệ thống)', totalDrawerAreaM2, drawerThick); }
       const surfaceM2 = 2 * (W * H + W * D + H * D) / 1e6;
-      let rattanAreaM2 = 0; if (comps.c_rattan_price > 0) { const offset = comps.c_rattan_offset || 0; const frontPct = (comps.c_rattan_front_pct || 0) / 100; const sides = comps.c_rattan_sides || 0; let w_clear = Math.max(0, W - 2 * offset), h_clear = Math.max(0, H - 2 * offset), d_clear = Math.max(0, D - 2 * offset); let frontArea = w_clear * h_clear * frontPct; let sideArea2 = sides * (d_clear * h_clear); rattanAreaM2 = (frontArea + sideArea2) / 1e6; }
+      let rattanAreaM2 = 0;
+      const weavePrice = comps.c_rattan_price || comps.c_string_price || 0;
+      if (weavePrice > 0) {
+        const offset = comps.c_rattan_offset || 0;
+        const frontPct = (comps.c_rattan_front_pct || 0) / 100;
+        const sides = comps.c_rattan_sides || 0;
+        const oversize = 40;
+        let w_clear = Math.max(0, W - 2 * offset) + oversize;
+        let h_clear = Math.max(0, H - 2 * offset) + oversize;
+        let d_clear = Math.max(0, D - 2 * offset) + oversize;
+        let frontArea = w_clear * h_clear * frontPct;
+        let sideArea2 = sides * (d_clear * h_clear);
+        rattanAreaM2 = (frontArea + sideArea2) / 1e6;
+      }
       let totalSMV = manualSmv > 0 ? manualSmv : (SMV_RATES.prep_wood + SMV_RATES.precision_machining + SMV_RATES.sanding + SMV_RATES.frame_assembly + SMV_RATES.drawer_door_assembly + SMV_RATES.finishing_pu + SMV_RATES.accessory_install + SMV_RATES.qc_packaging);
       if (drawerQty > 0) totalSMV += drawerQty * 7;
       const hingePrice = getAccPrice('Bản lề BGC thường 62×78mm', 12000);
@@ -576,7 +595,7 @@ const PRODUCT_TYPES = {
       if (handleQty > 0) items.push({ name: `Tay nắm (${handleName})`, qty: handleQty, unit: 'cái', price: handlePrice, tlth: 1.0, total: handleQty * handlePrice });
       items.push({ name: 'Vis + ốc', qty: comps.c_vis || 0, unit: 'con', price: 100, tlth: 1.0, total: (comps.c_vis || 0) * 100 });
       if (comps.c_extra_leg > 0) items.push({ name: 'Chân phụ', qty: comps.c_extra_leg, unit: 'cái', price: legPrice, tlth: 1.0, total: comps.c_extra_leg * legPrice });
-      if (rattanAreaM2 > 0) items.push({ name: 'Ốp Rattan/Đan dây', spec: `${rattanAreaM2.toFixed(3)}m²`, qty: rattanAreaM2.toFixed(3), unit: 'm²', price: comps.c_rattan_price, tlth: 1.1, total: rattanAreaM2 * comps.c_rattan_price * 1.1 });
+      if (rattanAreaM2 > 0) items.push({ name: 'Ốp Rattan/Đan dây', spec: `${rattanAreaM2.toFixed(3)}m²`, qty: rattanAreaM2.toFixed(3), unit: 'm²', price: weavePrice, tlth: 1.1, total: rattanAreaM2 * weavePrice * 1.1 });
       items.push({ name: 'Nhân công (SMV)', qty: totalSMV.toFixed(0), unit: 'phút', price: manualRate, tlth: 1.0, total: totalSMV * manualRate });
       return items;
     }
@@ -620,7 +639,8 @@ const PRODUCT_TYPES = {
       { id: 'c_block_w', label: 'Rộng bọ gỗ (mm)', qty: 30, unit: 'mm' },
       { id: 'c_block_t', label: 'Dày bọ gỗ (mm)', qty: 30, unit: 'mm' },
       { id: 'c_extra_leg', label: 'Chân phụ bổ sung', qty: 0, unit: 'cái', priceKey: 'Chân nhựa đen D50xH20', defaultPrice: 5000 },
-      { id: 'c_rattan_price', label: 'Giá Rattan/Đan dây (đ/m²)', qty: 0, unit: 'đ/m²' },
+      { id: 'c_rattan_price', label: 'Giá Rattan (đ/m²)', qty: 0, unit: 'đ/m²' },
+      { id: 'c_string_price', label: 'Giá Dây đan (đ/m²)', qty: 0, unit: 'đ/m²' },
       { id: 'c_rattan_offset', label: 'Offset viền Rattan (mm)', qty: 50, unit: 'mm' },
       { id: 'c_rattan_front_pct', label: '% Mặt trước Rattan (%)', qty: 100, unit: '%' },
       { id: 'c_rattan_sides', label: 'Số mặt hông Rattan', qty: 0, unit: 'mặt' }
@@ -650,7 +670,20 @@ const PRODUCT_TYPES = {
       const drawerQty = comps.c_drawer_qty || 0; if (drawerQty > 0) { const drawerHeight = 100; const drawerThick = comps.drawer_thick || 12; let totalDrawerAreaM2 = (2 * D * (drawerQty * drawerHeight) + (W * D) + ((drawerQty - 1) * W * 15) + (drawerQty * W * drawerHeight)) / 1e6; totalDrawerAreaM2 *= 1.05; addCorePart('Hộc kéo (hệ thống)', totalDrawerAreaM2, drawerThick); }
       let surfaceM2 = 2 * (W * H + W * D + H * D) / 1e6;
       if (isBare || hasStone) surfaceM2 -= (W * D) / 1e6;
-      let rattanAreaM2 = 0; if (comps.c_rattan_price > 0) { const offset = comps.c_rattan_offset || 0; const frontPct = (comps.c_rattan_front_pct || 0) / 100; const sides = comps.c_rattan_sides || 0; let w_clear = Math.max(0, W - 2 * offset), h_clear = Math.max(0, H - 2 * offset), d_clear = Math.max(0, D - 2 * offset); let frontArea = w_clear * h_clear * frontPct; let sideArea2 = sides * (d_clear * h_clear); rattanAreaM2 = (frontArea + sideArea2) / 1e6; }
+      let rattanAreaM2 = 0;
+      const weavePrice = comps.c_rattan_price || comps.c_string_price || 0;
+      if (weavePrice > 0) {
+        const offset = comps.c_rattan_offset || 0;
+        const frontPct = (comps.c_rattan_front_pct || 0) / 100;
+        const sides = comps.c_rattan_sides || 0;
+        const oversize = 40;
+        let w_clear = Math.max(0, W - 2 * offset) + oversize;
+        let h_clear = Math.max(0, H - 2 * offset) + oversize;
+        let d_clear = Math.max(0, D - 2 * offset) + oversize;
+        let frontArea = w_clear * h_clear * frontPct;
+        let sideArea2 = sides * (d_clear * h_clear);
+        rattanAreaM2 = (frontArea + sideArea2) / 1e6;
+      }
       let totalSMV = manualSmv > 0 ? manualSmv : (SMV_RATES.prep_wood + SMV_RATES.sanding + SMV_RATES.frame_assembly + SMV_RATES.drawer_door_assembly + SMV_RATES.finishing_pu + 60);
       if (drawerQty > 0) totalSMV += drawerQty * 7;
       const hingePrice = getAccPrice('Bản lề BGC thường 62×78mm', 12000);
@@ -672,7 +705,7 @@ const PRODUCT_TYPES = {
       items.push({ name: 'Vis + ốc', qty: comps.c_vis || 0, unit: 'con', price: 100, tlth: 1.0, total: (comps.c_vis || 0) * 100 });
       if (comps.c_leg > 0) items.push({ name: 'Chân cabinet', qty: comps.c_leg, unit: 'cái', price: legPrice, tlth: 1.0, total: comps.c_leg * legPrice });
       if (comps.c_extra_leg > 0) items.push({ name: 'Chân phụ', qty: comps.c_extra_leg, unit: 'cái', price: legPrice, tlth: 1.0, total: comps.c_extra_leg * legPrice });
-      if (rattanAreaM2 > 0) items.push({ name: 'Ốp Rattan/Đan dây', spec: `${rattanAreaM2.toFixed(3)}m²`, qty: rattanAreaM2.toFixed(3), unit: 'm²', price: comps.c_rattan_price, tlth: 1.1, total: rattanAreaM2 * comps.c_rattan_price * 1.1 });
+      if (rattanAreaM2 > 0) items.push({ name: 'Ốp Rattan/Đan dây', spec: `${rattanAreaM2.toFixed(3)}m²`, qty: rattanAreaM2.toFixed(3), unit: 'm²', price: weavePrice, tlth: 1.1, total: rattanAreaM2 * weavePrice * 1.1 });
       if (hasStone) {
         if (comps.vanity_stone_price > 0) items.push({ name: 'Mặt đá', qty: 1, unit: 'tấm', price: comps.vanity_stone_price, tlth: 1.0, total: comps.vanity_stone_price });
         if (comps.vanity_sink_price > 0) items.push({ name: 'Chậu rửa', qty: comps.vanity_sink_qty, unit: 'cái', price: comps.vanity_sink_price, tlth: 1.0, total: comps.vanity_sink_price * comps.vanity_sink_qty });
@@ -748,16 +781,20 @@ const PRODUCT_TYPES = {
       { id: 'c_armW', label: 'Rộng tay vịn (mm)', qty: 40, unit: 'mm' },
       { id: 'c_armT', label: 'Dày tay vịn (mm)', qty: 20, unit: 'mm' },
       { id: 'c_seat', label: 'Mặt: 1:Solid 2:Ply 3:Nệm 4:Rat 5:Dây', qty: 3, unit: 'loại', isSelect: true, options: [{ val: '1', text: 'Solid' }, { val: '2', text: 'Plywood' }, { val: '3', text: 'Nệm' }, { val: '4', text: 'Rattan' }, { val: '5', text: 'Dây' }] },
-      { id: 'c_seat_rattan_price', label: 'Giá Rattan/Dây mặt ngồi (đ/m²)', qty: 0, unit: 'đ/m²' },
+      { id: 'c_seat_rattan_price', label: 'Giá Rattan mặt ngồi (đ/m²)', qty: 0, unit: 'đ/m²' },
+      { id: 'c_seat_string_price', label: 'Giá Dây đan mặt ngồi (đ/m²)', qty: 0, unit: 'đ/m²' },
       { id: 'c_back_type', label: 'Lưng: 1:Gỗ 2:Nệm 3:Rat 4:Dây', qty: 2, unit: 'loại', isSelect: true, options: [{ val: '1', text: 'Gỗ' }, { val: '2', text: 'Nệm' }, { val: '3', text: 'Rattan' }, { val: '4', text: 'Dây' }] },
-      { id: 'c_back_rattan_price', label: 'Giá Rattan/Dây lưng (đ/m²)', qty: 0, unit: 'đ/m²' },
+      { id: 'c_back_rattan_price', label: 'Giá Rattan lưng (đ/m²)', qty: 0, unit: 'đ/m²' },
+      { id: 'c_back_string_price', label: 'Giá Dây đan lưng (đ/m²)', qty: 0, unit: 'đ/m²' },
       { id: 'c_mousse_type', label: 'Loại Mousse', qty: 'D40', isSelect: true, options: [{ val: 'D40', text: 'D40 (2.5tr/m³)' }, { val: 'D60', text: 'D60 (3.2tr/m³)' }, { val: 'D80', text: 'D80 (3.8tr/m³)' }] },
       { id: 'c_fabric_type', label: 'Loại vải', qty: 'Vải bọc', isSelect: true, options: [{ val: 'Vải bọc', text: 'Vải bọc (140k/m²)' }, { val: 'Vải nỉ', text: 'Vải nỉ (180k/m²)' }, { val: 'Vải da', text: 'Vải da (250k/m²)' }] },
       { id: 'c_screw_qty', label: 'Ốc vít (con)', qty: 20, unit: 'con' },
       { id: 'c_block_qty', label: 'Bọ gỗ l.kết (SL)', qty: 0, unit: 'cái' },
       { id: 'c_block_l', label: 'Dài bọ gỗ (mm)', qty: 50, unit: 'mm' },
       { id: 'c_block_w', label: 'Rộng bọ gỗ (mm)', qty: 30, unit: 'mm' },
-      { id: 'c_block_t', label: 'Dày bọ gỗ (mm)', qty: 30, unit: 'mm' }
+      { id: 'c_block_t', label: 'Dày bọ gỗ (mm)', qty: 30, unit: 'mm' },
+      { id: 'c_seat_depth', label: 'Chiều sâu mặt ngồi (mm) - 0 = auto', qty: 0, unit: 'mm' },
+      { id: 'c_back_height', label: 'Chiều cao lưng (mm) - 0 = auto', qty: 0, unit: 'mm' }
     ],
     calcBOM: function(W, H, D, thick, woodPrice, woodTlth, corePrice, finishCostM2, comps, manualSmv, manualRate) {
       const finishTlth = parseFloat(document.getElementById('finish_tlth_input')?.value) || 1.05;
@@ -771,11 +808,15 @@ const PRODUCT_TYPES = {
       const legVol = frameType === 2 ? legs * legW * legW * (H * 0.72) / 1e9 : 0;
       const rungVol = frameType === 2 ? rungs * rungW * rungT * actRungL / 1e9 : 0;
       const seatType = parseInt(comps.c_seat) || 3;
-      const seatAreaM2 = W * (D * 0.85) / 1e6;
+      // Tính diện tích mặt ngồi với oversize 40mm, cho phép nhập chiều sâu thực tế
+      const oversize = 40;
+      let seatDepth = comps.c_seat_depth || D * 0.85;
+      let seatAreaM2 = getAreaWithOversize(W, seatDepth, oversize);
       const seatVol = seatType === 1 ? seatAreaM2 * thick / 1000 : 0;
       const apronVol = (comps.c_seat_apron || 0) * (W * 0.8) * (comps.c_seat_apronW || 60) * (comps.c_seat_apronT || 20) / 1e9;
       const backType = parseInt(comps.c_back_type) || 2;
-      const backAreaM2 = W * actBackL / 1e6;
+      let backHeight = comps.c_back_height || (H * 0.4);
+      let backAreaM2 = getAreaWithOversize(W, backHeight, oversize);
       const backVol = backType === 1 ? backs * backW * backT * actBackL / 1e9 : (backs * backW * backT * actBackL / 1e9) * 0.3;
       const armVol = arms * armW * armT * D / 1e9;
       const surfaceM2 = ((frameType === 2 ? legs * 4 * legW * H + rungs * 2 * (rungW + rungT) * W : 0) + (seatType === 1 ? W * D * 2 : 0) + (backType === 1 ? backs * 2 * (backW + backT) * actBackL : 0) + (arms * 2 * (armW + armT) * D) + (comps.c_seat_apron > 0 ? comps.c_seat_apron * 2 * (comps.c_seat_apronW + comps.c_seat_apronT) * (W * 0.8) : 0)) / 1e6;
@@ -790,30 +831,41 @@ const PRODUCT_TYPES = {
       if (apronVol > 0) items.push({ name: 'Gỗ apron mặt ngồi', qty: apronVol.toFixed(4), unit: 'm³', price: woodPrice, tlth: woodTlth, total: apronVol * woodPrice * woodTlth });
       if (seatType === 1) items.push({ name: 'Mặt ngồi (Solid)', qty: seatVol.toFixed(4), unit: 'm³', price: woodPrice, tlth: woodTlth, total: seatVol * woodPrice * woodTlth });
       if (seatType === 2) items.push({ name: 'Mặt ngồi (Plywood)', qty: (seatAreaM2 / 2.9768).toFixed(2), unit: 'tấm', price: corePrice, tlth: 1.02, total: (seatAreaM2 / 2.9768) * corePrice * 1.02 });
-      if (seatType === 4 && comps.c_seat_rattan_price > 0) items.push({ name: 'Mặt ngồi Rattan', qty: seatAreaM2.toFixed(3), unit: 'm²', price: comps.c_seat_rattan_price, tlth: 1.1, total: seatAreaM2 * comps.c_seat_rattan_price * 1.1 });
+      // Xử lý mặt ngồi Rattan/Dây
+      let seatWeavePrice = 0;
+      if (seatType === 4) seatWeavePrice = comps.c_seat_rattan_price;
+      else if (seatType === 5) seatWeavePrice = comps.c_seat_string_price;
+      if (seatWeavePrice > 0) {
+        items.push({ name: seatType === 4 ? 'Mặt ngồi Rattan' : 'Mặt ngồi Dây đan', qty: seatAreaM2.toFixed(3), unit: 'm²', price: seatWeavePrice, tlth: 1.1, total: seatAreaM2 * seatWeavePrice * 1.1 });
+      }
       if (seatType === 3) {
-  const mousseThickMM = 50; // 50mm
-  // Kích thước khối nệm mặt ngồi: dài = D * 0.85 (mm), rộng = W (mm), dày = mousseThickMM
-  const seatLenMM = D * 0.85;
-  const seatWidMM = W;
-  const { volumeM3, fabricAreaM2 } = calculateUpholstery(seatLenMM, seatWidMM, mousseThickMM, 1.05);
-  const moussePrice = getMoussePrice(comps.c_mousse_type);
-  const fabricPrice = getFabricPriceFromType(comps.c_fabric_type);
-  if (volumeM3 > 0) items.push({ name: 'Mousse nệm mặt ngồi', spec: `${(seatLenMM*seatWidMM/1e6).toFixed(2)}m² x ${mousseThickMM}mm`, qty: volumeM3.toFixed(5), unit: 'm³', price: moussePrice, tlth: 1.0, total: volumeM3 * moussePrice });
-  if (fabricAreaM2 > 0) items.push({ name: 'Vải bọc mặt ngồi (6 mặt)', qty: fabricAreaM2.toFixed(3), unit: 'm²', price: fabricPrice, tlth: 1.0, total: fabricAreaM2 * fabricPrice });
-}
+        const mousseThickMM = 50; // 50mm
+        const seatLenMM = D * 0.85;
+        const seatWidMM = W;
+        const { volumeM3, fabricAreaM2 } = calculateUpholstery(seatLenMM, seatWidMM, mousseThickMM, 1.05);
+        const moussePrice = getMoussePrice(comps.c_mousse_type);
+        const fabricPrice = getFabricPriceFromType(comps.c_fabric_type);
+        if (volumeM3 > 0) items.push({ name: 'Mousse nệm mặt ngồi', spec: `${(seatLenMM*seatWidMM/1e6).toFixed(2)}m² x ${mousseThickMM}mm`, qty: volumeM3.toFixed(5), unit: 'm³', price: moussePrice, tlth: 1.0, total: volumeM3 * moussePrice });
+        if (fabricAreaM2 > 0) items.push({ name: 'Vải bọc mặt ngồi (6 mặt)', qty: fabricAreaM2.toFixed(3), unit: 'm²', price: fabricPrice, tlth: 1.0, total: fabricAreaM2 * fabricPrice });
+      }
       if (backVol > 0) items.push({ name: 'Khung/Nan lưng', qty: backVol.toFixed(4), unit: 'm³', price: woodPrice, tlth: woodTlth, total: backVol * woodPrice * woodTlth });
       if (backType === 2) {
-  const mousseThickMM = 50;
-  const backLenMM = actBackL;   // chiều dài lưng (mm)
-  const backWidMM = W;          // rộng lưng = rộng ghế
-  const { volumeM3, fabricAreaM2 } = calculateUpholstery(backLenMM, backWidMM, mousseThickMM, 1.05);
-  const moussePrice = getMoussePrice(comps.c_mousse_type);
-  const fabricPrice = getFabricPriceFromType(comps.c_fabric_type);
-  if (volumeM3 > 0) items.push({ name: 'Mousse nệm lưng', spec: `${(backLenMM*backWidMM/1e6).toFixed(2)}m² x ${mousseThickMM}mm`, qty: volumeM3.toFixed(5), unit: 'm³', price: moussePrice, tlth: 1.0, total: volumeM3 * moussePrice });
-  if (fabricAreaM2 > 0) items.push({ name: 'Vải bọc lưng (6 mặt)', qty: fabricAreaM2.toFixed(3), unit: 'm²', price: fabricPrice, tlth: 1.0, total: fabricAreaM2 * fabricPrice });
-}
-      if (backType === 3 && comps.c_back_rattan_price > 0) items.push({ name: 'Lưng Rattan', qty: backAreaM2.toFixed(3), unit: 'm²', price: comps.c_back_rattan_price, tlth: 1.1, total: backAreaM2 * comps.c_back_rattan_price * 1.1 });
+        const mousseThickMM = 50;
+        const backLenMM = actBackL;
+        const backWidMM = W;
+        const { volumeM3, fabricAreaM2 } = calculateUpholstery(backLenMM, backWidMM, mousseThickMM, 1.05);
+        const moussePrice = getMoussePrice(comps.c_mousse_type);
+        const fabricPrice = getFabricPriceFromType(comps.c_fabric_type);
+        if (volumeM3 > 0) items.push({ name: 'Mousse nệm lưng', spec: `${(backLenMM*backWidMM/1e6).toFixed(2)}m² x ${mousseThickMM}mm`, qty: volumeM3.toFixed(5), unit: 'm³', price: moussePrice, tlth: 1.0, total: volumeM3 * moussePrice });
+        if (fabricAreaM2 > 0) items.push({ name: 'Vải bọc lưng (6 mặt)', qty: fabricAreaM2.toFixed(3), unit: 'm²', price: fabricPrice, tlth: 1.0, total: fabricAreaM2 * fabricPrice });
+      }
+      // Xử lý lưng Rattan/Dây
+      let backWeavePrice = 0;
+      if (backType === 3) backWeavePrice = comps.c_back_rattan_price;
+      else if (backType === 4) backWeavePrice = comps.c_back_string_price;
+      if (backWeavePrice > 0) {
+        items.push({ name: backType === 3 ? 'Lưng Rattan' : 'Lưng Dây đan', qty: backAreaM2.toFixed(3), unit: 'm²', price: backWeavePrice, tlth: 1.1, total: backAreaM2 * backWeavePrice * 1.1 });
+      }
       if (armVol > 0) items.push({ name: 'Tay vịn', qty: armVol.toFixed(4), unit: 'm³', price: woodPrice, tlth: woodTlth, total: armVol * woodPrice * woodTlth });
       if (surfaceM2 > 0) items.push({ name: 'Hoàn thiện bề mặt', qty: surfaceM2.toFixed(3), unit: 'm²', price: finishCostM2, tlth: finishTlth, total: surfaceM2 * finishCostM2 * finishTlth });
       if (comps.c_screw_qty > 0) items.push({ name: 'Ốc vít', qty: comps.c_screw_qty, unit: 'con', price: 500, tlth: 1.0, total: comps.c_screw_qty * 500 });
@@ -827,7 +879,8 @@ const PRODUCT_TYPES = {
     components: [
       { id: 'c_head_type', label: 'Headboard: 1:Ván 2:Solid 3:Rattan 4:Nệm', qty: 1, unit: 'loại', isSelect: true, options: [{ val: '1', text: 'Ván' }, { val: '2', text: 'Solid' }, { val: '3', text: 'Rattan' }, { val: '4', text: 'Nệm' }] },
       { id: 'c_headH', label: 'Chiều cao đầu giường (mm)', qty: 1200, unit: 'mm' },
-      { id: 'c_head_rattan_price', label: 'Giá Rattan/Dây (đ/m²)', qty: 0, unit: 'đ' },
+      { id: 'c_head_rattan_price', label: 'Giá Rattan (đ/m²)', qty: 0, unit: 'đ' },
+      { id: 'c_head_string_price', label: 'Giá Dây đan (đ/m²)', qty: 0, unit: 'đ' },
       { id: 'c_footH', label: 'Chiều cao chân giường (mm)', qty: 400, unit: 'mm' },
       { id: 'c_slat', label: 'Nan đỡ nệm (cái)', qty: 14, unit: 'cái' },
       { id: 'c_bolt', label: 'Bulon M10 (con)', qty: 16, unit: 'con', defaultPrice: 1500 },
@@ -838,37 +891,44 @@ const PRODUCT_TYPES = {
       { id: 'c_block_qty', label: 'Bọ gỗ l.kết (SL)', qty: 0, unit: 'cái' },
       { id: 'c_block_l', label: 'Dài bọ gỗ (mm)', qty: 50, unit: 'mm' },
       { id: 'c_block_w', label: 'Rộng bọ gỗ (mm)', qty: 30, unit: 'mm' },
-      { id: 'c_block_t', label: 'Dày bọ gỗ (mm)', qty: 30, unit: 'mm' }
+      { id: 'c_block_t', label: 'Dày bọ gỗ (mm)', qty: 30, unit: 'mm' },
+      { id: 'c_head_height_actual', label: 'Chiều cao headboard thực tế (mm) - 0 = auto', qty: 0, unit: 'mm' }
     ],
     calcBOM: function(W, H, D, thick, woodPrice, woodTlth, corePrice, finishCostM2, comps, manualSmv, manualRate) {
       const coreTlth = parseFloat(document.getElementById('core_tlth_input')?.value) || 1.02;
       const finishTlth = parseFloat(document.getElementById('finish_tlth_input')?.value) || 1.05;
       const headType = parseInt(comps.c_head_type) || 1;
-      const headAreaM2 = W * (comps.c_headH || 1200) / 1e6;
+      let headHeight = comps.c_head_height_actual || comps.c_headH || 1200;
+      const oversize = 40;
+      const headAreaM2 = getAreaWithOversize(W, headHeight, oversize);
       let headVol = 0, headCoreM2 = 0;
       if (headType === 1) headCoreM2 = headAreaM2;
-      if (headType === 2) headVol = W * (comps.c_headH || 1200) * thick / 1e9;
-      if (headType === 3 || headType === 4) { headVol = (W * (comps.c_headH || 1200) * thick / 1e9) * 0.25; headCoreM2 = headAreaM2 * 0.8; }
+      if (headType === 2) headVol = W * headHeight * thick / 1e9;
+      if (headType === 3 || headType === 4) { headVol = (W * headHeight * thick / 1e9) * 0.25; headCoreM2 = headAreaM2 * 0.8; }
       const footVol = W * (comps.c_footH || 400) * thick / 1e9;
       const railVol = 2 * D * 200 * thick / 1e9;
       const slatVol = (comps.c_slat || 14) * 70 * 20 * W / 1e9;
-      const surfaceM2 = (W * (comps.c_headH || 1200) * 2 + W * (comps.c_footH || 400) * 2 + D * 200 * 2 * 2) / 1e6;
+      const surfaceM2 = (W * headHeight * 2 + W * (comps.c_footH || 400) * 2 + D * 200 * 2 * 2) / 1e6;
       const blockVol = (comps.c_block_qty || 0) * (comps.c_block_l || 50) * (comps.c_block_w || 30) * (comps.c_block_t || 30) / 1e9;
       let totalSMV = manualSmv > 0 ? manualSmv : (SMV_RATES.prep_wood + SMV_RATES.sanding + SMV_RATES.finishing_pu + 60);
       let items = [];
       if (headVol + footVol > 0) items.push({ name: 'Gỗ khung đầu + chân', qty: (headVol + footVol).toFixed(4), unit: 'm³', price: woodPrice, tlth: woodTlth, total: (headVol + footVol) * woodPrice * woodTlth });
       if (headCoreM2 > 0) items.push({ name: 'Ván lõi Headboard', qty: (headCoreM2 / 2.9768).toFixed(2), unit: 'tấm', price: corePrice, tlth: coreTlth, total: (headCoreM2 / 2.9768) * corePrice * coreTlth });
-      if (headType === 3 && comps.c_head_rattan_price > 0) items.push({ name: 'Ốp Rattan Headboard', qty: headAreaM2.toFixed(3), unit: 'm²', price: comps.c_head_rattan_price, tlth: 1.1, total: headAreaM2 * comps.c_head_rattan_price * 1.1 });
+      let headWeavePrice = 0;
+      if (headType === 3) headWeavePrice = comps.c_head_rattan_price || comps.c_head_string_price;
+      if (headWeavePrice > 0) {
+        items.push({ name: 'Ốp Headboard (Rattan/Dây)', qty: headAreaM2.toFixed(3), unit: 'm²', price: headWeavePrice, tlth: 1.1, total: headAreaM2 * headWeavePrice * 1.1 });
+      }
       if (headType === 4) {
-  const mousseThickMM = 50;
-  const headLenMM = W;
-  const headHeightMM = comps.c_headH || 1200;
-  const { volumeM3, fabricAreaM2 } = calculateUpholstery(headLenMM, headHeightMM, mousseThickMM, 1.05);
-  const moussePrice = getMoussePrice(comps.c_mousse_type);
-  const fabricPrice = getFabricPriceFromType(comps.c_fabric_type);
-  if (volumeM3 > 0) items.push({ name: 'Mousse nệm headboard', spec: `${(headLenMM*headHeightMM/1e6).toFixed(2)}m² x ${mousseThickMM}mm`, qty: volumeM3.toFixed(5), unit: 'm³', price: moussePrice, tlth: 1.0, total: volumeM3 * moussePrice });
-  if (fabricAreaM2 > 0) items.push({ name: 'Vải bọc headboard (6 mặt)', qty: fabricAreaM2.toFixed(3), unit: 'm²', price: fabricPrice, tlth: 1.0, total: fabricAreaM2 * fabricPrice });
-}
+        const mousseThickMM = 50;
+        const headLenMM = W;
+        const headHeightMM = headHeight;
+        const { volumeM3, fabricAreaM2 } = calculateUpholstery(headLenMM, headHeightMM, mousseThickMM, 1.05);
+        const moussePrice = getMoussePrice(comps.c_mousse_type);
+        const fabricPrice = getFabricPriceFromType(comps.c_fabric_type);
+        if (volumeM3 > 0) items.push({ name: 'Mousse nệm headboard', spec: `${(headLenMM*headHeightMM/1e6).toFixed(2)}m² x ${mousseThickMM}mm`, qty: volumeM3.toFixed(5), unit: 'm³', price: moussePrice, tlth: 1.0, total: volumeM3 * moussePrice });
+        if (fabricAreaM2 > 0) items.push({ name: 'Vải bọc headboard (6 mặt)', qty: fabricAreaM2.toFixed(3), unit: 'm²', price: fabricPrice, tlth: 1.0, total: fabricAreaM2 * fabricPrice });
+      }
       items.push({ name: 'Thanh dọc', qty: railVol.toFixed(4), unit: 'm³', price: woodPrice, tlth: woodTlth, total: railVol * woodPrice * woodTlth });
       items.push({ name: 'Nan đỡ nệm', qty: slatVol.toFixed(4), unit: 'm³', price: woodPrice, tlth: woodTlth, total: slatVol * woodPrice * woodTlth });
       items.push({ name: 'Hoàn thiện bề mặt', qty: surfaceM2.toFixed(3), unit: 'm²', price: finishCostM2, tlth: finishTlth, total: surfaceM2 * finishCostM2 * finishTlth });
@@ -887,8 +947,10 @@ const PRODUCT_TYPES = {
       { id: 'c_metal_price', label: 'Giá khung kim loại (đ/bộ)', qty: 0, unit: 'đ' },
       { id: 'c_seat', label: 'Mặt ngồi: 1:Solid 2:Ply 3:Nệm 4:Rattan', qty: 3, unit: 'loại', isSelect: true, options: [{ val: '1', text: 'Solid' }, { val: '2', text: 'Plywood' }, { val: '3', text: 'Nệm' }, { val: '4', text: 'Rattan' }] },
       { id: 'c_seat_rattan_price', label: 'Giá Rattan mặt ngồi (đ/m²)', qty: 0, unit: 'đ' },
+      { id: 'c_seat_string_price', label: 'Giá Dây đan mặt ngồi (đ/m²)', qty: 0, unit: 'đ' },
       { id: 'c_back', label: 'Lưng: 1:Solid 2:Ply 3:Nệm 4:Rattan', qty: 3, unit: 'loại', isSelect: true, options: [{ val: '1', text: 'Solid' }, { val: '2', text: 'Plywood' }, { val: '3', text: 'Nệm' }, { val: '4', text: 'Rattan' }] },
       { id: 'c_back_rattan_price', label: 'Giá Rattan lưng (đ/m²)', qty: 0, unit: 'đ' },
+      { id: 'c_back_string_price', label: 'Giá Dây đan lưng (đ/m²)', qty: 0, unit: 'đ' },
       { id: 'c_arm', label: 'Tay vịn: 0:Không 1:Có', qty: 0, unit: 'cái', isSelect: true, options: [{ val: '0', text: 'Không' }, { val: '1', text: 'Có' }] },
       { id: 'c_leg', label: 'Chân (SL)', qty: 4, unit: 'cái', priceKey: 'Chân sofa', defaultPrice: 30000 },
       { id: 'c_spring', label: 'Lò xo túi (cái)', qty: 0, unit: 'cái', defaultPrice: 12000 },
@@ -898,7 +960,9 @@ const PRODUCT_TYPES = {
       { id: 'c_block_qty', label: 'Bọ gỗ l.kết (SL)', qty: 0, unit: 'cái' },
       { id: 'c_block_l', label: 'Dài bọ gỗ (mm)', qty: 50, unit: 'mm' },
       { id: 'c_block_w', label: 'Rộng bọ gỗ (mm)', qty: 30, unit: 'mm' },
-      { id: 'c_block_t', label: 'Dày bọ gỗ (mm)', qty: 30, unit: 'mm' }
+      { id: 'c_block_t', label: 'Dày bọ gỗ (mm)', qty: 30, unit: 'mm' },
+      { id: 'c_seat_depth_actual', label: 'Chiều sâu mặt ngồi (mm) - 0 = auto', qty: 0, unit: 'mm' },
+      { id: 'c_back_height_actual', label: 'Chiều cao lưng (mm) - 0 = auto', qty: 0, unit: 'mm' }
     ],
     calcBOM: function(W, H, D, thick, woodPrice, woodTlth, corePrice, finishCostM2, comps, manualSmv, manualRate) {
       const coreTlth = parseFloat(document.getElementById('core_tlth_input')?.value) || 1.02;
@@ -909,8 +973,11 @@ const PRODUCT_TYPES = {
       const arm = parseInt(comps.c_arm) || 0;
       const leg = comps.c_leg || 4;
       const frameVol = (frameType === 1) ? (2 * (W + D) * 80 * thick + W * D * thick) / 1e9 : 0;
-      const seatArea = W * D / 1e6;
-      const backArea = W * (H * 0.4) / 1e6;
+      const oversize = 40;
+      let seatDepth = comps.c_seat_depth_actual || D;
+      let seatArea = getAreaWithOversize(W, seatDepth, oversize);
+      let backHeight = comps.c_back_height_actual || (H * 0.4);
+      let backArea = getAreaWithOversize(W, backHeight, oversize);
       const armArea = (arm === 1) ? (2 * 100 * D / 1e6) : 0;
       const finishArea = (frameType === 1 ? (2 * (W + D) * H / 1e6) : 0) + seatArea * 0.5 + backArea + armArea;
       let coreM2 = 0;
@@ -918,8 +985,8 @@ const PRODUCT_TYPES = {
       if (backType === 2) coreM2 += backArea;
       const coreTiles = coreM2 / 2.9768;
       let rattanSeatM2 = 0, rattanBackM2 = 0;
-      if (seatType === 4 && comps.c_seat_rattan_price) rattanSeatM2 = seatArea;
-      if (backType === 4 && comps.c_back_rattan_price) rattanBackM2 = backArea;
+      if (seatType === 4) rattanSeatM2 = seatArea;
+      if (backType === 4) rattanBackM2 = backArea;
       const springCost = (comps.c_spring || 0) * 12000;
       const blockVol = (comps.c_block_qty || 0) * (comps.c_block_l || 50) * (comps.c_block_w || 30) * (comps.c_block_t || 30) / 1e9;
       let totalSMV = manualSmv > 0 ? manualSmv : (SMV_RATES.prep_wood + SMV_RATES.frame_assembly + 90 + SMV_RATES.finishing_pu);
@@ -928,42 +995,51 @@ const PRODUCT_TYPES = {
       if (frameType === 2 && comps.c_metal_price > 0) items.push({ name: 'Khung kim loại', qty: 1, unit: 'bộ', price: comps.c_metal_price, tlth: 1.0, total: comps.c_metal_price });
       else if (frameType === 1) items.push({ name: 'Gỗ khung sofa', qty: frameVol.toFixed(4), unit: 'm³', price: woodPrice, tlth: woodTlth, total: frameVol * woodPrice * woodTlth });
       if (coreTiles > 0) items.push({ name: 'Ván lõi (Plywood/MDF)', qty: coreTiles.toFixed(2), unit: 'tấm', price: corePrice, tlth: coreTlth, total: coreTiles * corePrice * coreTlth });
-      if (rattanSeatM2 > 0) items.push({ name: 'Mặt ngồi Rattan', qty: rattanSeatM2.toFixed(3), unit: 'm²', price: comps.c_seat_rattan_price, tlth: 1.1, total: rattanSeatM2 * comps.c_seat_rattan_price * 1.1 });
-      if (rattanBackM2 > 0) items.push({ name: 'Lưng Rattan', qty: rattanBackM2.toFixed(3), unit: 'm²', price: comps.c_back_rattan_price, tlth: 1.1, total: rattanBackM2 * comps.c_back_rattan_price * 1.1 });
+      // Xử lý mặt ngồi Rattan/Dây
+      let seatWeavePrice = 0;
+      if (seatType === 4) seatWeavePrice = comps.c_seat_rattan_price || comps.c_seat_string_price;
+      if (seatWeavePrice > 0 && rattanSeatM2 > 0) {
+        items.push({ name: 'Mặt ngồi (Rattan/Dây)', qty: rattanSeatM2.toFixed(3), unit: 'm²', price: seatWeavePrice, tlth: 1.1, total: rattanSeatM2 * seatWeavePrice * 1.1 });
+      }
+      // Xử lý lưng Rattan/Dây
+      let backWeavePrice = 0;
+      if (backType === 4) backWeavePrice = comps.c_back_rattan_price || comps.c_back_string_price;
+      if (backWeavePrice > 0 && rattanBackM2 > 0) {
+        items.push({ name: 'Lưng (Rattan/Dây)', qty: rattanBackM2.toFixed(3), unit: 'm²', price: backWeavePrice, tlth: 1.1, total: rattanBackM2 * backWeavePrice * 1.1 });
+      }
       if (seatType === 3) {
-  const mousseThickMM = 80; // 80mm
-  const seatLenMM = D;
-  const seatWidMM = W;
-  const { volumeM3, fabricAreaM2 } = calculateUpholstery(seatLenMM, seatWidMM, mousseThickMM, 1.05);
-  const moussePrice = getMoussePrice(comps.c_mousse_type);
-  const fabricPrice = getFabricPriceFromType(comps.c_fabric_type);
-  if (volumeM3 > 0) items.push({ name: 'Mousse nệm mặt ngồi', spec: `${(seatLenMM*seatWidMM/1e6).toFixed(2)}m² x ${mousseThickMM}mm`, qty: volumeM3.toFixed(5), unit: 'm³', price: moussePrice, tlth: 1.0, total: volumeM3 * moussePrice });
-  if (fabricAreaM2 > 0) items.push({ name: 'Vải bọc mặt ngồi (6 mặt)', qty: fabricAreaM2.toFixed(3), unit: 'm²', price: fabricPrice, tlth: 1.0, total: fabricAreaM2 * fabricPrice });
-}
+        const mousseThickMM = 80;
+        const seatLenMM = D;
+        const seatWidMM = W;
+        const { volumeM3, fabricAreaM2 } = calculateUpholstery(seatLenMM, seatWidMM, mousseThickMM, 1.05);
+        const moussePrice = getMoussePrice(comps.c_mousse_type);
+        const fabricPrice = getFabricPriceFromType(comps.c_fabric_type);
+        if (volumeM3 > 0) items.push({ name: 'Mousse nệm mặt ngồi', spec: `${(seatLenMM*seatWidMM/1e6).toFixed(2)}m² x ${mousseThickMM}mm`, qty: volumeM3.toFixed(5), unit: 'm³', price: moussePrice, tlth: 1.0, total: volumeM3 * moussePrice });
+        if (fabricAreaM2 > 0) items.push({ name: 'Vải bọc mặt ngồi (6 mặt)', qty: fabricAreaM2.toFixed(3), unit: 'm²', price: fabricPrice, tlth: 1.0, total: fabricAreaM2 * fabricPrice });
+      }
       if (backType === 3) {
-  const mousseThickMM = 60;
-  const backLenMM = H * 0.4;   // chiều cao lưng (mm)
-  const backWidMM = W;
-  const { volumeM3, fabricAreaM2 } = calculateUpholstery(backLenMM, backWidMM, mousseThickMM, 1.05);
-  const moussePrice = getMoussePrice(comps.c_mousse_type);
-  const fabricPrice = getFabricPriceFromType(comps.c_fabric_type);
-  if (volumeM3 > 0) items.push({ name: 'Mousse nệm lưng', spec: `${(backLenMM*backWidMM/1e6).toFixed(2)}m² x ${mousseThickMM}mm`, qty: volumeM3.toFixed(5), unit: 'm³', price: moussePrice, tlth: 1.0, total: volumeM3 * moussePrice });
-  if (fabricAreaM2 > 0) items.push({ name: 'Vải bọc lưng (6 mặt)', qty: fabricAreaM2.toFixed(3), unit: 'm²', price: fabricPrice, tlth: 1.0, total: fabricAreaM2 * fabricPrice });
-}
+        const mousseThickMM = 60;
+        const backLenMM = backHeight;
+        const backWidMM = W;
+        const { volumeM3, fabricAreaM2 } = calculateUpholstery(backLenMM, backWidMM, mousseThickMM, 1.05);
+        const moussePrice = getMoussePrice(comps.c_mousse_type);
+        const fabricPrice = getFabricPriceFromType(comps.c_fabric_type);
+        if (volumeM3 > 0) items.push({ name: 'Mousse nệm lưng', spec: `${(backLenMM*backWidMM/1e6).toFixed(2)}m² x ${mousseThickMM}mm`, qty: volumeM3.toFixed(5), unit: 'm³', price: moussePrice, tlth: 1.0, total: volumeM3 * moussePrice });
+        if (fabricAreaM2 > 0) items.push({ name: 'Vải bọc lưng (6 mặt)', qty: fabricAreaM2.toFixed(3), unit: 'm²', price: fabricPrice, tlth: 1.0, total: fabricAreaM2 * fabricPrice });
+      }
       if (arm === 1) {
-  const mousseThickMM = 50;
-  // Giả định mỗi tay vịn có kích thước: dài = D * 0.2, rộng = 80mm, cao = H
-  const armLenMM = D * 0.2;
-  const armWidMM = 80;
-  const armHeightMM = H;
-  const { volumeM3: volOneArm, fabricAreaM2: fabOneArm } = calculateUpholstery(armLenMM, armWidMM, armHeightMM, 1.05);
-  const totalVolume = volOneArm * 2;
-  const totalFabric = fabOneArm * 2;
-  const moussePrice = getMoussePrice(comps.c_mousse_type);
-  const fabricPrice = getFabricPriceFromType(comps.c_fabric_type);
-  if (totalVolume > 0) items.push({ name: 'Mousse nệm tay vịn (2 bên)', spec: `${(armLenMM*armWidMM/1e6).toFixed(2)}m²/ bên, dày ${mousseThickMM}mm`, qty: totalVolume.toFixed(5), unit: 'm³', price: moussePrice, tlth: 1.0, total: totalVolume * moussePrice });
-  if (totalFabric > 0) items.push({ name: 'Vải bọc tay vịn (2 bên, 6 mặt)', qty: totalFabric.toFixed(3), unit: 'm²', price: fabricPrice, tlth: 1.0, total: totalFabric * fabricPrice });
-}
+        const mousseThickMM = 50;
+        const armLenMM = D * 0.2;
+        const armWidMM = 80;
+        const armHeightMM = H;
+        const { volumeM3: volOneArm, fabricAreaM2: fabOneArm } = calculateUpholstery(armLenMM, armWidMM, armHeightMM, 1.05);
+        const totalVolume = volOneArm * 2;
+        const totalFabric = fabOneArm * 2;
+        const moussePrice = getMoussePrice(comps.c_mousse_type);
+        const fabricPrice = getFabricPriceFromType(comps.c_fabric_type);
+        if (totalVolume > 0) items.push({ name: 'Mousse nệm tay vịn (2 bên)', spec: `${(armLenMM*armWidMM/1e6).toFixed(2)}m²/ bên, dày ${mousseThickMM}mm`, qty: totalVolume.toFixed(5), unit: 'm³', price: moussePrice, tlth: 1.0, total: totalVolume * moussePrice });
+        if (totalFabric > 0) items.push({ name: 'Vải bọc tay vịn (2 bên, 6 mặt)', qty: totalFabric.toFixed(3), unit: 'm²', price: fabricPrice, tlth: 1.0, total: totalFabric * fabricPrice });
+      }
       if (springCost > 0) items.push({ name: 'Lò xo túi', qty: comps.c_spring, unit: 'cái', price: 12000, tlth: 1.0, total: springCost });
       if (leg > 0) items.push({ name: 'Chân sofa', qty: leg, unit: 'cái', price: legPrice, tlth: 1.0, total: leg * legPrice });
       if (finishArea > 0 && frameType === 1) items.push({ name: 'Hoàn thiện bề mặt', qty: finishArea.toFixed(3), unit: 'm²', price: finishCostM2, tlth: finishTlth, total: finishArea * finishCostM2 * finishTlth });
