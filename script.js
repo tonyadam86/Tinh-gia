@@ -404,10 +404,55 @@ function renderAccList() {
   `).join('');
 }
 function updateAllSelects(){
-  const populateWood=()=>{const sel=document.getElementById('woodType');if(!sel)return;const cur=sel.value;sel.innerHTML='';dbWood.forEach(w=>{const opt=document.createElement('option');opt.value=w.code;opt.textContent=`${w.name} — ${new Intl.NumberFormat('vi-VN').format(w.price)}/m³`;opt.dataset.price=w.price;opt.dataset.tlth=w.tlth||1.54;opt.dataset.thick=w.thick||32;sel.appendChild(opt);});if(sel.options.length>0)sel.value=cur||sel.options[0].value;};
-  const populateCore=()=>{const sel=document.getElementById('coreBoard');if(!sel)return;const cur=sel.value;sel.innerHTML='';dbCore.forEach(c=>{const opt=document.createElement('option');opt.value=c.code;opt.textContent=`${c.name} ${c.spec} — ${new Intl.NumberFormat('vi-VN').format(c.price)}/tấm`;opt.dataset.price=c.price;sel.appendChild(opt);});if(sel.options.length>0)sel.value=cur||sel.options[0].value;};
-  const populateFinish=()=>{const sel=document.getElementById('finish');if(!sel)return;const cur=sel.value;sel.innerHTML='';dbFinish.forEach(f=>{const opt=document.createElement('option');opt.value=f.name;opt.textContent=`${f.name} — ${new Intl.NumberFormat('vi-VN').format(f.cost)}/m²`;opt.dataset.cost=f.cost;sel.appendChild(opt);});if(sel.options.length>0)sel.value=cur||sel.options[0].value;};
-  populateWood();populateCore();populateFinish();
+  const populateWood=()=>{
+    const sel = document.getElementById('woodType');
+    if (!sel) return;
+    const cur = sel.value;
+    sel.innerHTML = '';
+    dbWood.forEach(w => {
+      const opt = document.createElement('option');
+      opt.value = w.code;
+      opt.textContent = `${w.name} — ${new Intl.NumberFormat('vi-VN').format(w.price)}/m³`;
+      opt.dataset.price = w.price;
+      opt.dataset.tlth = w.tlth || 1.54;
+      opt.dataset.thick = w.thick || 32;
+      sel.appendChild(opt);
+    });
+    if (sel.options.length > 0) sel.value = cur || sel.options[0].value;
+  };
+  const populateCore=()=>{
+    const sel = document.getElementById('coreBoard');
+    if (!sel) return;
+    const cur = sel.value;
+    sel.innerHTML = '';
+    dbCore.forEach(c => {
+      const opt = document.createElement('option');
+      opt.value = c.code;
+      opt.textContent = `${c.name} ${c.spec} — ${new Intl.NumberFormat('vi-VN').format(c.price)}/tấm`;
+      opt.dataset.price = c.price;
+      sel.appendChild(opt);
+    });
+    if (sel.options.length > 0) sel.value = cur || sel.options[0].value;
+  };
+  const populateFinishSelect = (selectId) => {
+    const sel = document.getElementById(selectId);
+    if (!sel) return;
+    const cur = sel.value;
+    sel.innerHTML = '';
+    dbFinish.forEach(f => {
+      const opt = document.createElement('option');
+      opt.value = f.name;
+      opt.textContent = `${f.name} — ${new Intl.NumberFormat('vi-VN').format(f.cost)}/m²`;
+      opt.dataset.cost = f.cost;
+      sel.appendChild(opt);
+    });
+    if (sel.options.length > 0) sel.value = cur || sel.options[0].value;
+  };
+  populateWood();
+  populateCore();
+  populateFinishSelect('finish');        // finish cũ
+  populateFinishSelect('finishOuter');
+  populateFinishSelect('finishInner');
 }
 function loadDefaultDatabase(){dbWood=[{code:'G-TR-25',name:'Gỗ Tràm VN',price:3800000,tlth:1.7,thick:32},{code:'G-CS-26',name:'Gỗ Cao su VN',price:7200000,tlth:1.45,thick:32},{code:'G-PO-26',name:'Gỗ Poplar Mỹ',price:13776500,tlth:1.54,thick:32},{code:'G-OA-32',name:'Gỗ W.Oak Mỹ 1C',price:30355000,tlth:1.54,thick:32},{code:'G-WA-32',name:'Gỗ Óc Chó (Walnut) 1C',price:55000000,tlth:1.54,thick:32},{code:'G-AS-32',name:'Gỗ Tần Bì (Ash) 1C',price:16500000,tlth:1.54,thick:32},{code:'G-PI-26',name:'Gỗ Thông (Pine) NewZealand',price:7500000,tlth:1.35,thick:32},{code:'G-EU-26',name:'Gỗ Bạch Đàn (Eucalyptus)',price:5800000,tlth:1.6,thick:32}];dbCore=[{code:'MDF09',name:'MDF CARB P2 09mm',price:220000,spec:'1220×2440mm'},{code:'MDF12',name:'MDF CARB P2 12mm',price:270000,spec:'1220×2440mm'},{code:'MDF15',name:'MDF CARB P2 15mm',price:875000,spec:'1220×2440mm'},{code:'MDF18',name:'MDF CARB P2 18mm',price:380000,spec:'1220×2440mm'},{code:'MDF25',name:'MDF CARB P2 25mm',price:510000,spec:'1220×2440mm'},{code:'PB18',name:'Ván dăm PB 18mm',price:220000,spec:'1220×2440mm'},{code:'RUB18',name:'Cao su ghép 18mm',price:390000,spec:'1220×2440mm'},{code:'PLY12',name:'Plywood Bạch Dương 12mm',price:420000,spec:'1220×2440mm'},{code:'PLY15',name:'Plywood Bạch Dương 15mm',price:520000,spec:'1220×2440mm'},{code:'PLY18',name:'Plywood Bạch Dương 18mm',price:610000,spec:'1220×2440mm'}];dbFinish=[{name:'Sơn PU Trong (Clear)',cost:100000},{name:'Sơn PU Bệt (Pigmented)',cost:120000},{name:'Sơn UV Dây chuyền',cost:140000},{name:'Lau dầu (Oil finish)',cost:160000},{name:'Veneer Oak + PU',cost:200000},{name:'Veneer Walnut + PU',cost:280000},{name:'Veneer Ash + PU',cost:190000},{name:'Phủ Melamine 2 mặt',cost:85000}];dbAccessories = [
   { name: 'Bản lề BGC thường 62×78mm', price: 12000, type: 'cái' },
@@ -459,6 +504,16 @@ function getSelectedWoodTlth() { return parseFloat(document.getElementById('wood
 function getSelectedWoodThick() { return parseFloat(document.getElementById('wood_thick_input').value) || 32; }
 function getSelectedCorePrice() { const opt = getOpt('coreBoard'); return opt ? parseFloat(opt.dataset.price) : 0; }
 function getSelectedFinishCost() { const opt = getOpt('finish'); return opt ? parseFloat(opt.dataset.cost) : 0; }
+function getSelectedFinishOuterCost() {
+  const sel = document.getElementById('finishOuter');
+  const opt = sel?.options[sel.selectedIndex];
+  return opt ? parseFloat(opt.dataset.cost) : 0;
+}
+function getSelectedFinishInnerCost() {
+  const sel = document.getElementById('finishInner');
+  const opt = sel?.options[sel.selectedIndex];
+  return opt ? parseFloat(opt.dataset.cost) : 0;
+}
 function getLaborRate() { return parseFloat(document.getElementById('laborRateInput').value) || 1250; }
 function getSMV() { return parseFloat(document.getElementById('totalSmvInput').value) || 0; }
 function getPackagingCost() { const manual = parseFloat(document.getElementById('packagingCost').value); if (!isNaN(manual) && manual > 0) return manual; const rate = parseFloat(document.getElementById('packagingRate').value) || 0; return rate * _currentVolumeM3; }
@@ -541,6 +596,7 @@ const PRODUCT_TYPES = {
     calcBOM: function(W, H, D, thick, woodPrice, woodTlth, corePrice, finishCostM2, comps, manualSmv, manualRate) {
       const coreTlth = parseFloat(document.getElementById('core_tlth_input')?.value) || 1.02;
       const finishTlth = parseFloat(document.getElementById('finish_tlth_input')?.value) || 1.05;
+      let totalDrawerAreaM2 = 0; // khai báo để dùng cho finish
       const legVol = calcSolidVolume(comps.solid_leg_qty || 0, comps.solid_leg_w || 40, comps.solid_leg_h || 100, comps.solid_leg_d || 40);
       const framePerimeter = 2 * (W + D);
       const frameVol = (framePerimeter * (comps.solid_frame_width || 80) * (comps.solid_frame_thick || 25)) / 1e9;
@@ -559,7 +615,7 @@ const PRODUCT_TYPES = {
       addCorePart('Kệ ngang', (comps.c_shelf || 2) * W * D / 1e6, comps.core_shelf_thick || 18);
       addCorePart('Vách ngăn dọc', (comps.c_divider_qty || 0) * H * D / 1e6, comps.core_divider_thick || 18);
       const doorQty = comps.c_door || 1; if (doorQty > 0 && comps.core_door_thick > 0) addCorePart('Cánh tủ', doorQty * (W / doorQty) * H / 1e6, comps.core_door_thick || 18);
-      const drawerQty = comps.c_drawer_qty || 0; if (drawerQty > 0) { const drawerHeight = 100; const drawerThick = comps.drawer_thick || 12; let totalDrawerAreaM2 = (2 * D * (drawerQty * drawerHeight) + (W * D) + ((drawerQty - 1) * W * 15) + (drawerQty * W * drawerHeight)) / 1e6; totalDrawerAreaM2 *= 1.05; addCorePart('Hộc kéo (hệ thống)', totalDrawerAreaM2, drawerThick); }
+      const drawerQty = comps.c_drawer_qty || 0; if (drawerQty > 0) { const drawerHeight = 100; const drawerThick = comps.drawer_thick || 12; totalDrawerAreaM2 = (2 * D * (drawerQty * drawerHeight) + (W * D) + ((drawerQty - 1) * W * 15) + (drawerQty * W * drawerHeight)) / 1e6; totalDrawerAreaM2 *= 1.05; addCorePart('Hộc kéo (hệ thống)', totalDrawerAreaM2, drawerThick); }
       const surfaceM2 = 2 * (W * H + W * D + H * D) / 1e6;
       let rattanAreaM2 = 0;
       const weavePrice = comps.c_rattan_price || comps.c_string_price || 0;
@@ -589,7 +645,21 @@ const PRODUCT_TYPES = {
       let items = [];
       if (totalSolidVolAll > 0) items.push({ name: 'Gỗ solid (chân, khung, giằng, bọ gỗ)', spec: `${totalSolidVolAll.toFixed(4)}m³`, qty: totalSolidVolAll.toFixed(4), unit: 'm³', price: woodPrice, tlth: woodTlth, total: totalSolidVolAll * woodPrice * woodTlth });
       for (let it of coreItems) items.push({ name: `Ván lõi: ${it.name}`, spec: `dày ${it.thickness_mm}mm, ${it.area_m2.toFixed(2)}m² (${it.tiles.toFixed(2)} tấm)`, qty: it.tiles.toFixed(2), unit: 'tấm', price: it.pricePerSheet, tlth: coreTlth, total: it.total });
-      items.push({ name: 'Hoàn thiện bề mặt', qty: surfaceM2.toFixed(3), unit: 'm²', price: finishCostM2, tlth: finishTlth, total: surfaceM2 * finishCostM2 * finishTlth });
+      // === TÍNH DIỆN TÍCH HOÀN THIỆN RIÊNG MẶT NGOÀI & TRONG ===
+      const outerArea = (2 * W * H + 2 * W * D + 2 * H * D) / 1e6;
+      let innerArea = outerArea; // mặt trong của các tấm chính
+      // Cộng thêm diện tích 2 mặt của kệ ngang
+      innerArea += 2 * (comps.c_shelf * W * D) / 1e6;
+      // Cộng thêm diện tích 2 mặt của vách ngăn dọc
+      innerArea += 2 * (comps.c_divider_qty * H * D) / 1e6;
+      // Cộng thêm diện tích 2 mặt của hộc kéo (nếu có)
+      if (drawerQty > 0) {
+        innerArea += 2 * totalDrawerAreaM2;
+      }
+      const finishOuterCost = getSelectedFinishOuterCost();
+      const finishInnerCost = getSelectedFinishInnerCost();
+      items.push({ name: 'Hoàn thiện mặt ngoài', qty: outerArea.toFixed(3), unit: 'm²', price: finishOuterCost, tlth: finishTlth, total: outerArea * finishOuterCost * finishTlth });
+      items.push({ name: 'Hoàn thiện mặt trong', qty: innerArea.toFixed(3), unit: 'm²', price: finishInnerCost, tlth: finishTlth, total: innerArea * finishInnerCost * finishTlth });
       items.push({ name: 'Bản lề', qty: hingeQty, unit: 'cái', price: hingePrice, tlth: 1.0, total: hingeQty * hingePrice });
       items.push({ name: 'Ray trượt', qty: railQty, unit: 'bộ', price: railPrice, tlth: 1.0, total: railQty * railPrice });
       if (handleQty > 0) items.push({ name: `Tay nắm (${handleName})`, qty: handleQty, unit: 'cái', price: handlePrice, tlth: 1.0, total: handleQty * handlePrice });
@@ -650,6 +720,7 @@ const PRODUCT_TYPES = {
       const finishTlth = parseFloat(document.getElementById('finish_tlth_input')?.value) || 1.05;
       const isBare = document.getElementById('bareCabinet')?.checked || false;
       const hasStone = (!isBare && (comps.vanity_stone_price > 0));
+      let totalDrawerAreaM2 = 0;
       const legVol = calcSolidVolume(comps.solid_leg_qty || 0, comps.solid_leg_w || 40, comps.solid_leg_h || 100, comps.solid_leg_d || 40);
       const framePerimeter = 2 * (W + D);
       const frameVol = (framePerimeter * (comps.solid_frame_width || 80) * (comps.solid_frame_thick || 25)) / 1e9;
@@ -667,7 +738,7 @@ const PRODUCT_TYPES = {
       addCorePart('Kệ ngang', (comps.c_shelf || 1) * W * D / 1e6, comps.core_shelf_thick || 18);
       addCorePart('Vách ngăn dọc', (comps.c_divider_qty || 0) * H * D / 1e6, comps.core_divider_thick || 18);
       const doorQty = comps.c_door || 2; if (doorQty > 0 && comps.core_door_thick > 0) addCorePart('Cánh tủ', doorQty * (W / doorQty) * H / 1e6, comps.core_door_thick || 18);
-      const drawerQty = comps.c_drawer_qty || 0; if (drawerQty > 0) { const drawerHeight = 100; const drawerThick = comps.drawer_thick || 12; let totalDrawerAreaM2 = (2 * D * (drawerQty * drawerHeight) + (W * D) + ((drawerQty - 1) * W * 15) + (drawerQty * W * drawerHeight)) / 1e6; totalDrawerAreaM2 *= 1.05; addCorePart('Hộc kéo (hệ thống)', totalDrawerAreaM2, drawerThick); }
+      const drawerQty = comps.c_drawer_qty || 0; if (drawerQty > 0) { const drawerHeight = 100; const drawerThick = comps.drawer_thick || 12; totalDrawerAreaM2 = (2 * D * (drawerQty * drawerHeight) + (W * D) + ((drawerQty - 1) * W * 15) + (drawerQty * W * drawerHeight)) / 1e6; totalDrawerAreaM2 *= 1.05; addCorePart('Hộc kéo (hệ thống)', totalDrawerAreaM2, drawerThick); }
       let surfaceM2 = 2 * (W * H + W * D + H * D) / 1e6;
       if (isBare || hasStone) surfaceM2 -= (W * D) / 1e6;
       let rattanAreaM2 = 0;
@@ -698,7 +769,26 @@ const PRODUCT_TYPES = {
       let items = [];
       if (totalSolidVolAll > 0) items.push({ name: 'Gỗ solid (chân, khung, giằng, bọ gỗ)', spec: `${totalSolidVolAll.toFixed(4)}m³`, qty: totalSolidVolAll.toFixed(4), unit: 'm³', price: woodPrice, tlth: woodTlth, total: totalSolidVolAll * woodPrice * woodTlth });
       for (let it of coreItems) items.push({ name: `Ván lõi: ${it.name}`, spec: `dày ${it.thickness_mm}mm, ${it.area_m2.toFixed(2)}m² (${it.tiles.toFixed(2)} tấm)`, qty: it.tiles.toFixed(2), unit: 'tấm', price: it.pricePerSheet, tlth: coreTlth, total: it.total });
-      items.push({ name: 'Hoàn thiện bề mặt', qty: surfaceM2.toFixed(3), unit: 'm²', price: finishCostM2, tlth: finishTlth, total: surfaceM2 * finishCostM2 * finishTlth });
+      // === TÍNH DIỆN TÍCH HOÀN THIỆN RIÊNG MẶT NGOÀI & TRONG ===
+      let outerArea = (2 * W * H + 2 * W * D + 2 * H * D) / 1e6;
+      let innerArea = outerArea;
+      // Cộng thêm diện tích 2 mặt của kệ ngang
+      innerArea += 2 * (comps.c_shelf * W * D) / 1e6;
+      // Cộng thêm diện tích 2 mặt của vách ngăn dọc
+      innerArea += 2 * (comps.c_divider_qty * H * D) / 1e6;
+      if (drawerQty > 0) {
+        innerArea += 2 * totalDrawerAreaM2;
+      }
+      // Nếu là thùng trần hoặc có mặt đá, trừ diện tích mặt trên
+      if (isBare || hasStone) {
+        const topArea = (W * D) / 1e6;
+        outerArea -= topArea;
+        innerArea -= topArea;
+      }
+      const finishOuterCost = getSelectedFinishOuterCost();
+      const finishInnerCost = getSelectedFinishInnerCost();
+      items.push({ name: 'Hoàn thiện mặt ngoài', qty: outerArea.toFixed(3), unit: 'm²', price: finishOuterCost, tlth: finishTlth, total: outerArea * finishOuterCost * finishTlth });
+      items.push({ name: 'Hoàn thiện mặt trong', qty: innerArea.toFixed(3), unit: 'm²', price: finishInnerCost, tlth: finishTlth, total: innerArea * finishInnerCost * finishTlth });
       items.push({ name: 'Bản lề', qty: hingeQty, unit: 'cái', price: hingePrice, tlth: 1.0, total: hingeQty * hingePrice });
       items.push({ name: 'Ray trượt', qty: railQty, unit: 'bộ', price: railPrice, tlth: 1.0, total: railQty * railPrice });
       if (handleQty > 0) items.push({ name: `Tay nắm (${handleName})`, qty: handleQty, unit: 'cái', price: handlePrice, tlth: 1.0, total: handleQty * handlePrice });
@@ -1130,6 +1220,16 @@ function setType(type) {
     if (vanitySec) vanitySec.style.display = (type === 'vanity') ? 'block' : 'none';
     syncSizeCombinedFromIndividual();
   }
+  // Ẩn/hiện finish riêng cho cabinet/vanity
+  const finishSeparateRow = document.getElementById('finish-separate-row');
+  const finishOldRow = document.getElementById('finish')?.closest('.fg');
+  if (type === 'cabinet' || type === 'vanity') {
+    if (finishSeparateRow) finishSeparateRow.style.display = 'block';
+    if (finishOldRow) finishOldRow.style.display = 'none';
+  } else {
+    if (finishSeparateRow) finishSeparateRow.style.display = 'none';
+    if (finishOldRow) finishOldRow.style.display = 'block';
+  }
   customAccList = [];
   renderCustomAccList();
   compValues = {};
@@ -1397,6 +1497,8 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('coreBoard')?.addEventListener('change', calculate);
   document.getElementById('finish')?.addEventListener('change', calculate);
   document.getElementById('packagingType')?.addEventListener('change', () => { updatePackagingRateFromType(); calculate(); });
+  document.getElementById('finishOuter')?.addEventListener('change', calculate);
+  document.getElementById('finishInner')?.addEventListener('change', calculate);
   setType('vanity');
   calculate();
   window.onclick = function (e) {
