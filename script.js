@@ -1,3 +1,4 @@
+
 // ==================== JAVASCRIPT CƠ BẢN ====================
 
 function showToast(msg){const x=document.getElementById("toast");x.textContent=msg;x.className="show";setTimeout(function(){x.className=x.className.replace("show","");},3000);}
@@ -198,7 +199,17 @@ function addPackagingFromForm() {
   showToast('Thêm bao bì thành công');
 }
 function loadDatabase(){dbWood=JSON.parse(localStorage.getItem('dbWood'))||[];dbFinish=JSON.parse(localStorage.getItem('dbFinish'))||[];dbAccessories=JSON.parse(localStorage.getItem('dbAccessories'))||[];dbCore=JSON.parse(localStorage.getItem('dbCore'))||[];dbPackaging=JSON.parse(localStorage.getItem('dbPackaging'))||[];updateAllSelects();updatePackagingSelect();}
-function saveDatabaseNoAlert(){localStorage.setItem('dbWood',JSON.stringify(dbWood));localStorage.setItem('dbFinish',JSON.stringify(dbFinish));localStorage.setItem('dbAccessories',JSON.stringify(dbAccessories));localStorage.setItem('dbCore',JSON.stringify(dbCore));localStorage.setItem('dbPackaging',JSON.stringify(dbPackaging));updateAllSelects();updatePackagingSelect();calculate();}
+function saveDatabaseNoAlert(){
+  localStorage.setItem('dbWood',JSON.stringify(dbWood));
+  localStorage.setItem('dbFinish',JSON.stringify(dbFinish));
+  localStorage.setItem('dbAccessories',JSON.stringify(dbAccessories));
+  localStorage.setItem('dbCore',JSON.stringify(dbCore));
+  localStorage.setItem('dbPackaging',JSON.stringify(dbPackaging));
+  updateAllSelects();
+  updatePackagingSelect();
+  calculate();
+  quickCalculate(); // 👈 THÊM DÒNG NÀY ĐỂ CẬP NHẬT QUICK CALC
+}
 function syncWoodInput(){const opt=getOpt('woodType');if(opt){document.getElementById('man_wood_name').value=opt.text.split('—')[0].trim();document.getElementById('man_wood_price').value=opt.dataset.price;document.getElementById('wood_tlth_input').value=opt.dataset.tlth||1.54;document.getElementById('wood_thick_input').value=opt.dataset.thick||32;}calculate();}
 function syncCoreInput(){const opt=getOpt('coreBoard');if(opt){document.getElementById('man_core_name').value=opt.text.split('—')[0].trim();document.getElementById('man_core_price').value=opt.dataset.price;}calculate();}
 function syncFinishInput(){const opt=getOpt('finish');if(opt){document.getElementById('man_finish_name').value=opt.text.split('—')[0].trim();document.getElementById('man_finish_price').value=opt.dataset.cost;}calculate();}
@@ -481,7 +492,7 @@ function loadDefaultDatabase(){dbWood=[{code:'G-TR-25',name:'Gỗ Tràm VN',pric
   { name: 'Vải nỉ', price: 180000, type: 'm²' },
   { name: 'Vải da', price: 250000, type: 'm²' }
 ];
-dbPackaging=[{type:'3a',name:'Carton 3 lớp',price:350000},{type:'5a',name:'Carton 5 lớp',price:450000},{type:'6a',name:'Carton 6 lớp / chống ẩm',price:550000}];saveDatabaseNoAlert();loadDatabase();showToast('Đã khôi phục dữ liệu mặc định');}
+dbPackaging=[{type:'3a',name:'Carton 3 lớp',price:350000},{type:'5a',name:'Carton 5 lớp',price:450000},{type:'6a',name:'Carton 6 lớp / chống ẩm',price:550000}];saveDatabaseNoAlert();loadDatabase();quickCalculate();showToast('Đã khôi phục dữ liệu mặc định');}
 // ==================== ĐỊNH NGHĨA SẢN PHẨM ====================
 
 let _lastBomItems = [];
@@ -1585,7 +1596,51 @@ function exportQuoteToPDF() {
   window.print();
 }
 
-// ==================== QUICK CALCULATION (DỰA TRÊN KHỐI LƯỢNG KG) ====================
+// ==================== HÀM TÍNH CHI PHÍ NVL CƠ SỞ TRÊN MỖI KG TỪ DATABASE ====================
+/**
+ * Ước tính chi phí nguyên vật liệu thô (gỗ, ván, hoàn thiện) cho 1kg thành phẩm
+ * dựa trên giá trung bình trong database và tỷ lệ sử dụng đặc trưng của từng loại SP.
+ */
+function calculateBaseMaterialCostPerKg(productType) {
+  // Giá trung bình từ database (nếu chưa có thì dùng giá mặc định)
+  let avgWoodPrice = 7200000;   // VND/m³
+  let avgCorePrice = 380000;    // VND/tấm (18mm)
+  let avgFinishCost = 120000;   // VND/m²
+
+  if (dbWood.length > 0) {
+    avgWoodPrice = dbWood.reduce((s, w) => s + w.price, 0) / dbWood.length;
+  }
+  if (dbCore.length > 0) {
+    avgCorePrice = dbCore.reduce((s, c) => s + c.price, 0) / dbCore.length;
+  }
+  if (dbFinish.length > 0) {
+    avgFinishCost = dbFinish.reduce((s, f) => s + f.cost, 0) / dbFinish.length;
+  }
+
+  // Tỷ lệ ước tính khối lượng gỗ, ván trên mỗi kg thành phẩm
+  const ratios = {
+    cabinet: { woodM3PerKg: 0.0008, coreSheetPerKg: 0.025, finishM2PerKg: 0.15 },
+    vanity:  { woodM3PerKg: 0.0007, coreSheetPerKg: 0.022, finishM2PerKg: 0.14 },
+    table:   { woodM3PerKg: 0.0012, coreSheetPerKg: 0.0,   finishM2PerKg: 0.10 },
+    chair:   { woodM3PerKg: 0.0015, coreSheetPerKg: 0.0,   finishM2PerKg: 0.12 },
+    bed:     { woodM3PerKg: 0.0006, coreSheetPerKg: 0.018, finishM2PerKg: 0.13 },
+    sofa:    { woodM3PerKg: 0.0005, coreSheetPerKg: 0.015, finishM2PerKg: 0.08 }
+  };
+
+  const r = ratios[productType] || ratios.cabinet;
+
+  let cost = 0;
+  cost += (r.woodM3PerKg || 0) * avgWoodPrice * 1.54;      // TLTH gỗ trung bình 1.54
+  cost += (r.coreSheetPerKg || 0) * avgCorePrice * 1.02;   // TLTH ván 1.02
+  cost += (r.finishM2PerKg || 0) * avgFinishCost * 1.05;   // TLTH hoàn thiện 1.05
+
+  // Thêm phần cứng + phụ kiện cơ bản (ước tính 15% tổng NVL)
+  cost = cost * 1.15;
+
+  return cost;
+}
+
+// ==================== QUICK CALCULATION (DỰA TRÊN KG, TỰ ĐỘNG CẬP NHẬT THEO DB) ====================
 function quickCalculate() {
   const W = parseFloat(document.getElementById('quickWidth').value) || 0;
   const H = parseFloat(document.getElementById('quickHeight').value) || 0;
@@ -1597,7 +1652,7 @@ function quickCalculate() {
   const productType = document.getElementById('quickType').value;
   const grade = document.getElementById('quickMaterial').value;
 
-  // Mật độ kỳ vọng (kg/m³) – dùng để ước tính khối lượng nếu chưa nhập
+  // Mật độ kỳ vọng (kg/m³)
   const densityMap = {
     cabinet: { standard: 180, premium: 220, luxury: 280 },
     vanity:   { standard: 150, premium: 190, luxury: 250 },
@@ -1609,40 +1664,34 @@ function quickCalculate() {
   const expectedDensity = densityMap[productType]?.[grade] || 200;
   const expectedWeight = volumeM3 * expectedDensity;
 
-  // Nếu chưa nhập -> tự điền ước tính từ thể tích
   if ((isNaN(weight) || weight <= 0) && weightInput.dataset.manual !== 'true') {
     weight = expectedWeight;
     weightInput.value = weight.toFixed(1);
     weightInput.dataset.manual = 'false';
   }
-
-  // Nếu khối lượng vẫn không hợp lệ, gán mặc định 10kg để tránh lỗi
   if (isNaN(weight) || weight <= 0) weight = 10;
 
-  // ========== TÍNH TOÁN CHI PHÍ DỰA TRÊN KHỐI LƯỢNG (KG) ==========
-  // Hệ số chi phí nguyên vật liệu trên mỗi kg (VND/kg) – được hiệu chỉnh để khớp với tính chi tiết
-  const materialCostPerKg = {
-    cabinet: { standard: 45000, premium: 65000, luxury: 95000 },
-    vanity:   { standard: 55000, premium: 80000, luxury: 120000 },
-    table:    { standard: 60000, premium: 90000, luxury: 140000 },
-    chair:    { standard: 70000, premium: 110000, luxury: 170000 },
-    bed:      { standard: 40000, premium: 60000, luxury: 90000 },
-    sofa:     { standard: 80000, premium: 120000, luxury: 180000 }
+  // Tính chi phí NVL cơ sở từ DB
+  const baseCostPerKg = calculateBaseMaterialCostPerKg(productType);
+  const gradeAdjustments = {
+    cabinet: { standard: 0.60, premium: 0.73, luxury: 0.88 },
+    vanity:  { standard: 0.60, premium: 0.73, luxury: 0.88 },
+    table:   { standard: 0.55, premium: 0.70, luxury: 0.85 },
+    chair:   { standard: 0.55, premium: 0.70, luxury: 0.85 },
+    bed:     { standard: 0.60, premium: 0.73, luxury: 0.88 },
+    sofa:    { standard: 0.55, premium: 0.70, luxury: 0.85 }
   };
+  const gradeFactor = gradeAdjustments[productType]?.[grade] || 1.0;
+  const adjustedBaseCostPerKg = baseCostPerKg * gradeFactor;
 
-  // Hệ số nhân công (phút) trên mỗi kg
-  const laborMinutesPerKg = {
-    cabinet: 2.5, vanity: 2.8, table: 1.8, chair: 2.2, bed: 2.0, sofa: 3.0
-  };
-
-  // Hệ số điều chỉnh theo độ phức tạp
+  // Hệ số phức tạp
   const complexity = parseFloat(document.getElementById('quickComplexity').value) || 1.0;
 
+
   const finishGrade = document.getElementById('quickFinish').value;
-  // Hệ số hoàn thiện (nhân với chi phí NVL)
   const finishFactor = { standard: 0.15, premium: 0.25, luxury: 0.40 }[finishGrade] || 0.25;
 
-  // Lấy thông số chung
+  // Thông số chung
   const exchange = parseFloat(document.getElementById('exchangeRate').value) || exchangeRateUSD;
   const profitPct = parseFloat(document.getElementById('profitMargin').value) / 100 || 0.15;
   const inflation = parseFloat(document.getElementById('inflationBuffer').value) / 100 || 0.01;
@@ -1652,20 +1701,19 @@ function quickCalculate() {
   const discountPercent = parseFloat(document.getElementById('discountPercent').value) || 0;
   const laborRate = getLaborRate();
 
-  // Chi phí nguyên vật liệu cơ bản (bao gồm gỗ, ván, phần cứng cơ bản)
-  let baseMaterialCost = weight * (materialCostPerKg[productType]?.[grade] || 60000) * complexity;
+  // Chi phí NVL cơ bản (chưa bao gồm hoàn thiện và đóng gói)
+  let baseMaterialCost = weight * adjustedBaseCostPerKg * complexity;
 
-  // Chi phí hoàn thiện (tỉ lệ với NVL)
   let finishCost = baseMaterialCost * finishFactor;
 
-  // Chi phí nhân công = số phút * đơn giá/phút
+  const laborMinutesPerKg = {
+    cabinet: 2.5, vanity: 2.8, table: 1.8, chair: 2.2, bed: 2.0, sofa: 3.0
+  };
   let laborMinutes = weight * (laborMinutesPerKg[productType] || 2.0) * complexity;
   let laborCost = laborMinutes * laborRate;
 
-  // Chi phí đóng gói ước tính (khoảng 5% NVL)
   let packagingCost = baseMaterialCost * 0.05;
 
-  // Tổng chi phí trước trượt giá và định phí
   let rawMaterialCost = baseMaterialCost + finishCost + packagingCost;
   let customAccCost = 0;
   for (let acc of customAccList) if (acc.price) customAccCost += acc.price;
@@ -1681,15 +1729,15 @@ function quickCalculate() {
   let fobUSD = fobUSD_before * (1 - discountPercent / 100);
   fobUSD = Math.ceil(fobUSD * 10) / 10;
 
-  // Hiển thị kết quả
-  document.getElementById('quickVolume').innerHTML = volumeM3.toFixed(4) + ' m³';
+  // Cập nhật giao diện (ẩn giá trị thể tích)
+  document.getElementById('quickVolume').innerHTML = '';
   document.getElementById('quickCogsVND').innerHTML = new Intl.NumberFormat('vi-VN').format(Math.round(totalCostVND));
   document.getElementById('quickFobUSD').innerHTML = `USD ${fobUSD.toFixed(2)}`;
 
   window._quickEstimate = { volumeM3, weight, totalCostVND, fobUSD };
 }
 
-// Hàm reset ước tính khối lượng
+// Hàm reset ước tính khối lượng (giữ nguyên)
 function resetWeightEstimation() {
   const weightInput = document.getElementById('quickWeight');
   weightInput.value = '';
@@ -1750,4 +1798,4 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 });
 
-console.log('✅ Ứng dụng đã sẵn sàng với Quick Calc dựa trên khối lượng thực tế!');
+console.log('✅ Ứng dụng đã sẵn sàng với Quick Calc dựa trên khối lượng thực tế và tự động cập nhật từ DB!');
