@@ -36,6 +36,7 @@
   <button class="tab-btn" onclick="switchTab('result')" id="tab-result">📊 Kết quả</button>
   <button class="tab-btn" onclick="switchTab('bom')" id="tab-bom">📋 BOM</button>
   <button class="tab-btn" onclick="switchTab('quote')" id="tab-quote">📄 Báo giá</button>
+  <button class="tab-btn" onclick="switchTab('quick')" id="tab-quick">⚡ Quick Calc</button>
 </div>
 <div class="main">
 <div class="left-panel tab-panel active" id="panel-input">
@@ -104,9 +105,72 @@
 <div class="qrow"><span class="ql">Mã SP</span><span class="qv" id="q_code">—</span></div><div class="qrow"><span class="ql">Tên SP</span><span class="qv" id="q_name">—</span></div><div class="qrow"><span class="ql">Loại</span><span class="qv" id="q_type">—</span></div><div class="qrow"><span class="ql">Kích thước</span><span class="qv" id="q_size">—</span></div><div class="qrow"><span class="ql">Nguyên liệu</span><span class="qv" id="q_material">—</span></div><div class="qrow"><span class="ql">Hoàn thiện</span><span class="qv" id="q_finish">—</span></div><div class="qrow"><span class="ql">SLDK</span><span class="qv" id="q_qty">—</span></div><div class="qrow"><span class="ql">Đóng gói</span><span class="qv" id="q_packaging">—</span></div><div class="qrow"><span class="ql">Chiết khấu</span><span class="qv" id="q_discount">—</span></div><div class="qrow"><span class="ql">Trạng thái</span><span class="qv" id="q_status">⏳ Chưa duyệt</span></div><div class="qfob"><div><div class="qfob-lbl">FOB sau chiết khấu</div></div><div class="qfob-val" id="q_fob">USD —</div></div></div>
     <div class="btn-group"><button class="btn btn-gold" onclick="exportQuoteToPDF()">📄 Xuất PDF</button></div>
   </div>
+  <div class="tab-panel" id="panel-quick">
+    <div class="slabel">⚡ Quick Calculation (ước tính theo kích thước & khối lượng)</div>
+    <div class="quick-calc-panel">
+      <div class="row3">
+        <div class="fg"><label>Rộng W (mm)</label><input type="number" id="quickWidth" value="450" step="1" min="0"></div>
+        <div class="fg"><label>Cao H (mm)</label><input type="number" id="quickHeight" value="900" step="1" min="0"></div>
+        <div class="fg"><label>Sâu D (mm)</label><input type="number" id="quickDepth" value="500" step="1" min="0"></div>
+      </div>
+      <div class="row2">
+        <div class="fg">
+          <label>Khối lượng (kg) <span style="color:var(--muted);">(để trống để tự tính)</span></label>
+          <input type="number" id="quickWeight" placeholder="Tự động" step="0.1" min="0">
+        </div>
+        <div class="fg">
+          <label>Thể tích ước tính</label>
+          <div class="val" id="quickVolume" style="font-family:var(--mono); padding:10px 0; color:var(--gold2);">—</div>
+        </div>
+      </div>
+      <div class="row2">
+        <div class="fg">
+          <label>Loại sản phẩm</label>
+          <select id="quickType">
+            <option value="cabinet">Tủ / Kệ</option>
+            <option value="vanity">Vanity</option>
+            <option value="table">Bàn</option>
+            <option value="chair" selected>Ghế</option>
+            <option value="bed">Giường</option>
+            <option value="sofa">Sofa</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label>Chất liệu</label>
+          <select id="quickMaterial">
+            <option value="standard">Tiêu chuẩn (Gỗ ghép, MDF, plywood)</option>
+            <option value="premium" selected>Cao cấp (Oak, Ash, MDF CARB P2)</option>
+            <option value="luxury">Sang trọng (Óc chó, Plywood)</option>
+          </select>
+        </div>
+      </div>
+      <div class="row2">
+        <div class="fg">
+          <label>Mức hoàn thiện</label>
+          <select id="quickFinish">
+            <option value="standard">Tiêu chuẩn (NC/PU cơ bản)</option>
+            <option value="premium" selected>Cao cấp (PU cao cấp / UV / Water-based)</option>
+            <option value="luxury">Sang trọng (PU high-end / Acrylic / Polyester / Oil finish đặc biệt)</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label>Mức độ phức tạp</label>
+          <input type="number" id="quickComplexity" value="1.0" step="0.05" min="0.5" max="2.0">
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="quick-kpi-grid">
+        <div class="kpi"><label>Giá thành ước tính</label><div class="val" id="quickCogsVND">—</div></div>
+        <div class="kpi hi"><label>Giá FOB ước tính</label><div class="val" id="quickFobUSD">—</div></div>
+      </div>
+      <div class="quick-note">
+        * Ước tính dựa trên kích thước khối lượng và cấp độ vật liệu, sai số ±5% so với tính chi tiết. Mức độ phức tạp tuỳ vào cấu tạo của sản phẩm (tủ với nhiều pattern ~ 1.2->1.3; ghế tiện chân: 1.2, đan dây: 1.3->1.5 tuỳ loại)
+      </div>
+    </div>
+  </div>
 </div></div>
 <div class="fsticky"><div><div class="fl" id="sticky_type">TỦ KỆ</div><div class="fc" id="sticky_cogs">—</div></div><div class="fv" id="sticky_fob">USD —</div></div>
-<div id="guideModal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.8);z-index:400;align-items:center;justify-content:center;"><div style="background:var(--cream2);padding:20px;border:1px solid var(--gold);max-width:500px"><div style="font-family:var(--mono);color:var(--gold);margin-bottom:15px">Hướng Dẫn</div><div style="font-size:11px;line-height:1.6"><b>Công thức FOB:</b><br/>COGS = NVL_sau_trượt + NC + Bao bì + Định phí + Test/XK<br/>FOB = (COGS / tỷ giá) / (1 - LN%) × (1 - CK%)<br/><br/><b>Cập nhật mới:</b><br/>- Nhập giá mục tiêu USD, hệ thống cảnh báo nếu chênh lệch >15%.<br/>- Nút "Tối ưu giá" tự động điều chỉnh lợi nhuận.<br/>- "Phê duyệt báo giá" khóa phiên bản chào hàng.<br/>- Xuất PDF chuẩn báo giá.<br/></div><button class="btn btn-gold" style="width:100%;margin-top:15px" onclick="closeGuide()">Đã Hiểu</button></div></div>
+<div id="guideModal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.8);z-index:400;align-items:center;justify-content:center;"><div style="background:var(--cream2);padding:20px;border:1px solid var(--gold);max-width:500px"><div style="font-family:var(--mono);color:var(--gold);margin-bottom:15px">Hướng Dẫn</div><div style="font-size:11px;line-height:1.6"><b>Công thức FOB:</b><br/>COGS = NVL_sau_trượt + NC + Bao bì + Định phí + Test/XK<br/>FOB = (COGS / tỷ giá) / (1 - LN%) × (1 - CK%)<br/><br/><b>Cập nhật mới:</b><br/>- Nhập giá mục tiêu USD, hệ thống cảnh báo nếu chênh lệch >15%.<br/>- Nút "Tối ưu giá" tự động điều chỉnh lợi nhuận.<br/>- "Phê duyệt báo giá" khóa phiên bản chào hàng.<br/>- Tab "Quick Calc" ước tính nhanh theo kg và kích thước.<br/></div><button class="btn btn-gold" style="width:100%;margin-top:15px" onclick="closeGuide()">Đã Hiểu</button></div></div>
 
 <script src="script.js"></script>
 </body>

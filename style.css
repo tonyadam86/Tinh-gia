@@ -1210,3 +1210,28 @@ body {
   from { bottom: 30px; opacity: 1; }
   to { bottom: 0; opacity: 0; }
 }
+
+/* Quick Calc Styles */
+.quick-calc-panel {
+  padding: 20px;
+}
+.quick-kpi-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-top: 20px;
+}
+.quick-note {
+  margin-top: 24px;
+  font-size: 11px;
+  color: var(--muted);
+  font-family: var(--mono);
+}
+/* Ẩn toàn bộ hàng Thể tích ước tính trong Quick Calc */
+.quick-calc-panel .row2 .fg:has(#quickVolume) {
+    display: none;
+}
+#quickVolume {
+  font-size: 18px;
+  font-weight: 700;
+}

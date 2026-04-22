@@ -606,7 +606,8 @@ const PRODUCT_TYPES = {
       addCorePart('Hậu tủ', W * H / 1e6, comps.core_back_thick || 9);
       addCorePart('Kệ ngang', (comps.c_shelf || 2) * W * D / 1e6, comps.core_shelf_thick || 18);
       addCorePart('Vách ngăn dọc', (comps.c_divider_qty || 0) * H * D / 1e6, comps.core_divider_thick || 18);
-      const doorQty = comps.c_door || 1; if (doorQty > 0 && comps.core_door_thick > 0) addCorePart('Cánh tủ', doorQty * (W / doorQty) * H / 1e6, comps.core_door_thick || 18);
+      const doorQty = comps.c_door || 0;
+      if (doorQty > 0 && comps.core_door_thick > 0) addCorePart('Cánh tủ', doorQty * (W / doorQty) * H / 1e6, comps.core_door_thick || 18);
       const drawerQty = comps.c_drawer_qty || 0; if (drawerQty > 0) { const drawerHeight = 100; const drawerThick = comps.drawer_thick || 12; totalDrawerAreaM2 = (2 * D * (drawerQty * drawerHeight) + (W * D) + ((drawerQty - 1) * W * 15) + (drawerQty * W * drawerHeight)) / 1e6; totalDrawerAreaM2 *= 1.05; addCorePart('Hộc kéo (hệ thống)', totalDrawerAreaM2, drawerThick); }
       const surfaceM2 = 2 * (W * H + W * D + H * D) / 1e6;
       let rattanAreaM2 = 0;
@@ -646,8 +647,8 @@ const PRODUCT_TYPES = {
       const finishInnerCost = getSelectedFinishInnerCost();
       items.push({ name: 'Hoàn thiện mặt ngoài', qty: outerArea.toFixed(3), unit: 'm²', price: finishOuterCost, tlth: finishTlth, total: outerArea * finishOuterCost * finishTlth });
       items.push({ name: 'Hoàn thiện mặt trong', qty: innerArea.toFixed(3), unit: 'm²', price: finishInnerCost, tlth: finishTlth, total: innerArea * finishInnerCost * finishTlth });
-      items.push({ name: 'Bản lề', qty: hingeQty, unit: 'cái', price: hingePrice, tlth: 1.0, total: hingeQty * hingePrice });
-      items.push({ name: 'Ray trượt', qty: railQty, unit: 'bộ', price: railPrice, tlth: 1.0, total: railQty * railPrice });
+      if (hingeQty > 0) items.push({ name: 'Bản lề', qty: hingeQty, unit: 'cái', price: hingePrice, tlth: 1.0, total: hingeQty * hingePrice });
+      if (railQty > 0) items.push({ name: 'Ray trượt', qty: railQty, unit: 'bộ', price: railPrice, tlth: 1.0, total: railQty * railPrice });
       if (handleQty > 0) items.push({ name: `Tay nắm (${handleName})`, qty: handleQty, unit: 'cái', price: handlePrice, tlth: 1.0, total: handleQty * handlePrice });
       items.push({ name: 'Vis + ốc', qty: comps.c_vis || 0, unit: 'con', price: 100, tlth: 1.0, total: (comps.c_vis || 0) * 100 });
       if (comps.c_extra_leg > 0) items.push({ name: 'Chân phụ', qty: comps.c_extra_leg, unit: 'cái', price: legPrice, tlth: 1.0, total: comps.c_extra_leg * legPrice });
@@ -723,7 +724,8 @@ const PRODUCT_TYPES = {
       addCorePart('Hậu tủ', W * H / 1e6, comps.core_back_thick || 9);
       addCorePart('Kệ ngang', (comps.c_shelf || 1) * W * D / 1e6, comps.core_shelf_thick || 18);
       addCorePart('Vách ngăn dọc', (comps.c_divider_qty || 0) * H * D / 1e6, comps.core_divider_thick || 18);
-      const doorQty = comps.c_door || 2; if (doorQty > 0 && comps.core_door_thick > 0) addCorePart('Cánh tủ', doorQty * (W / doorQty) * H / 1e6, comps.core_door_thick || 18);
+      const doorQty = comps.c_door || 0;
+      if (doorQty > 0 && comps.core_door_thick > 0) addCorePart('Cánh tủ', doorQty * (W / doorQty) * H / 1e6, comps.core_door_thick || 18);
       const drawerQty = comps.c_drawer_qty || 0; if (drawerQty > 0) { const drawerHeight = 100; const drawerThick = comps.drawer_thick || 12; totalDrawerAreaM2 = (2 * D * (drawerQty * drawerHeight) + (W * D) + ((drawerQty - 1) * W * 15) + (drawerQty * W * drawerHeight)) / 1e6; totalDrawerAreaM2 *= 1.05; addCorePart('Hộc kéo (hệ thống)', totalDrawerAreaM2, drawerThick); }
       let surfaceM2 = 2 * (W * H + W * D + H * D) / 1e6;
       if (isBare || hasStone) surfaceM2 -= (W * D) / 1e6;
@@ -769,8 +771,8 @@ const PRODUCT_TYPES = {
       const finishInnerCost = getSelectedFinishInnerCost();
       items.push({ name: 'Hoàn thiện mặt ngoài', qty: outerArea.toFixed(3), unit: 'm²', price: finishOuterCost, tlth: finishTlth, total: outerArea * finishOuterCost * finishTlth });
       items.push({ name: 'Hoàn thiện mặt trong', qty: innerArea.toFixed(3), unit: 'm²', price: finishInnerCost, tlth: finishTlth, total: innerArea * finishInnerCost * finishTlth });
-      items.push({ name: 'Bản lề', qty: hingeQty, unit: 'cái', price: hingePrice, tlth: 1.0, total: hingeQty * hingePrice });
-      items.push({ name: 'Ray trượt', qty: railQty, unit: 'bộ', price: railPrice, tlth: 1.0, total: railQty * railPrice });
+      if (hingeQty > 0) items.push({ name: 'Bản lề', qty: hingeQty, unit: 'cái', price: hingePrice, tlth: 1.0, total: hingeQty * hingePrice });
+      if (railQty > 0) items.push({ name: 'Ray trượt', qty: railQty, unit: 'bộ', price: railPrice, tlth: 1.0, total: railQty * railPrice });
       if (handleQty > 0) items.push({ name: `Tay nắm (${handleName})`, qty: handleQty, unit: 'cái', price: handlePrice, tlth: 1.0, total: handleQty * handlePrice });
       items.push({ name: 'Vis + ốc', qty: comps.c_vis || 0, unit: 'con', price: 100, tlth: 1.0, total: (comps.c_vis || 0) * 100 });
       if (comps.c_leg > 0) items.push({ name: 'Chân cabinet', qty: comps.c_leg, unit: 'cái', price: legPrice, tlth: 1.0, total: comps.c_leg * legPrice });
@@ -1215,6 +1217,9 @@ function switchTab(tabId) {
   document.getElementById(`panel-${tabId}`).classList.add('active');
   document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
   document.getElementById(`tab-${tabId}`).classList.add('active');
+  if (tabId === 'quick') {
+    quickCalculate();
+  }
 }
 
 function calculateUpholstery(L_mm, W_mm, H_mm, wasteFactor = 1.05) {
@@ -1304,7 +1309,7 @@ function calculate() {
   renderSensitivity();
   updateQuote(discountPercent);
   updateStickyFooter();
-  checkTargetPrice(); // gọi so sánh giá mục tiêu
+  checkTargetPrice();
 }
 
 function renderBreakdown(discountPercent, profitPercent, totalCostVND, exchange, fobUSD_before_discount) {
@@ -1580,6 +1585,119 @@ function exportQuoteToPDF() {
   window.print();
 }
 
+// ==================== QUICK CALCULATION (DỰA TRÊN KHỐI LƯỢNG KG) ====================
+function quickCalculate() {
+  const W = parseFloat(document.getElementById('quickWidth').value) || 0;
+  const H = parseFloat(document.getElementById('quickHeight').value) || 0;
+  const D = parseFloat(document.getElementById('quickDepth').value) || 0;
+  const volumeM3 = (W * H * D) / 1e9;
+
+  const weightInput = document.getElementById('quickWeight');
+  let weight = parseFloat(weightInput.value);
+  const productType = document.getElementById('quickType').value;
+  const grade = document.getElementById('quickMaterial').value;
+
+  // Mật độ kỳ vọng (kg/m³) – dùng để ước tính khối lượng nếu chưa nhập
+  const densityMap = {
+    cabinet: { standard: 180, premium: 220, luxury: 280 },
+    vanity:   { standard: 150, premium: 190, luxury: 250 },
+    table:    { standard: 250, premium: 300, luxury: 380 },
+    chair:    { standard: 280, premium: 330, luxury: 400 },
+    bed:      { standard: 140, premium: 170, luxury: 220 },
+    sofa:     { standard: 130, premium: 160, luxury: 210 }
+  };
+  const expectedDensity = densityMap[productType]?.[grade] || 200;
+  const expectedWeight = volumeM3 * expectedDensity;
+
+  // Nếu chưa nhập -> tự điền ước tính từ thể tích
+  if ((isNaN(weight) || weight <= 0) && weightInput.dataset.manual !== 'true') {
+    weight = expectedWeight;
+    weightInput.value = weight.toFixed(1);
+    weightInput.dataset.manual = 'false';
+  }
+
+  // Nếu khối lượng vẫn không hợp lệ, gán mặc định 10kg để tránh lỗi
+  if (isNaN(weight) || weight <= 0) weight = 10;
+
+  // ========== TÍNH TOÁN CHI PHÍ DỰA TRÊN KHỐI LƯỢNG (KG) ==========
+  // Hệ số chi phí nguyên vật liệu trên mỗi kg (VND/kg) – được hiệu chỉnh để khớp với tính chi tiết
+  const materialCostPerKg = {
+    cabinet: { standard: 45000, premium: 65000, luxury: 95000 },
+    vanity:   { standard: 55000, premium: 80000, luxury: 120000 },
+    table:    { standard: 60000, premium: 90000, luxury: 140000 },
+    chair:    { standard: 70000, premium: 110000, luxury: 170000 },
+    bed:      { standard: 40000, premium: 60000, luxury: 90000 },
+    sofa:     { standard: 80000, premium: 120000, luxury: 180000 }
+  };
+
+  // Hệ số nhân công (phút) trên mỗi kg
+  const laborMinutesPerKg = {
+    cabinet: 2.5, vanity: 2.8, table: 1.8, chair: 2.2, bed: 2.0, sofa: 3.0
+  };
+
+  // Hệ số điều chỉnh theo độ phức tạp
+  const complexity = parseFloat(document.getElementById('quickComplexity').value) || 1.0;
+
+  const finishGrade = document.getElementById('quickFinish').value;
+  // Hệ số hoàn thiện (nhân với chi phí NVL)
+  const finishFactor = { standard: 0.15, premium: 0.25, luxury: 0.40 }[finishGrade] || 0.25;
+
+  // Lấy thông số chung
+  const exchange = parseFloat(document.getElementById('exchangeRate').value) || exchangeRateUSD;
+  const profitPct = parseFloat(document.getElementById('profitMargin').value) / 100 || 0.15;
+  const inflation = parseFloat(document.getElementById('inflationBuffer').value) / 100 || 0.01;
+  const overheadPct = parseFloat(document.getElementById('fixedOverheadPerProduct').value) / 100 || 0.05;
+  const testCost = parseFloat(document.getElementById('testCost').value) || 0;
+  const shippingCost = parseFloat(document.getElementById('shippingCost').value) || 0;
+  const discountPercent = parseFloat(document.getElementById('discountPercent').value) || 0;
+  const laborRate = getLaborRate();
+
+  // Chi phí nguyên vật liệu cơ bản (bao gồm gỗ, ván, phần cứng cơ bản)
+  let baseMaterialCost = weight * (materialCostPerKg[productType]?.[grade] || 60000) * complexity;
+
+  // Chi phí hoàn thiện (tỉ lệ với NVL)
+  let finishCost = baseMaterialCost * finishFactor;
+
+  // Chi phí nhân công = số phút * đơn giá/phút
+  let laborMinutes = weight * (laborMinutesPerKg[productType] || 2.0) * complexity;
+  let laborCost = laborMinutes * laborRate;
+
+  // Chi phí đóng gói ước tính (khoảng 5% NVL)
+  let packagingCost = baseMaterialCost * 0.05;
+
+  // Tổng chi phí trước trượt giá và định phí
+  let rawMaterialCost = baseMaterialCost + finishCost + packagingCost;
+  let customAccCost = 0;
+  for (let acc of customAccList) if (acc.price) customAccCost += acc.price;
+  rawMaterialCost += customAccCost;
+
+  const inflatedMat = rawMaterialCost * (1 + inflation);
+  const subtotal = inflatedMat + laborCost + testCost + shippingCost;
+  const overhead = subtotal * overheadPct;
+  const totalCostVND = subtotal + overhead;
+
+  let fobUSD_before = (totalCostVND / exchange) * (1 + profitPct);
+  fobUSD_before = Math.ceil(fobUSD_before * 10) / 10;
+  let fobUSD = fobUSD_before * (1 - discountPercent / 100);
+  fobUSD = Math.ceil(fobUSD * 10) / 10;
+
+  // Hiển thị kết quả
+  document.getElementById('quickVolume').innerHTML = volumeM3.toFixed(4) + ' m³';
+  document.getElementById('quickCogsVND').innerHTML = new Intl.NumberFormat('vi-VN').format(Math.round(totalCostVND));
+  document.getElementById('quickFobUSD').innerHTML = `USD ${fobUSD.toFixed(2)}`;
+
+  window._quickEstimate = { volumeM3, weight, totalCostVND, fobUSD };
+}
+
+// Hàm reset ước tính khối lượng
+function resetWeightEstimation() {
+  const weightInput = document.getElementById('quickWeight');
+  weightInput.value = '';
+  weightInput.dataset.manual = 'false';
+  quickCalculate();
+  showToast('Đã xóa khối lượng nhập tay. Hệ thống sẽ ước tính lại.');
+}
+
 // Khởi tạo và lắng nghe sự kiện
 document.addEventListener('DOMContentLoaded', () => {
   if (!localStorage.getItem('dbWood')) loadDefaultDatabase(); else loadDatabase();
@@ -1591,8 +1709,27 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('packagingType')?.addEventListener('change', () => { updatePackagingRateFromType(); calculate(); });
   document.getElementById('finishOuter')?.addEventListener('change', calculate);
   document.getElementById('finishInner')?.addEventListener('change', calculate);
+
+  // Quick calc listeners
+  const quickInputs = ['quickWidth', 'quickHeight', 'quickDepth', 'quickType', 'quickMaterial', 'quickFinish', 'quickComplexity'];
+  quickInputs.forEach(id => { const el = document.getElementById(id); if (el) el.addEventListener('input', quickCalculate); });
+  
+  const quickWeightEl = document.getElementById('quickWeight');
+  if (quickWeightEl) {
+    quickWeightEl.addEventListener('input', function() {
+      this.dataset.manual = 'true';
+      quickCalculate();
+    });
+  }
+  
+  ['exchangeRate', 'profitMargin', 'testCost', 'shippingCost', 'fixedOverheadPerProduct'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('input', () => { quickCalculate(); });
+  });
+
   setType('vanity');
   calculate();
+  quickCalculate();
 
   window.addEventListener('storage', function(e) {
     if (e.key && (e.key.startsWith('dbWood') || e.key.startsWith('dbFinish') || 
@@ -1613,4 +1750,4 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 });
 
-console.log('✅ Ứng dụng đã sẵn sàng với tính năng so sánh giá mục tiêu, tối ưu, phê duyệt và xuất PDF!');
+console.log('✅ Ứng dụng đã sẵn sàng với Quick Calc dựa trên khối lượng thực tế!');
