@@ -1654,13 +1654,13 @@ function quickCalculate() {
 
   // Mật độ kỳ vọng (kg/m³)
   const densityMap = {
-    cabinet: { standard: 180, premium: 220, luxury: 280 },
-    vanity:   { standard: 150, premium: 190, luxury: 250 },
-    table:    { standard: 250, premium: 300, luxury: 380 },
-    chair:    { standard: 280, premium: 330, luxury: 400 },
-    bed:      { standard: 140, premium: 170, luxury: 220 },
-    sofa:     { standard: 130, premium: 160, luxury: 210 }
-  };
+  cabinet: { standard: 100, premium: 120, luxury: 140 },
+  vanity:   { standard: 110, premium: 130, luxury: 150 },
+  table:    { standard: 120, premium: 140, luxury: 160 },
+  chair:    { standard: 70, premium: 85, luxury: 100 },
+  bed:      { standard: 80, premium: 95, luxury: 110 },
+  sofa:     { standard: 70, premium: 85, luxury: 100 }
+};
   const expectedDensity = densityMap[productType]?.[grade] || 200;
   const expectedWeight = volumeM3 * expectedDensity;
 
@@ -1738,6 +1738,7 @@ function quickCalculate() {
 }
 
 // Hàm reset ước tính khối lượng (giữ nguyên)
+
 function resetWeightEstimation() {
   const weightInput = document.getElementById('quickWeight');
   weightInput.value = '';
@@ -1745,7 +1746,6 @@ function resetWeightEstimation() {
   quickCalculate();
   showToast('Đã xóa khối lượng nhập tay. Hệ thống sẽ ước tính lại.');
 }
-
 // Khởi tạo và lắng nghe sự kiện
 document.addEventListener('DOMContentLoaded', () => {
   if (!localStorage.getItem('dbWood')) loadDefaultDatabase(); else loadDatabase();
