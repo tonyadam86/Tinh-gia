@@ -952,6 +952,8 @@ body {
   text-shadow: 0 0 1px rgba(0,0,0,0.3);
 }
 
+/* ... toàn bộ các phần trên không đổi ... */
+
 .fsticky {
   position: fixed;
   bottom: 0;
@@ -960,29 +962,40 @@ body {
   background: #0a0a0a;
   border-top: 3px solid var(--gold);
   padding: 12px 20px;
-  padding-bottom: calc(12px + var(--safe-bottom));
+  padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
   display: flex;
   justify-content: space-between;
   align-items: center;
   z-index: 300;
   backdrop-filter: blur(8px);
+  height: calc(68px + env(safe-area-inset-bottom, 0px));   /* ← cố định chiều cao */
+  box-sizing: border-box;
 }
 .fsticky .fl {
   font-family: var(--mono);
   font-size: 9px;
   color: var(--gold);
   text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .fsticky .fc {
   font-family: var(--mono);
   font-size: 10px;
   color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .fsticky .fv {
   font-family: var(--mono);
   font-size: 22px;
   font-weight: 700;
   color: var(--gold2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 @media (min-width: 768px) {
